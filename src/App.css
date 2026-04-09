@@ -56,3 +56,23 @@
   margin-bottom: 15px;
   text-align: center;
 }
+
+.pitch-info {
+  text-align: center;
+  margin: 20px 0;
+  padding: 20px;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 12px;
+  border: 2px solid rgba(78, 205, 196, 0.3);
+}
+
+.pitch-info h2 {
+  font-size: 28px;
+  color: #4ecdc4;
+  margin-bottom: 8px;
+}
+
+.pitch-info p {
+  font-size: 16px;
+  color: #95e1d3;
+}

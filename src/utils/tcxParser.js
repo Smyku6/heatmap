@@ -30,12 +30,12 @@ export const parseTCX = (xmlString) => {
   return points;
 };
 
-// Współrzędne GPS boiska piłkarskiego (4 narożniki)
-export const PITCH_CORNERS = {
-  topLeft: { lat: 54.325814, lon: 18.567196 },
-  topRight: { lat: 54.325968, lon: 18.567493 },
-  bottomLeft: { lat: 54.325438, lon: 18.567764 },
-  bottomRight: { lat: 54.325592, lon: 18.568062 }
+import { getPitch, DEFAULT_PITCH_ID } from '../config/pitches';
+
+// Pobiera współrzędne boiska (domyślne lub wybrane)
+const getPitchCorners = (pitchId = DEFAULT_PITCH_ID) => {
+  const pitch = getPitch(pitchId);
+  return pitch.corners;
 };
 
 // Konwertuje GPS lat/lon na współrzędne SVG
@@ -159,9 +159,12 @@ export const splitIntoSegments = (trackingPoints, segmentType) => {
 };
 
 // Konwertuje punkty trackingu i narożniki boiska na współrzędne SVG
-export const prepareVisualizationData = (trackingPoints, segmentType = 'full') => {
+export const prepareVisualizationData = (trackingPoints, segmentType = 'full', pitchId = DEFAULT_PITCH_ID) => {
   // Podziel na segmenty
   const segments = splitIntoSegments(trackingPoints, segmentType);
+
+  // Pobierz współrzędne wybranego boiska
+  const PITCH_CORNERS = getPitchCorners(pitchId);
 
   // Wszystkie punkty GPS (boisko + tracking) do obliczenia boundingu
   const allGPSPoints = [
@@ -215,6 +218,9 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full') =
     ? Math.round(allHeartRates.reduce((sum, hr) => sum + hr, 0) / allHeartRates.length)
     : null;
 
+  // Pobierz informacje o boisku
+  const pitch = getPitch(pitchId);
+
   return {
     pitchCorners: pitchCornersSVG,
     segments: segmentsSVG,
@@ -224,6 +230,11 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full') =
     totalDistance,
     totalAvgHeartRate,
     totalPointCount: trackingPoints.length,
-    segmentType
+    segmentType,
+    pitchInfo: {
+      id: pitch.id,
+      name: pitch.name,
+      location: pitch.location
+    }
   };
 };

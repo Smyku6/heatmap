@@ -1,0 +1,46 @@
+.pitch-selector {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 20px 0;
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+}
+
+.pitch-selector-label {
+  font-size: 14px;
+  font-weight: bold;
+  color: #4ecdc4;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.pitch-selector-dropdown {
+  flex: 1;
+  max-width: 400px;
+  padding: 10px 15px;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  border: 2px solid rgba(78, 205, 196, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pitch-selector-dropdown:hover {
+  border-color: #4ecdc4;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.pitch-selector-dropdown:focus {
+  outline: none;
+  border-color: #4ecdc4;
+  box-shadow: 0 0 10px rgba(78, 205, 196, 0.3);
+}
+
+.pitch-selector-dropdown option {
+  background: #1a1a1a;
+  color: #fff;
+}

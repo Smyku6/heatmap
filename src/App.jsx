@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import Pitch from './components/Pitch';
 import SegmentSelector from './components/SegmentSelector';
+import PitchSelector from './components/PitchSelector';
 import TotalSummary from './components/TotalSummary';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
+import { DEFAULT_PITCH_ID } from './config/pitches';
 import './App.css';
 
 function App() {
   const [rawPoints, setRawPoints] = useState(null);
   const [visualizationData, setVisualizationData] = useState(null);
   const [selectedSegment, setSelectedSegment] = useState('full');
+  const [selectedPitch, setSelectedPitch] = useState(DEFAULT_PITCH_ID);
 
   const handleFileLoad = (fileContent) => {
     try {
@@ -17,7 +20,7 @@ function App() {
 
       if (points.length > 0) {
         setRawPoints(points);
-        const vizData = prepareVisualizationData(points, 'full');
+        const vizData = prepareVisualizationData(points, 'full', selectedPitch);
         setVisualizationData(vizData);
       }
     } catch (error) {
@@ -29,7 +32,15 @@ function App() {
   const handleSegmentChange = (segmentType) => {
     setSelectedSegment(segmentType);
     if (rawPoints) {
-      const vizData = prepareVisualizationData(rawPoints, segmentType);
+      const vizData = prepareVisualizationData(rawPoints, segmentType, selectedPitch);
+      setVisualizationData(vizData);
+    }
+  };
+
+  const handlePitchChange = (pitchId) => {
+    setSelectedPitch(pitchId);
+    if (rawPoints) {
+      const vizData = prepareVisualizationData(rawPoints, selectedSegment, pitchId);
       setVisualizationData(vizData);
     }
   };
@@ -44,8 +55,18 @@ function App() {
       <main className="app-main">
         <FileUpload onFileLoad={handleFileLoad} />
 
+        <PitchSelector
+          selectedPitchId={selectedPitch}
+          onChange={handlePitchChange}
+        />
+
         {visualizationData ? (
           <>
+            <div className="pitch-info">
+              <h2>Boisko: {visualizationData.pitchInfo.name}</h2>
+              <p>{visualizationData.pitchInfo.location}</p>
+            </div>
+
             <SegmentSelector
               selectedSegment={selectedSegment}
               onChange={handleSegmentChange}
