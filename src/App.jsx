@@ -76,7 +76,10 @@ function App() {
           <>
             <div className="pitch-info">
               <h2>📍 Boisko: {visualizationData.pitchInfo.name}</h2>
-              <p>{visualizationData.pitchInfo.location} • Auto-wykryte</p>
+              <p>
+                {visualizationData.pitchInfo.location} • Auto-wykryte •
+                Wymiary: {visualizationData.pitchInfo.dimensions.length}m x {visualizationData.pitchInfo.dimensions.width}m
+              </p>
             </div>
 
             <SegmentSelector

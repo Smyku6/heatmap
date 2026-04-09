@@ -86,6 +86,36 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
+// Oblicza wymiary boiska na podstawie narożników GPS
+export const calculatePitchDimensions = (corners) => {
+  // Szerokość (górna i dolna krawędź)
+  const topWidth = calculateDistance(
+    corners.topLeft.lat, corners.topLeft.lon,
+    corners.topRight.lat, corners.topRight.lon
+  );
+  const bottomWidth = calculateDistance(
+    corners.bottomLeft.lat, corners.bottomLeft.lon,
+    corners.bottomRight.lat, corners.bottomRight.lon
+  );
+  const width = (topWidth + bottomWidth) / 2;
+
+  // Długość (lewa i prawa krawędź)
+  const leftLength = calculateDistance(
+    corners.topLeft.lat, corners.topLeft.lon,
+    corners.bottomLeft.lat, corners.bottomLeft.lon
+  );
+  const rightLength = calculateDistance(
+    corners.topRight.lat, corners.topRight.lon,
+    corners.bottomRight.lat, corners.bottomRight.lon
+  );
+  const length = (leftLength + rightLength) / 2;
+
+  return {
+    width: Math.round(width),
+    length: Math.round(length)
+  };
+};
+
 // Oblicza całkowitą przebiegniętą odległość
 export const calculateTotalDistance = (trackingPoints) => {
   if (trackingPoints.length < 2) return 0;
@@ -220,6 +250,7 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
 
   // Pobierz informacje o boisku
   const pitch = getPitch(pitchId);
+  const dimensions = calculatePitchDimensions(PITCH_CORNERS);
 
   return {
     pitchCorners: pitchCornersSVG,
@@ -234,7 +265,8 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     pitchInfo: {
       id: pitch.id,
       name: pitch.name,
-      location: pitch.location
+      location: pitch.location,
+      dimensions: dimensions
     }
   };
 };
