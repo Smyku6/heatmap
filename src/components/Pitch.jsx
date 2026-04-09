@@ -1,0 +1,113 @@
+import React from 'react';
+import './Pitch.css';
+
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate }) => {
+  if (!pitchCorners || !trackingPoints) return null;
+
+  // Czworokąt boiska (polygon z 4 narożników GPS)
+  const pitchPolygonPoints = `
+    ${pitchCorners.topLeft.x},${pitchCorners.topLeft.y}
+    ${pitchCorners.topRight.x},${pitchCorners.topRight.y}
+    ${pitchCorners.bottomRight.x},${pitchCorners.bottomRight.y}
+    ${pitchCorners.bottomLeft.x},${pitchCorners.bottomLeft.y}
+  `;
+
+  return (
+    <div className="pitch-container">
+      <svg width={width} height={height} className="pitch-svg">
+        {/* Tło */}
+        <rect x={0} y={0} width={width} height={height} fill="#1a1a1a" />
+
+        {/* Boisko - czworokąt z 4 narożników GPS */}
+        <polygon
+          points={pitchPolygonPoints}
+          fill="#2d5016"
+          stroke="#fff"
+          strokeWidth="3"
+        />
+
+        {/* Markery narożników boiska */}
+        {Object.entries(pitchCorners).map(([key, corner]) => (
+          <g key={key}>
+            <circle
+              cx={corner.x}
+              cy={corner.y}
+              r={8}
+              fill="#ff00ff"
+              opacity={0.8}
+            />
+            <text
+              x={corner.x}
+              y={corner.y - 15}
+              fill="#fff"
+              fontSize="12"
+              textAnchor="middle"
+              fontWeight="bold"
+            >
+              {key}
+            </text>
+          </g>
+        ))}
+
+        {/* Punkty GPS trackingu */}
+        {trackingPoints.map((point, index) => (
+          <circle
+            key={index}
+            cx={point.x}
+            cy={point.y}
+            r={3}
+            fill={getColorByHeartRate(point.heartRate)}
+            opacity={0.7}
+            className="gps-point"
+          />
+        ))}
+
+        {/* Linia trasy */}
+        {trackingPoints.length > 1 && (
+          <polyline
+            points={trackingPoints.map(p => `${p.x},${p.y}`).join(' ')}
+            fill="none"
+            stroke="#ff6b6b"
+            strokeWidth="2"
+            opacity={0.5}
+          />
+        )}
+      </svg>
+
+      <div className="stats">
+        {duration && (
+          <div className="stat-item">
+            <span className="stat-label">Czas:</span>
+            <span className="stat-value">{duration.formatted}</span>
+          </div>
+        )}
+        {distance !== undefined && (
+          <div className="stat-item">
+            <span className="stat-label">Dystans:</span>
+            <span className="stat-value">{(distance / 1000).toFixed(2)} km</span>
+          </div>
+        )}
+        {avgHeartRate && (
+          <div className="stat-item">
+            <span className="stat-label">Śr. tętno:</span>
+            <span className="stat-value">{avgHeartRate} bpm</span>
+          </div>
+        )}
+        <div className="stat-item">
+          <span className="stat-label">Punkty GPS:</span>
+          <span className="stat-value">{trackingPoints.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const getColorByHeartRate = (hr) => {
+  if (!hr) return '#4ecdc4';
+  if (hr < 100) return '#4ecdc4';
+  if (hr < 130) return '#95e1d3';
+  if (hr < 160) return '#ffd93d';
+  return '#ff6b6b';
+};
+
+export default Pitch;
