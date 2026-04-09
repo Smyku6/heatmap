@@ -38,13 +38,56 @@ const getPitchCorners = (pitchId = DEFAULT_PITCH_ID) => {
   return pitch.corners;
 };
 
+// Oblicza kąt obrotu boiska dla CSS transform (w stopniach)
+// Obliczany na podstawie lewej krawędzi boiska (TL -> BL) w SVG
+const calculatePitchRotationAngle = (pitchCornersSVG, orientation) => {
+  if (orientation === 'original') {
+    return 0; // Bez rotacji
+  }
+
+  // Oblicz kąt obecnej orientacji boiska w SVG (lewa krawędź TL -> BL)
+  const dx = pitchCornersSVG.bottomLeft.x - pitchCornersSVG.topLeft.x;
+  const dy = pitchCornersSVG.bottomLeft.y - pitchCornersSVG.topLeft.y;
+  const currentAngleRad = Math.atan2(dy, dx);
+  const currentAngleDeg = currentAngleRad * 180 / Math.PI;
+
+  // Dla horizontal: długość boiska powinna być pozioma (kąt = 0° lub 180°)
+  // Dla vertical: długość boiska powinna być pionowa (kąt = 90° lub 270°)
+
+  if (orientation === 'horizontal') {
+    // Chcemy żeby długość była pozioma (0° w prawo, lub 180° w lewo)
+    // Obracamy tak żeby kąt był najbliżej 0° lub 180°
+    const targetAngle = Math.abs(currentAngleDeg) < 90 ? 0 : 180;
+    return targetAngle - currentAngleDeg;
+  } else if (orientation === 'vertical') {
+    // Chcemy żeby długość była pionowa (90° w dół, lub 270° w górę)
+    // Obracamy tak żeby kąt był najbliżej 90° lub 270°
+    const targetAngle = (currentAngleDeg + 90) % 360 < 180 ? 90 : 270;
+    return targetAngle - currentAngleDeg;
+  }
+
+  return 0;
+};
+
 // Konwertuje GPS lat/lon na współrzędne SVG
 // Używamy prostego układu: znajdź min/max wszystkich punktów (boisko + tracking)
 // i mapuj na canvas
-export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 800) => {
+export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 800, pitchCorners = null) => {
   // Zbierz wszystkie punkty GPS (narożniki boiska + punkty trackingu)
-  const allLats = allPoints.map(p => p.lat);
-  const allLons = allPoints.map(p => p.lon);
+  const allLats = [
+    pitchCorners.topLeft.lat,
+    pitchCorners.topRight.lat,
+    pitchCorners.bottomLeft.lat,
+    pitchCorners.bottomRight.lat,
+    ...allPoints.map(p => p.lat)
+  ];
+  const allLons = [
+    pitchCorners.topLeft.lon,
+    pitchCorners.topRight.lon,
+    pitchCorners.bottomLeft.lon,
+    pitchCorners.bottomRight.lon,
+    ...allPoints.map(p => p.lon)
+  ];
 
   const minLat = Math.min(...allLats);
   const maxLat = Math.max(...allLats);
@@ -189,7 +232,7 @@ export const splitIntoSegments = (trackingPoints, segmentType) => {
 };
 
 // Konwertuje punkty trackingu i narożniki boiska na współrzędne SVG
-export const prepareVisualizationData = (trackingPoints, segmentType = 'full', pitchId = DEFAULT_PITCH_ID) => {
+export const prepareVisualizationData = (trackingPoints, segmentType = 'full', pitchId = DEFAULT_PITCH_ID, orientation = 'original') => {
   // Podziel na segmenty
   const segments = splitIntoSegments(trackingPoints, segmentType);
 
@@ -205,7 +248,7 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     ...trackingPoints
   ];
 
-  const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(allGPSPoints);
+  const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(allGPSPoints, 1000, 800, PITCH_CORNERS);
 
   // Konwertuj narożniki boiska
   const pitchCornersSVG = {
@@ -214,6 +257,9 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     bottomLeft: toSVG(PITCH_CORNERS.bottomLeft.lat, PITCH_CORNERS.bottomLeft.lon),
     bottomRight: toSVG(PITCH_CORNERS.bottomRight.lat, PITCH_CORNERS.bottomRight.lon)
   };
+
+  // Oblicz kąt rotacji dla CSS transform
+  const rotationAngle = calculatePitchRotationAngle(pitchCornersSVG, orientation);
 
   // Konwertuj segmenty punktów trackingu
   const segmentsSVG = segments.map(segmentPoints => {
@@ -262,6 +308,7 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     totalAvgHeartRate,
     totalPointCount: trackingPoints.length,
     segmentType,
+    rotationAngle, // Kąt rotacji dla CSS transform
     pitchInfo: {
       id: pitch.id,
       name: pitch.name,

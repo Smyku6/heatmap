@@ -1,7 +1,7 @@
 import React from 'react';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate }) => {
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0 }) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
@@ -12,11 +12,18 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
     ${pitchCorners.bottomLeft.x},${pitchCorners.bottomLeft.y}
   `;
 
+  // Centrum SVG dla rotacji
+  const centerX = width / 2;
+  const centerY = height / 2;
+
   return (
     <div className="pitch-container">
       <svg width={width} height={height} className="pitch-svg">
         {/* Tło */}
         <rect x={0} y={0} width={width} height={height} fill="#1a1a1a" />
+
+        {/* Grupa z rotacją - wszystko co ma się obracać */}
+        <g transform={`rotate(${rotationAngle}, ${centerX}, ${centerY})`}>
 
         {/* Boisko - czworokąt z 4 narożników GPS */}
         <polygon
@@ -72,6 +79,7 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
             opacity={0.5}
           />
         )}
+        </g>
       </svg>
 
       <div className="stats">

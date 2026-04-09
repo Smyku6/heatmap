@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import Pitch from './components/Pitch';
 import SegmentSelector from './components/SegmentSelector';
+import OrientationSelector from './components/OrientationSelector';
 import PerformanceSelector from './components/PerformanceSelector';
 import TotalSummary from './components/TotalSummary';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
@@ -13,6 +14,7 @@ function App() {
   const [rawPoints, setRawPoints] = useState(null);
   const [visualizationData, setVisualizationData] = useState(null);
   const [selectedSegment, setSelectedSegment] = useState('full');
+  const [selectedOrientation, setSelectedOrientation] = useState('original');
   const [detectedPitch, setDetectedPitch] = useState(null);
 
   const handleFileLoad = (fileContent) => {
@@ -26,7 +28,7 @@ function App() {
         const pitchId = autoDetectPitch(points) || DEFAULT_PITCH_ID;
         setDetectedPitch(pitchId);
 
-        const vizData = prepareVisualizationData(points, 'full', pitchId);
+        const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation);
         setVisualizationData(vizData);
       }
     } catch (error) {
@@ -38,7 +40,15 @@ function App() {
   const handleSegmentChange = (segmentType) => {
     setSelectedSegment(segmentType);
     if (rawPoints && detectedPitch) {
-      const vizData = prepareVisualizationData(rawPoints, segmentType, detectedPitch);
+      const vizData = prepareVisualizationData(rawPoints, segmentType, detectedPitch, selectedOrientation);
+      setVisualizationData(vizData);
+    }
+  };
+
+  const handleOrientationChange = (orientation) => {
+    setSelectedOrientation(orientation);
+    if (rawPoints && detectedPitch) {
+      const vizData = prepareVisualizationData(rawPoints, selectedSegment, detectedPitch, orientation);
       setVisualizationData(vizData);
     }
   };
@@ -51,7 +61,7 @@ function App() {
         setRawPoints(points);
         setDetectedPitch(pitchId);
         setSelectedSegment('full');
-        const vizData = prepareVisualizationData(points, 'full', pitchId);
+        const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation);
         setVisualizationData(vizData);
       }
     } catch (error) {
@@ -82,6 +92,11 @@ function App() {
               </p>
             </div>
 
+            <OrientationSelector
+              selectedOrientation={selectedOrientation}
+              onChange={handleOrientationChange}
+            />
+
             <SegmentSelector
               selectedSegment={selectedSegment}
               onChange={handleSegmentChange}
@@ -104,6 +119,7 @@ function App() {
                     duration={segment.duration}
                     distance={segment.distance}
                     avgHeartRate={segment.avgHeartRate}
+                    rotationAngle={visualizationData.rotationAngle}
                   />
                 </div>
               ))}
