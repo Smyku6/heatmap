@@ -2,17 +2,18 @@ import React, { useState } from 'react';
 import FileUpload from './components/FileUpload';
 import Pitch from './components/Pitch';
 import SegmentSelector from './components/SegmentSelector';
-import PitchSelector from './components/PitchSelector';
+import PerformanceSelector from './components/PerformanceSelector';
 import TotalSummary from './components/TotalSummary';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
 import { DEFAULT_PITCH_ID } from './config/pitches';
+import { autoDetectPitch } from './utils/pitchDetection';
 import './App.css';
 
 function App() {
   const [rawPoints, setRawPoints] = useState(null);
   const [visualizationData, setVisualizationData] = useState(null);
   const [selectedSegment, setSelectedSegment] = useState('full');
-  const [selectedPitch, setSelectedPitch] = useState(DEFAULT_PITCH_ID);
+  const [detectedPitch, setDetectedPitch] = useState(null);
 
   const handleFileLoad = (fileContent) => {
     try {
@@ -20,7 +21,12 @@ function App() {
 
       if (points.length > 0) {
         setRawPoints(points);
-        const vizData = prepareVisualizationData(points, 'full', selectedPitch);
+
+        // Auto-wykryj boisko
+        const pitchId = autoDetectPitch(points) || DEFAULT_PITCH_ID;
+        setDetectedPitch(pitchId);
+
+        const vizData = prepareVisualizationData(points, 'full', pitchId);
         setVisualizationData(vizData);
       }
     } catch (error) {
@@ -31,17 +37,26 @@ function App() {
 
   const handleSegmentChange = (segmentType) => {
     setSelectedSegment(segmentType);
-    if (rawPoints) {
-      const vizData = prepareVisualizationData(rawPoints, segmentType, selectedPitch);
+    if (rawPoints && detectedPitch) {
+      const vizData = prepareVisualizationData(rawPoints, segmentType, detectedPitch);
       setVisualizationData(vizData);
     }
   };
 
-  const handlePitchChange = (pitchId) => {
-    setSelectedPitch(pitchId);
-    if (rawPoints) {
-      const vizData = prepareVisualizationData(rawPoints, selectedSegment, pitchId);
-      setVisualizationData(vizData);
+  const handleLoadPerformance = (tcxContent, pitchId) => {
+    try {
+      const points = parseTCX(tcxContent);
+
+      if (points.length > 0) {
+        setRawPoints(points);
+        setDetectedPitch(pitchId);
+        setSelectedSegment('full');
+        const vizData = prepareVisualizationData(points, 'full', pitchId);
+        setVisualizationData(vizData);
+      }
+    } catch (error) {
+      console.error('Błąd parsowania pliku TCX:', error);
+      alert('Nie można wczytać pliku TCX. Sprawdź format pliku.');
     }
   };
 
@@ -55,16 +70,13 @@ function App() {
       <main className="app-main">
         <FileUpload onFileLoad={handleFileLoad} />
 
-        <PitchSelector
-          selectedPitchId={selectedPitch}
-          onChange={handlePitchChange}
-        />
+        <PerformanceSelector onLoadPerformance={handleLoadPerformance} />
 
         {visualizationData ? (
           <>
             <div className="pitch-info">
-              <h2>Boisko: {visualizationData.pitchInfo.name}</h2>
-              <p>{visualizationData.pitchInfo.location}</p>
+              <h2>📍 Boisko: {visualizationData.pitchInfo.name}</h2>
+              <p>{visualizationData.pitchInfo.location} • Auto-wykryte</p>
             </div>
 
             <SegmentSelector
