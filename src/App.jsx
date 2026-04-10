@@ -23,7 +23,9 @@ function App() {
   const [heatmapSettings, setHeatmapSettings] = useState({
     intensity: 14,
     opacity: 0.65,
-    densityRadius: 10
+    densityRadius: 10,
+    colorPalette: 'classic',
+    minThreshold: 0
   });
   const [satelliteTransform, setSatelliteTransform] = useState({
     scale: 1.0,
@@ -173,6 +175,9 @@ function App() {
                     {selectedSegment === 'halves' && `${index + 1}. połowa`}
                     {selectedSegment === 'thirds' && `${index + 1}. tercja`}
                     {selectedSegment === 'quarters' && `${index + 1}. ćwiartka`}
+                    {segment.duration && segment.duration.timeRange && (
+                      <span className="segment-time"> • {segment.duration.timeRange}</span>
+                    )}
                   </h3>
 
                   <div className="pitch-with-controls">

@@ -2,7 +2,7 @@ import React from 'react';
 import HeatmapLayer from './HeatmapLayer';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 } }) => {
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 } }) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
@@ -68,6 +68,8 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
             intensity={heatmapSettings.intensity}
             opacity={heatmapSettings.opacity}
             densityRadius={heatmapSettings.densityRadius}
+            colorPalette={heatmapSettings.colorPalette}
+            minThreshold={heatmapSettings.minThreshold}
           />
         )}
 

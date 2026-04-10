@@ -55,6 +55,16 @@
   color: #4ecdc4;
   margin-bottom: 15px;
   text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.segment-time {
+  font-size: 20px;
+  color: #fbbf24;
+  font-weight: normal;
 }
 
 .pitch-info {

@@ -1,10 +1,36 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './HeatmapControls.css';
 
 const HeatmapControls = ({ settings, onChange }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
     <div className="heatmap-controls">
-      <h4>Ustawienia heatmapy</h4>
+      <button
+        className="heatmap-toggle"
+        onClick={() => setIsExpanded(!isExpanded)}
+      >
+        <span>Opcje heatmapy</span>
+        <span className={`toggle-icon ${isExpanded ? 'expanded' : ''}`}>▼</span>
+      </button>
+
+      {isExpanded && (
+        <div className="heatmap-controls-content">
+
+      <div className="control-item">
+        <label>
+          <span>Paleta kolorów</span>
+          <select
+            value={settings.colorPalette}
+            onChange={(e) => onChange({ ...settings, colorPalette: e.target.value })}
+          >
+            <option value="classic">Klasyczna (niebieski→czerwony)</option>
+            <option value="thermal">Termalna (czarny→czerwony)</option>
+            <option value="purple">Fioletowa (fiolet→żółty)</option>
+            <option value="mono">Monochromatyczna (cyan)</option>
+          </select>
+        </label>
+      </div>
 
       <div className="control-item">
         <label>
@@ -48,6 +74,23 @@ const HeatmapControls = ({ settings, onChange }) => {
         </label>
         <small>Im większa wartość, tym bardziej rozmyte skupiska</small>
       </div>
+
+      <div className="control-item">
+        <label>
+          <span>Próg minimalny: {settings.minThreshold}%</span>
+          <input
+            type="range"
+            min="0"
+            max="50"
+            step="5"
+            value={settings.minThreshold}
+            onChange={(e) => onChange({ ...settings, minThreshold: parseInt(e.target.value) })}
+          />
+        </label>
+        <small>Ukrywa obszary o niskiej aktywności</small>
+      </div>
+        </div>
+      )}
     </div>
   );
 };

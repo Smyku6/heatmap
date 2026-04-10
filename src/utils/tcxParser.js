@@ -249,6 +249,11 @@ export const calculateDuration = (trackingPoints) => {
   const minutes = Math.floor((durationSeconds % 3600) / 60);
   const seconds = durationSeconds % 60;
 
+  // Format czasu jako HH:MM
+  const formatTime = (date) => {
+    return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  };
+
   return {
     hours,
     minutes,
@@ -256,7 +261,10 @@ export const calculateDuration = (trackingPoints) => {
     totalSeconds: durationSeconds,
     formatted: hours > 0
       ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      : `${minutes}:${seconds.toString().padStart(2, '0')}`
+      : `${minutes}:${seconds.toString().padStart(2, '0')}`,
+    startTime: formatTime(startTime),
+    endTime: formatTime(endTime),
+    timeRange: `${formatTime(startTime)}-${formatTime(endTime)}`
   };
 };
 
