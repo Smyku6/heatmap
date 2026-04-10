@@ -1,0 +1,116 @@
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 256px;
+  height: 100vh;
+  background-color: var(--color-surface-container-low);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 0;
+  z-index: 50;
+  border-right: 1px solid rgba(202, 253, 0, 0.05);
+}
+
+.sidebar-header {
+  padding: 0 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.sidebar-logo {
+  font-family: var(--font-headline);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  letter-spacing: 0.2em;
+  margin-bottom: 0.25rem;
+}
+
+.sidebar-subtitle {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #64748b;
+}
+
+.sidebar-nav {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-family: var(--font-headline);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-right: 2px solid transparent;
+  text-align: left;
+  letter-spacing: -0.02em;
+}
+
+.sidebar-nav-item .material-symbols-outlined {
+  margin-right: 1rem;
+  font-size: 1.5rem;
+}
+
+.sidebar-nav-item:hover {
+  color: var(--color-primary);
+  background-color: rgba(255, 255, 255, 0.03);
+}
+
+.sidebar-nav-item.active {
+  color: var(--color-primary);
+  background-color: rgba(202, 253, 0, 0.1);
+  border-right-color: var(--color-primary);
+}
+
+.sidebar-footer {
+  padding: 2rem 1.5rem 0;
+  border-top: 1px solid rgba(116, 117, 121, 0.1);
+}
+
+.sidebar-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar-user-avatar {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: var(--color-surface-container-highest);
+  border: 1px solid rgba(202, 253, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-primary);
+}
+
+.sidebar-user-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar-user-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-on-surface);
+  margin-bottom: 0.125rem;
+}
+
+.sidebar-user-role {
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: #64748b;
+}

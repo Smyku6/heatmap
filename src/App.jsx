@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import Sidebar from './components/Sidebar';
 import FileUpload from './components/FileUpload';
+import PitchInfoBanner from './components/PitchInfoBanner';
 import Pitch from './components/Pitch';
 import SegmentSelector from './components/SegmentSelector';
 import OrientationSelector from './components/OrientationSelector';
@@ -15,6 +17,7 @@ import { autoDetectPitch } from './utils/pitchDetection';
 import './App.css';
 
 function App() {
+  const [currentView, setCurrentView] = useState('dashboard');
   const [rawPoints, setRawPoints] = useState(null);
   const [visualizationData, setVisualizationData] = useState(null);
   const [selectedSegment, setSelectedSegment] = useState('full');
@@ -134,38 +137,25 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>TCX Heatmap Viewer</h1>
-        <p>Wizualizacja danych treningowych z Garmin</p>
-      </header>
+      <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
       <main className="app-main">
+        <header className="app-header">
+          <h1 className="app-header-title">DASHBOARD</h1>
+          <p className="app-header-subtitle">Witaj ponownie. Twoje dane są gotowe do analizy.</p>
+        </header>
+
         <FileUpload onFileLoad={handleFileLoad} />
 
         <PerformanceSelector onLoadPerformance={handleLoadPerformance} />
 
         {visualizationData ? (
           <>
-            <div className="pitch-info">
-              <h2>📍 Boisko: {visualizationData.pitchInfo.name}</h2>
-              <p>
-                {visualizationData.pitchInfo.location} • Auto-wykryte •
-                Wymiary: {visualizationData.pitchInfo.dimensions.length}m x {visualizationData.pitchInfo.dimensions.width}m
-              </p>
-              {visualizationData.activityDate && (
-                <p className="activity-date">
-                  📅 {visualizationData.activityDate.toLocaleDateString('pl-PL', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                  })} • {visualizationData.activityDate.toLocaleTimeString('pl-PL', {
-                    hour: '2-digit',
-                    minute: '2-digit'
-                  })}
-                </p>
-              )}
-            </div>
+            <PitchInfoBanner
+              pitchInfo={visualizationData.pitchInfo}
+              activityDate={visualizationData.activityDate}
+              duration={visualizationData.totalDuration}
+            />
 
             <OrientationSelector
               selectedOrientation={selectedOrientation}

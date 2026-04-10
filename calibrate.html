@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🏟️ Kalibracja Boiska - Pitch Calibration Tool</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #1a1a1a;
+      color: #fff;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #4ecdc4;
+      margin-bottom: 10px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #aaa;
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .instructions {
+      background: rgba(78, 205, 196, 0.1);
+      border: 2px solid #4ecdc4;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 30px;
+    }
+
+    .instructions h2 {
+      color: #4ecdc4;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+
+    .instructions ol {
+      margin-left: 20px;
+      color: #ddd;
+    }
+
+    .instructions li {
+      margin: 8px 0;
+    }
+
+    .upload-section {
+      margin-bottom: 30px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      display: inline-block;
+    }
+
+    .file-input-label {
+      background: #4ecdc4;
+      color: #1a1a1a;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      display: inline-block;
+      transition: background 0.3s;
+    }
+
+    .file-input-label:hover {
+      background: #3db5ac;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .filename {
+      margin-left: 15px;
+      color: #aaa;
+      font-style: italic;
+    }
+
+    .main-grid {
+      display: grid;
+      grid-template-columns: 1fr 400px;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .canvas-section {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #333;
+    }
+
+    .canvas-wrapper {
+      position: relative;
+      display: inline-block;
+      cursor: crosshair;
+      background: #000;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #imageCanvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    .marker {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      margin-left: -10px;
+      margin-top: -10px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      background: rgba(78, 205, 196, 0.8);
+      pointer-events: none;
+      box-shadow: 0 0 10px rgba(78, 205, 196, 0.8);
+    }
+
+    .marker-label {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4ecdc4;
+      color: #1a1a1a;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .sidebar {
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #333;
+    }
+
+    .current-step {
+      background: rgba(78, 205, 196, 0.2);
+      border: 2px solid #4ecdc4;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .current-step h3 {
+      color: #4ecdc4;
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .current-step p {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .points-list {
+      margin-bottom: 20px;
+    }
+
+    .point-item {
+      background: #1a1a1a;
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border: 2px solid transparent;
+    }
+
+    .point-item.completed {
+      border-color: #4ecdc4;
+    }
+
+    .point-item.active {
+      border-color: #ffd93d;
+      background: rgba(255, 217, 61, 0.1);
+    }
+
+    .point-label {
+      font-weight: bold;
+      color: #4ecdc4;
+    }
+
+    .point-coords {
+      color: #aaa;
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    button {
+      background: #4ecdc4;
+      color: #1a1a1a;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+
+    button:hover:not(:disabled) {
+      background: #3db5ac;
+    }
+
+    button:disabled {
+      background: #555;
+      color: #888;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: #ff6b6b;
+    }
+
+    button.secondary:hover:not(:disabled) {
+      background: #ee5a52;
+    }
+
+    .config-output {
+      margin-top: 30px;
+      background: #2a2a2a;
+      border-radius: 12px;
+      padding: 20px;
+      border: 2px solid #333;
+    }
+
+    .config-output h2 {
+      color: #4ecdc4;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .config-box {
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 6px;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      font-size: 13px;
+      color: #4ecdc4;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .copy-button {
+      margin-top: 10px;
+      width: 100%;
+    }
+
+    .success-message {
+      background: rgba(78, 205, 196, 0.2);
+      border: 2px solid #4ecdc4;
+      color: #4ecdc4;
+      padding: 10px;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .success-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏟️ Kalibracja Boiska</h1>
+    <p class="subtitle">Narzędzie do kalibracji zdjęć satelitarnych boisk piłkarskich</p>
+
+    <div class="instructions">
+      <h2>📝 Instrukcja:</h2>
+      <ol>
+        <li>Wczytaj zdjęcie satelitarne boiska (JPG/PNG)</li>
+        <li>Kliknij kolejno 4 narożniki boiska w kolejności: <strong>Top Left → Top Right → Bottom Right → Bottom Left</strong></li>
+        <li>Skopiuj wygenerowany config do pliku <code>src/config/pitches.js</code></li>
+      </ol>
+    </div>
+
+    <div class="upload-section">
+      <div class="file-input-wrapper">
+        <label for="imageInput" class="file-input-label">
+          📁 Wybierz Zdjęcie Boiska
+        </label>
+        <input type="file" id="imageInput" accept="image/*">
+        <span class="filename" id="filename">Nie wybrano pliku</span>
+      </div>
+    </div>
+
+    <div class="main-grid">
+      <div class="canvas-section">
+        <div class="canvas-wrapper" id="canvasWrapper">
+          <canvas id="imageCanvas"></canvas>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="current-step" id="currentStep">
+          <h3>Kliknij: Top Left</h3>
+          <p>Lewy górny narożnik boiska</p>
+        </div>
+
+        <div class="points-list">
+          <div class="point-item active" id="point-tl">
+            <span class="point-label">Top Left (TL)</span>
+            <span class="point-coords" id="coords-tl">—</span>
+          </div>
+          <div class="point-item" id="point-tr">
+            <span class="point-label">Top Right (TR)</span>
+            <span class="point-coords" id="coords-tr">—</span>
+          </div>
+          <div class="point-item" id="point-br">
+            <span class="point-label">Bottom Right (BR)</span>
+            <span class="point-coords" id="coords-br">—</span>
+          </div>
+          <div class="point-item" id="point-bl">
+            <span class="point-label">Bottom Left (BL)</span>
+            <span class="point-coords" id="coords-bl">—</span>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button id="resetButton" class="secondary">🔄 Reset</button>
+          <button id="generateButton" disabled>✅ Generuj Config</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="config-output" id="configOutput" style="display: none;">
+      <h2>📋 Wygenerowany Config</h2>
+      <div class="config-box" id="configBox"></div>
+      <button class="copy-button" id="copyButton">📋 Skopiuj do Schowka</button>
+      <div class="success-message" id="successMessage">✅ Skopiowano do schowka!</div>
+    </div>
+  </div>
+
+  <script>
+    const state = {
+      image: null,
+      points: {
+        topLeft: null,
+        topRight: null,
+        bottomRight: null,
+        bottomLeft: null
+      },
+      currentPoint: 'topLeft',
+      scale: 1
+    };
+
+    const steps = [
+      { key: 'topLeft', label: 'Top Left', desc: 'Lewy górny narożnik boiska' },
+      { key: 'topRight', label: 'Top Right', desc: 'Prawy górny narożnik boiska' },
+      { key: 'bottomRight', label: 'Bottom Right', desc: 'Prawy dolny narożnik boiska' },
+      { key: 'bottomLeft', label: 'Bottom Left', desc: 'Lewy dolny narożnik boiska' }
+    ];
+
+    const canvas = document.getElementById('imageCanvas');
+    const ctx = canvas.getContext('2d');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const imageInput = document.getElementById('imageInput');
+    const filename = document.getElementById('filename');
+    const currentStepEl = document.getElementById('currentStep');
+    const resetButton = document.getElementById('resetButton');
+    const generateButton = document.getElementById('generateButton');
+    const configOutput = document.getElementById('configOutput');
+    const configBox = document.getElementById('configBox');
+    const copyButton = document.getElementById('copyButton');
+    const successMessage = document.getElementById('successMessage');
+
+    // Wczytywanie obrazu
+    imageInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      filename.textContent = file.name;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const img = new Image();
+        img.onload = () => {
+          state.image = img;
+
+          // Skaluj do max 900px szerokości
+          const maxWidth = 900;
+          if (img.width > maxWidth) {
+            state.scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * state.scale;
+          } else {
+            state.scale = 1;
+            canvas.width = img.width;
+            canvas.height = img.height;
+          }
+
+          drawImage();
+          resetPoints();
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Rysowanie obrazu i markerów
+    function drawImage() {
+      if (!state.image) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(state.image, 0, 0, canvas.width, canvas.height);
+
+      // Usuń stare markery
+      document.querySelectorAll('.marker').forEach(m => m.remove());
+
+      // Narysuj markery
+      Object.entries(state.points).forEach(([key, point]) => {
+        if (point) {
+          drawMarker(point.x, point.y, getPointLabel(key));
+        }
+      });
+    }
+
+    function drawMarker(x, y, label) {
+      const marker = document.createElement('div');
+      marker.className = 'marker';
+      marker.style.left = x + 'px';
+      marker.style.top = y + 'px';
+
+      const markerLabel = document.createElement('div');
+      markerLabel.className = 'marker-label';
+      markerLabel.textContent = label;
+      marker.appendChild(markerLabel);
+
+      canvasWrapper.appendChild(marker);
+    }
+
+    function getPointLabel(key) {
+      const labels = {
+        topLeft: 'TL',
+        topRight: 'TR',
+        bottomRight: 'BR',
+        bottomLeft: 'BL'
+      };
+      return labels[key];
+    }
+
+    // Kliknięcie na canvas
+    canvas.addEventListener('click', (e) => {
+      console.log('Canvas clicked!');
+      if (!state.image) {
+        console.log('No image loaded');
+        return;
+      }
+
+      const rect = canvas.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      console.log('Click position:', { x, y });
+
+      // Zapisz punkt (w oryginalnych współrzędnych obrazu)
+      state.points[state.currentPoint] = {
+        x: x,
+        y: y,
+        originalX: Math.round(x / state.scale),
+        originalY: Math.round(y / state.scale)
+      };
+
+      // Aktualizuj UI
+      updatePointDisplay(state.currentPoint);
+
+      // Przejdź do następnego punktu
+      const currentIndex = steps.findIndex(s => s.key === state.currentPoint);
+      if (currentIndex < steps.length - 1) {
+        state.currentPoint = steps[currentIndex + 1].key;
+        updateCurrentStep();
+      } else {
+        // Wszystkie punkty zebrane
+        generateButton.disabled = false;
+        currentStepEl.innerHTML = '<h3>✅ Gotowe!</h3><p>Kliknij "Generuj Config"</p>';
+      }
+
+      drawImage();
+    });
+
+    function updatePointDisplay(key) {
+      const point = state.points[key];
+
+      // Mapowanie kluczy na ID
+      const keyToId = {
+        'topLeft': 'tl',
+        'topRight': 'tr',
+        'bottomRight': 'br',
+        'bottomLeft': 'bl'
+      };
+
+      const id = keyToId[key];
+      const coordsEl = document.getElementById(`coords-${id}`);
+      const itemEl = document.getElementById(`point-${id}`);
+
+      if (point) {
+        coordsEl.textContent = `x: ${point.originalX}, y: ${point.originalY}`;
+        itemEl.classList.remove('active');
+        itemEl.classList.add('completed');
+      }
+
+      // Oznacz następny jako aktywny
+      const currentIndex = steps.findIndex(s => s.key === key);
+      if (currentIndex < steps.length - 1) {
+        const nextKey = steps[currentIndex + 1].key;
+        const nextId = keyToId[nextKey];
+        const nextItemEl = document.getElementById(`point-${nextId}`);
+        nextItemEl.classList.add('active');
+      }
+    }
+
+    function updateCurrentStep() {
+      const step = steps.find(s => s.key === state.currentPoint);
+      if (step) {
+        currentStepEl.innerHTML = `<h3>Kliknij: ${step.label}</h3><p>${step.desc}</p>`;
+      }
+    }
+
+    // Reset
+    resetButton.addEventListener('click', resetPoints);
+
+    function resetPoints() {
+      state.points = {
+        topLeft: null,
+        topRight: null,
+        bottomRight: null,
+        bottomLeft: null
+      };
+      state.currentPoint = 'topLeft';
+
+      document.querySelectorAll('.point-item').forEach(item => {
+        item.classList.remove('completed', 'active');
+      });
+      document.getElementById('point-tl').classList.add('active');
+
+      document.querySelectorAll('.point-coords').forEach(el => {
+        el.textContent = '—';
+      });
+
+      updateCurrentStep();
+      generateButton.disabled = true;
+      configOutput.style.display = 'none';
+      drawImage();
+    }
+
+    // Generowanie configu
+    generateButton.addEventListener('click', () => {
+      const config = {
+        imageCorners: {
+          topLeft: { x: state.points.topLeft.originalX, y: state.points.topLeft.originalY },
+          topRight: { x: state.points.topRight.originalX, y: state.points.topRight.originalY },
+          bottomRight: { x: state.points.bottomRight.originalX, y: state.points.bottomRight.originalY },
+          bottomLeft: { x: state.points.bottomLeft.originalX, y: state.points.bottomLeft.originalY }
+        }
+      };
+
+      const configText = `satellite: {
+  image: '/images/your-pitch-name.jpg',  // ← ZMIEŃ NA NAZWĘ PLIKU
+  imageCorners: ${JSON.stringify(config.imageCorners, null, 4).replace(/"(\w+)":/g, '$1:')}
+}`;
+
+      configBox.textContent = configText;
+      configOutput.style.display = 'block';
+      configOutput.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // Kopiowanie do schowka
+    copyButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(configBox.textContent).then(() => {
+        successMessage.classList.add('show');
+        setTimeout(() => {
+          successMessage.classList.remove('show');
+        }, 3000);
+      });
+    });
+  </script>
+</body>
+</html>

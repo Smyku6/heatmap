@@ -44,3 +44,6 @@ coverage/
 
 # Optional: TCX files (uncomment if you don't want to commit training files)
 # *.tcx
+
+# Claude Code internal files
+.claude/
