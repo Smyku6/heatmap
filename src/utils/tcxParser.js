@@ -31,6 +31,7 @@ export const parseTCX = (xmlString) => {
 };
 
 import { getPitch, DEFAULT_PITCH_ID } from '../config/pitches';
+import { getPerspectiveTransform, transformPoint } from './perspectiveTransform';
 
 // Pobiera współrzędne boiska (domyślne lub wybrane)
 const getPitchCorners = (pitchId = DEFAULT_PITCH_ID) => {
@@ -70,10 +71,48 @@ const calculatePitchRotationAngle = (pitchCornersSVG, orientation) => {
 };
 
 // Konwertuje GPS lat/lon na współrzędne SVG
-// Używamy prostego układu: znajdź min/max wszystkich punktów (boisko + tracking)
-// i mapuj na canvas
+// Używa transformacji perspektywicznej (homografia) aby zmapować czworokąt GPS na prostokąt canvas
+// Zachowuje rzeczywiste proporcje boiska (obliczone z GPS)
 export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 800, pitchCorners = null) => {
-  // Zbierz wszystkie punkty GPS (narożniki boiska + punkty trackingu)
+  // Oblicz rzeczywiste wymiary boiska w metrach
+  const pitchWidth = calculateDistance(
+    pitchCorners.topLeft.lat, pitchCorners.topLeft.lon,
+    pitchCorners.topRight.lat, pitchCorners.topRight.lon
+  );
+  const pitchLength = calculateDistance(
+    pitchCorners.topLeft.lat, pitchCorners.topLeft.lon,
+    pitchCorners.bottomLeft.lat, pitchCorners.bottomLeft.lon
+  );
+
+  console.log(`Rzeczywiste wymiary boiska: ${pitchWidth.toFixed(1)}m × ${pitchLength.toFixed(1)}m`);
+
+  // Oblicz ratio boiska
+  const pitchRatio = pitchWidth / pitchLength; // szerokość / długość
+
+  // Padding wokół boiska
+  const padding = 50;
+  const availableWidth = canvasWidth - 2 * padding;
+  const availableHeight = canvasHeight - 2 * padding;
+
+  // Dopasuj rozmiar boiska do canvas zachowując proporcje
+  let drawWidth, drawHeight;
+  const canvasRatio = availableWidth / availableHeight;
+
+  if (pitchRatio > canvasRatio) {
+    // Boisko szersze proporcjonalnie - dopasuj do szerokości
+    drawWidth = availableWidth;
+    drawHeight = availableWidth / pitchRatio;
+  } else {
+    // Boisko wyższe proporcjonalnie - dopasuj do wysokości
+    drawHeight = availableHeight;
+    drawWidth = availableHeight * pitchRatio;
+  }
+
+  // Wycentruj boisko
+  const offsetX = padding + (availableWidth - drawWidth) / 2;
+  const offsetY = padding + (availableHeight - drawHeight) / 2;
+
+  // Znajdź zakres GPS wszystkich punktów
   const allLats = [
     pitchCorners.topLeft.lat,
     pitchCorners.topRight.lat,
@@ -97,16 +136,39 @@ export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 80
   const latRange = maxLat - minLat;
   const lonRange = maxLon - minLon;
 
-  // Dodaj padding (10% z każdej strony)
-  const padding = 50;
-  const drawWidth = canvasWidth - 2 * padding;
-  const drawHeight = canvasHeight - 2 * padding;
+  // Znormalizuj współrzędne GPS do [0,1] × [0,1]
+  const normalizeGPS = (lat, lon) => ({
+    x: (lon - minLon) / lonRange,
+    y: (lat - minLat) / latRange
+  });
+
+  // Punkty źródłowe: narożniki boiska w znormalizowanych współrzędnych GPS
+  const sourcePoints = [
+    normalizeGPS(pitchCorners.topLeft.lat, pitchCorners.topLeft.lon),
+    normalizeGPS(pitchCorners.topRight.lat, pitchCorners.topRight.lon),
+    normalizeGPS(pitchCorners.bottomRight.lat, pitchCorners.bottomRight.lon),
+    normalizeGPS(pitchCorners.bottomLeft.lat, pitchCorners.bottomLeft.lon)
+  ];
+
+  // Punkty docelowe: idealny prostokąt na canvas z prawdziwymi proporcjami
+  const destPoints = [
+    { x: offsetX, y: offsetY },                           // topLeft
+    { x: offsetX + drawWidth, y: offsetY },               // topRight
+    { x: offsetX + drawWidth, y: offsetY + drawHeight },  // bottomRight
+    { x: offsetX, y: offsetY + drawHeight }               // bottomLeft
+  ];
+
+  // Oblicz macierz transformacji perspektywicznej
+  const perspectiveMatrix = getPerspectiveTransform(sourcePoints, destPoints);
 
   // Funkcja konwertująca GPS na SVG
-  const toSVG = (lat, lon) => ({
-    x: padding + ((lon - minLon) / lonRange) * drawWidth,
-    y: padding + drawHeight - ((lat - minLat) / latRange) * drawHeight // odwrócone Y
-  });
+  const toSVG = (lat, lon) => {
+    // Znormalizuj punkt GPS
+    const normalized = normalizeGPS(lat, lon);
+
+    // Zastosuj transformację perspektywiczną
+    return transformPoint(normalized.x, normalized.y, perspectiveMatrix);
+  };
 
   return {
     toSVG,

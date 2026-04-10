@@ -9,6 +9,15 @@ export const PITCHES = {
       topRight: { lat: 54.325968, lon: 18.567493 },
       bottomLeft: { lat: 54.325438, lon: 18.567764 },
       bottomRight: { lat: 54.325592, lon: 18.568062 }
+    },
+    satellite: {
+      image: '/images/lawendowe.jpg',
+      imageCorners: {
+        topLeft: { x: 623, y: 394 },
+        topRight: { x: 864, y: 177 },
+        bottomRight: { x: 1333, y: 703 },
+        bottomLeft: { x: 1089, y: 920 }
+      }
     }
   },
   // Dodaj kolejne boiska tutaj:

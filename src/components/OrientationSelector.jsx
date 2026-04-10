@@ -3,9 +3,8 @@ import './OrientationSelector.css';
 
 const OrientationSelector = ({ selectedOrientation, onChange }) => {
   const orientations = [
-    { id: 'original', label: 'Oryginalny', description: 'Bez obrotu' },
-    { id: 'vertical', label: 'Pionowy', description: 'Boisko pionowo' },
-    { id: 'horizontal', label: 'Poziomy', description: 'Boisko poziomo' }
+    { id: 'original', label: 'Pionowo', description: 'Boisko pionowo' },
+    { id: 'horizontal', label: 'Poziomo', description: 'Boisko poziomo' }
   ];
 
   return (

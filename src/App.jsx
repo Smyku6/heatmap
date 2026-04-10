@@ -16,6 +16,7 @@ function App() {
   const [selectedSegment, setSelectedSegment] = useState('full');
   const [selectedOrientation, setSelectedOrientation] = useState('original');
   const [detectedPitch, setDetectedPitch] = useState(null);
+  const [showActivityPoints, setShowActivityPoints] = useState(true);
 
   const handleFileLoad = (fileContent) => {
     try {
@@ -97,6 +98,17 @@ function App() {
               onChange={handleOrientationChange}
             />
 
+            <div className="controls-row">
+              <label className="checkbox-control">
+                <input
+                  type="checkbox"
+                  checked={showActivityPoints}
+                  onChange={(e) => setShowActivityPoints(e.target.checked)}
+                />
+                <span>Pokaż punkty aktywności</span>
+              </label>
+            </div>
+
             <SegmentSelector
               selectedSegment={selectedSegment}
               onChange={handleSegmentChange}
@@ -120,6 +132,7 @@ function App() {
                     distance={segment.distance}
                     avgHeartRate={segment.avgHeartRate}
                     rotationAngle={visualizationData.rotationAngle}
+                    showActivityPoints={showActivityPoints}
                   />
                 </div>
               ))}

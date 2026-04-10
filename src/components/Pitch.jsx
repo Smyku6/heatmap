@@ -1,7 +1,7 @@
 import React from 'react';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0 }) => {
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true }) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
@@ -15,6 +15,7 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
   // Centrum SVG dla rotacji
   const centerX = width / 2;
   const centerY = height / 2;
+
 
   return (
     <div className="pitch-container">
@@ -57,7 +58,7 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
         ))}
 
         {/* Punkty GPS trackingu */}
-        {trackingPoints.map((point, index) => (
+        {showActivityPoints && trackingPoints.map((point, index) => (
           <circle
             key={index}
             cx={point.x}
@@ -70,7 +71,7 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
         ))}
 
         {/* Linia trasy */}
-        {trackingPoints.length > 1 && (
+        {showActivityPoints && trackingPoints.length > 1 && (
           <polyline
             points={trackingPoints.map(p => `${p.x},${p.y}`).join(' ')}
             fill="none"
