@@ -6,6 +6,7 @@ import OrientationSelector from './components/OrientationSelector';
 import PerformanceSelector from './components/PerformanceSelector';
 import TotalSummary from './components/TotalSummary';
 import SatelliteControls from './components/SatelliteControls';
+import HeatmapControls from './components/HeatmapControls';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
 import { DEFAULT_PITCH_ID } from './config/pitches';
 import { autoDetectPitch } from './utils/pitchDetection';
@@ -17,7 +18,13 @@ function App() {
   const [selectedSegment, setSelectedSegment] = useState('full');
   const [selectedOrientation, setSelectedOrientation] = useState('original');
   const [detectedPitch, setDetectedPitch] = useState(null);
-  const [showActivityPoints, setShowActivityPoints] = useState(true);
+  const [showHeatmap, setShowHeatmap] = useState(true);
+  const [showActivityPoints, setShowActivityPoints] = useState(false);
+  const [heatmapSettings, setHeatmapSettings] = useState({
+    intensity: 14,
+    opacity: 0.65,
+    densityRadius: 10
+  });
   const [satelliteTransform, setSatelliteTransform] = useState({
     scale: 1.0,
     rotation: 0,
@@ -130,12 +137,28 @@ function App() {
               <label className="checkbox-control">
                 <input
                   type="checkbox"
+                  checked={showHeatmap}
+                  onChange={(e) => setShowHeatmap(e.target.checked)}
+                />
+                <span>Pokaż heatmapę</span>
+              </label>
+
+              <label className="checkbox-control">
+                <input
+                  type="checkbox"
                   checked={showActivityPoints}
                   onChange={(e) => setShowActivityPoints(e.target.checked)}
                 />
                 <span>Pokaż punkty aktywności</span>
               </label>
             </div>
+
+            {showHeatmap && (
+              <HeatmapControls
+                settings={heatmapSettings}
+                onChange={setHeatmapSettings}
+              />
+            )}
 
             <SegmentSelector
               selectedSegment={selectedSegment}
@@ -164,6 +187,8 @@ function App() {
                         avgHeartRate={segment.avgHeartRate}
                         rotationAngle={visualizationData.rotationAngle}
                         showActivityPoints={showActivityPoints}
+                        showHeatmap={showHeatmap}
+                        heatmapSettings={heatmapSettings}
                         satellite={visualizationData.satellite}
                         satelliteTransform={satelliteTransform}
                       />
