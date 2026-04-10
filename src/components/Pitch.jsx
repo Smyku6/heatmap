@@ -1,8 +1,9 @@
 import React from 'react';
 import HeatmapLayer from './HeatmapLayer';
+import SprintLayer from './SprintLayer';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 }, centerCircleRadius = 5, pitchDimensions = { length: 56, width: 26 }, goal = { width: 5, depth: 1 }, penaltyBox = { width: 10, depth: 5 } }) => {
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 }, centerCircleRadius = 5, pitchDimensions = { length: 56, width: 26 }, goal = { width: 5, depth: 1 }, penaltyBox = { width: 10, depth: 5 }, showSprints = false, sprints = [], sprintSettings = { minSpeed: 16.5, minDuration: 2, minDistance: 10, simplified: true, showNumbers: false } }) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
@@ -219,6 +220,15 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
             densityRadius={heatmapSettings.densityRadius}
             colorPalette={heatmapSettings.colorPalette}
             minThreshold={heatmapSettings.minThreshold}
+          />
+        )}
+
+        {/* Warstwa sprintów */}
+        {showSprints && (
+          <SprintLayer
+            sprints={sprints}
+            simplified={sprintSettings.simplified}
+            showNumbers={sprintSettings.showNumbers}
           />
         )}
 

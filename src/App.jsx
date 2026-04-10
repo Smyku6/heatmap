@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FileUpload from './components/FileUpload';
 import Pitch from './components/Pitch';
 import SegmentSelector from './components/SegmentSelector';
@@ -7,6 +7,8 @@ import PerformanceSelector from './components/PerformanceSelector';
 import TotalSummary from './components/TotalSummary';
 import SatelliteControls from './components/SatelliteControls';
 import HeatmapControls from './components/HeatmapControls';
+import SprintControls from './components/SprintControls';
+import SprintStats from './components/SprintStats';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
 import { DEFAULT_PITCH_ID } from './config/pitches';
 import { autoDetectPitch } from './utils/pitchDetection';
@@ -20,12 +22,20 @@ function App() {
   const [detectedPitch, setDetectedPitch] = useState(null);
   const [showHeatmap, setShowHeatmap] = useState(true);
   const [showActivityPoints, setShowActivityPoints] = useState(false);
+  const [showSprints, setShowSprints] = useState(false);
   const [heatmapSettings, setHeatmapSettings] = useState({
     intensity: 14,
     opacity: 0.65,
     densityRadius: 10,
     colorPalette: 'classic',
     minThreshold: 0
+  });
+  const [sprintSettings, setSprintSettings] = useState({
+    minSpeed: 16.5,
+    minDuration: 2,
+    minDistance: 10,
+    simplified: true,
+    showNumbers: false
   });
   const [satelliteTransform, setSatelliteTransform] = useState({
     scale: 1.0,
@@ -45,7 +55,7 @@ function App() {
         const pitchId = autoDetectPitch(points) || DEFAULT_PITCH_ID;
         setDetectedPitch(pitchId);
 
-        const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation);
+        const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation, showSprints ? sprintSettings : null);
         setVisualizationData(vizData);
 
         // Wczytaj domyślną transformację dla tej orientacji jeśli istnieje
@@ -64,7 +74,7 @@ function App() {
   const handleSegmentChange = (segmentType) => {
     setSelectedSegment(segmentType);
     if (rawPoints && detectedPitch) {
-      const vizData = prepareVisualizationData(rawPoints, segmentType, detectedPitch, selectedOrientation);
+      const vizData = prepareVisualizationData(rawPoints, segmentType, detectedPitch, selectedOrientation, showSprints ? sprintSettings : null);
       setVisualizationData(vizData);
     }
   };
@@ -72,7 +82,7 @@ function App() {
   const handleOrientationChange = (orientation) => {
     setSelectedOrientation(orientation);
     if (rawPoints && detectedPitch) {
-      const vizData = prepareVisualizationData(rawPoints, selectedSegment, detectedPitch, orientation);
+      const vizData = prepareVisualizationData(rawPoints, selectedSegment, detectedPitch, orientation, showSprints ? sprintSettings : null);
       setVisualizationData(vizData);
 
       // Wczytaj domyślną transformację dla nowej orientacji jeśli istnieje
@@ -92,7 +102,7 @@ function App() {
         setRawPoints(points);
         setDetectedPitch(pitchId);
         setSelectedSegment('full');
-        const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation);
+        const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation, showSprints ? sprintSettings : null);
         setVisualizationData(vizData);
 
         // Wczytaj domyślną transformację dla tej orientacji jeśli istnieje
@@ -107,6 +117,20 @@ function App() {
       alert('Nie można wczytać pliku TCX. Sprawdź format pliku.');
     }
   };
+
+  // Przelicz dane gdy zmieniają się ustawienia sprintów lub checkbox sprintów
+  useEffect(() => {
+    if (rawPoints && detectedPitch) {
+      const vizData = prepareVisualizationData(
+        rawPoints,
+        selectedSegment,
+        detectedPitch,
+        selectedOrientation,
+        showSprints ? sprintSettings : null
+      );
+      setVisualizationData(vizData);
+    }
+  }, [showSprints, sprintSettings]);
 
   return (
     <div className="app">
@@ -128,6 +152,19 @@ function App() {
                 {visualizationData.pitchInfo.location} • Auto-wykryte •
                 Wymiary: {visualizationData.pitchInfo.dimensions.length}m x {visualizationData.pitchInfo.dimensions.width}m
               </p>
+              {visualizationData.activityDate && (
+                <p className="activity-date">
+                  📅 {visualizationData.activityDate.toLocaleDateString('pl-PL', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })} • {visualizationData.activityDate.toLocaleTimeString('pl-PL', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                  })}
+                </p>
+              )}
             </div>
 
             <OrientationSelector
@@ -148,6 +185,15 @@ function App() {
               <label className="checkbox-control">
                 <input
                   type="checkbox"
+                  checked={showSprints}
+                  onChange={(e) => setShowSprints(e.target.checked)}
+                />
+                <span>Pokaż sprinty</span>
+              </label>
+
+              <label className="checkbox-control">
+                <input
+                  type="checkbox"
                   checked={showActivityPoints}
                   onChange={(e) => setShowActivityPoints(e.target.checked)}
                 />
@@ -159,6 +205,13 @@ function App() {
               <HeatmapControls
                 settings={heatmapSettings}
                 onChange={setHeatmapSettings}
+              />
+            )}
+
+            {showSprints && (
+              <SprintControls
+                settings={sprintSettings}
+                onChange={setSprintSettings}
               />
             )}
 
@@ -200,6 +253,9 @@ function App() {
                         pitchDimensions={visualizationData.pitchInfo.dimensions}
                         goal={visualizationData.goal}
                         penaltyBox={visualizationData.penaltyBox}
+                        showSprints={showSprints}
+                        sprints={segment.sprints}
+                        sprintSettings={sprintSettings}
                       />
                     </div>
 
@@ -214,6 +270,11 @@ function App() {
                       </div>
                     )} */}
                   </div>
+
+                  {/* Statystyki sprintów dla tego segmentu */}
+                  {showSprints && segment.sprints && (
+                    <SprintStats sprints={segment.sprints} />
+                  )}
                 </div>
               ))}
             </div>

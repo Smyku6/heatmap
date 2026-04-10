@@ -221,6 +221,114 @@ export const calculatePitchDimensions = (corners) => {
   };
 };
 
+// Oblicza prędkość w km/h między dwoma punktami
+const calculateSpeed = (point1, point2) => {
+  const time1 = new Date(point1.time);
+  const time2 = new Date(point2.time);
+  const timeDiffSeconds = (time2 - time1) / 1000;
+
+  if (timeDiffSeconds === 0) return 0;
+
+  const distance = calculateDistance(point1.lat, point1.lon, point2.lat, point2.lon);
+  const speedMetersPerSecond = distance / timeDiffSeconds;
+  const speedKmH = speedMetersPerSecond * 3.6;
+
+  return speedKmH;
+};
+
+// Wykrywa sprinty w danych trackingowych
+export const detectSprints = (trackingPoints, settings = {}) => {
+  const {
+    minSpeed = 16.5,      // Minimalna prędkość w km/h
+    minDuration = 2,      // Minimalna długość sprintu w sekundach
+    minDistance = 10      // Minimalny dystans w metrach
+  } = settings;
+
+  if (trackingPoints.length < 2) return [];
+
+  const sprints = [];
+  let currentSprint = null;
+
+  for (let i = 1; i < trackingPoints.length; i++) {
+    const speed = calculateSpeed(trackingPoints[i - 1], trackingPoints[i]);
+
+    if (speed >= minSpeed) {
+      if (!currentSprint) {
+        // Rozpocznij nowy sprint
+        currentSprint = {
+          startIndex: i - 1,
+          endIndex: i,
+          points: [trackingPoints[i - 1], trackingPoints[i]],
+          speeds: [speed],
+          maxSpeed: speed
+        };
+      } else {
+        // Kontynuuj sprint
+        currentSprint.endIndex = i;
+        currentSprint.points.push(trackingPoints[i]);
+        currentSprint.speeds.push(speed);
+        currentSprint.maxSpeed = Math.max(currentSprint.maxSpeed, speed);
+      }
+    } else {
+      // Zakończ sprint jeśli był aktywny
+      if (currentSprint) {
+        const sprintData = finalizeSprint(currentSprint, minDuration, minDistance);
+        if (sprintData) {
+          sprints.push(sprintData);
+        }
+        currentSprint = null;
+      }
+    }
+  }
+
+  // Zakończ ostatni sprint jeśli był aktywny
+  if (currentSprint) {
+    const sprintData = finalizeSprint(currentSprint, minDuration, minDistance);
+    if (sprintData) {
+      sprints.push(sprintData);
+    }
+  }
+
+  return sprints;
+};
+
+// Finalizuje sprint i sprawdza czy spełnia minimalne wymagania
+const finalizeSprint = (sprint, minDuration, minDistance) => {
+  const startTime = new Date(sprint.points[0].time);
+  const endTime = new Date(sprint.points[sprint.points.length - 1].time);
+  const duration = (endTime - startTime) / 1000; // w sekundach
+
+  // Oblicz całkowity dystans sprintu
+  let distance = 0;
+  for (let i = 1; i < sprint.points.length; i++) {
+    distance += calculateDistance(
+      sprint.points[i - 1].lat,
+      sprint.points[i - 1].lon,
+      sprint.points[i].lat,
+      sprint.points[i].lon
+    );
+  }
+
+  // Sprawdź minimalne wymagania
+  if (duration < minDuration || distance < minDistance) {
+    return null;
+  }
+
+  const avgSpeed = sprint.speeds.reduce((sum, s) => sum + s, 0) / sprint.speeds.length;
+
+  return {
+    startPoint: sprint.points[0],
+    endPoint: sprint.points[sprint.points.length - 1],
+    points: sprint.points,
+    duration,
+    distance,
+    avgSpeed,
+    maxSpeed: sprint.maxSpeed,
+    startTime: sprint.points[0].time,
+    endTime: sprint.points[sprint.points.length - 1].time
+  };
+};
+
 // Oblicza całkowitą przebiegniętą odległość
 export const calculateTotalDistance = (trackingPoints) => {
   if (trackingPoints.length < 2) return 0;
@@ -302,7 +410,7 @@ export const splitIntoSegments = (trackingPoints, segmentType) => {
 };
 
 // Konwertuje punkty trackingu i narożniki boiska na współrzędne SVG
-export const prepareVisualizationData = (trackingPoints, segmentType = 'full', pitchId = DEFAULT_PITCH_ID, orientation = 'original') => {
+export const prepareVisualizationData = (trackingPoints, segmentType = 'full', pitchId = DEFAULT_PITCH_ID, orientation = 'original', sprintSettings = null) => {
   // Podziel na segmenty
   const segments = splitIntoSegments(trackingPoints, segmentType);
 
@@ -347,12 +455,35 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
       ? Math.round(heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length)
       : null;
 
+    // Wykryj sprinty jeśli ustawienia są podane
+    let sprints = [];
+    if (sprintSettings) {
+      const detectedSprints = detectSprints(segmentPoints, sprintSettings);
+      // Konwertuj punkty sprintów do współrzędnych SVG
+      sprints = detectedSprints.map(sprint => ({
+        ...sprint,
+        startPoint: {
+          ...sprint.startPoint,
+          ...toSVG(sprint.startPoint.lat, sprint.startPoint.lon)
+        },
+        endPoint: {
+          ...sprint.endPoint,
+          ...toSVG(sprint.endPoint.lat, sprint.endPoint.lon)
+        },
+        points: sprint.points.map(p => ({
+          ...p,
+          ...toSVG(p.lat, p.lon)
+        }))
+      }));
+    }
+
     return {
       trackingPoints: pointsSVG,
       duration,
       distance,
       avgHeartRate,
-      pointCount: segmentPoints.length
+      pointCount: segmentPoints.length,
+      sprints
     };
   });
 
@@ -367,6 +498,9 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
   // Pobierz informacje o boisku
   const pitch = getPitch(pitchId);
   const dimensions = calculatePitchDimensions(PITCH_CORNERS);
+
+  // Pobierz datę aktywności z pierwszego punktu
+  const activityDate = trackingPoints.length > 0 ? new Date(trackingPoints[0].time) : null;
 
   return {
     pitchCorners: pitchCornersSVG,
@@ -383,6 +517,7 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     centerCircleRadius: pitch.centerCircleRadius || 5, // Promień koła środkowego w metrach
     goal: pitch.goal || { width: 5, depth: 1 }, // Wymiary bramki w metrach
     penaltyBox: pitch.penaltyBox || { width: 10, depth: 5 }, // Wymiary pola karnego w metrach
+    activityDate: activityDate, // Data aktywności
     pitchInfo: {
       id: pitch.id,
       name: pitch.name,

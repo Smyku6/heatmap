@@ -85,6 +85,14 @@
 .pitch-info p {
   font-size: 16px;
   color: #95e1d3;
+  margin: 5px 0;
+}
+
+.pitch-info .activity-date {
+  font-size: 15px;
+  color: #ffd700;
+  font-weight: 500;
+  margin-top: 10px;
 }
 
 .controls-row {
