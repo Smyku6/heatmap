@@ -1,11 +1,71 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="pl" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>TCX Heatmap Viewer</title>
-    <script type="module" crossorigin src="/heatmap/assets/index-CbjBSaSh.js"></script>
-    <link rel="stylesheet" crossorigin href="/heatmap/assets/index-DLGyM2M3.css">
+    <title>KINETIC LAB | Football Performance Analytics</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+    <style>
+      :root {
+        --color-primary: #cafd00;
+        --color-primary-dim: #beee00;
+        --color-surface: #0c0e11;
+        --color-surface-container-low: #111417;
+        --color-surface-container: #171a1d;
+        --color-surface-container-high: #1d2024;
+        --color-surface-container-highest: #23262a;
+        --color-on-surface: #f9f9fd;
+        --color-on-primary: #516700;
+        --color-outline: #747579;
+        --color-outline-variant: #46484b;
+
+        --font-headline: 'Space Grotesk', sans-serif;
+        --font-body: 'Inter', sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--font-body);
+        background-color: var(--color-surface);
+        color: var(--color-on-surface);
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--color-surface-container-low);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--color-outline-variant);
+        border-radius: 4px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-outline);
+      }
+    </style>
+    <script type="module" crossorigin src="/heatmap/assets/index-Bebc9nvT.js"></script>
+    <link rel="stylesheet" crossorigin href="/heatmap/assets/index-YDnyNpLC.css">
   </head>
   <body>
     <div id="root"></div>
