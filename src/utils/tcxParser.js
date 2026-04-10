@@ -371,6 +371,7 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     totalPointCount: trackingPoints.length,
     segmentType,
     rotationAngle, // Kąt rotacji dla CSS transform
+    satellite: pitch.satellite || null, // Dane obrazu satelitarnego
     pitchInfo: {
       id: pitch.id,
       name: pitch.name,

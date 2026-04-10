@@ -5,6 +5,7 @@ import SegmentSelector from './components/SegmentSelector';
 import OrientationSelector from './components/OrientationSelector';
 import PerformanceSelector from './components/PerformanceSelector';
 import TotalSummary from './components/TotalSummary';
+import SatelliteControls from './components/SatelliteControls';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
 import { DEFAULT_PITCH_ID } from './config/pitches';
 import { autoDetectPitch } from './utils/pitchDetection';
@@ -17,6 +18,12 @@ function App() {
   const [selectedOrientation, setSelectedOrientation] = useState('original');
   const [detectedPitch, setDetectedPitch] = useState(null);
   const [showActivityPoints, setShowActivityPoints] = useState(true);
+  const [satelliteTransform, setSatelliteTransform] = useState({
+    scale: 1.0,
+    rotation: 0,
+    translateX: 0,
+    translateY: 0
+  });
 
   const handleFileLoad = (fileContent) => {
     try {
@@ -31,6 +38,13 @@ function App() {
 
         const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation);
         setVisualizationData(vizData);
+
+        // Wczytaj domyślną transformację dla tej orientacji jeśli istnieje
+        if (vizData.satellite?.transforms?.[selectedOrientation]) {
+          setSatelliteTransform(vizData.satellite.transforms[selectedOrientation]);
+        } else {
+          setSatelliteTransform({ scale: 1.0, rotation: 0, translateX: 0, translateY: 0 });
+        }
       }
     } catch (error) {
       console.error('Błąd parsowania pliku TCX:', error);
@@ -51,6 +65,13 @@ function App() {
     if (rawPoints && detectedPitch) {
       const vizData = prepareVisualizationData(rawPoints, selectedSegment, detectedPitch, orientation);
       setVisualizationData(vizData);
+
+      // Wczytaj domyślną transformację dla nowej orientacji jeśli istnieje
+      if (vizData.satellite?.transforms?.[orientation]) {
+        setSatelliteTransform(vizData.satellite.transforms[orientation]);
+      } else {
+        setSatelliteTransform({ scale: 1.0, rotation: 0, translateX: 0, translateY: 0 });
+      }
     }
   };
 
@@ -64,6 +85,13 @@ function App() {
         setSelectedSegment('full');
         const vizData = prepareVisualizationData(points, 'full', pitchId, selectedOrientation);
         setVisualizationData(vizData);
+
+        // Wczytaj domyślną transformację dla tej orientacji jeśli istnieje
+        if (vizData.satellite?.transforms?.[selectedOrientation]) {
+          setSatelliteTransform(vizData.satellite.transforms[selectedOrientation]);
+        } else {
+          setSatelliteTransform({ scale: 1.0, rotation: 0, translateX: 0, translateY: 0 });
+        }
       }
     } catch (error) {
       console.error('Błąd parsowania pliku TCX:', error);
@@ -123,17 +151,35 @@ function App() {
                     {selectedSegment === 'thirds' && `${index + 1}. tercja`}
                     {selectedSegment === 'quarters' && `${index + 1}. ćwiartka`}
                   </h3>
-                  <Pitch
-                    pitchCorners={visualizationData.pitchCorners}
-                    trackingPoints={segment.trackingPoints}
-                    width={visualizationData.canvasWidth}
-                    height={visualizationData.canvasHeight}
-                    duration={segment.duration}
-                    distance={segment.distance}
-                    avgHeartRate={segment.avgHeartRate}
-                    rotationAngle={visualizationData.rotationAngle}
-                    showActivityPoints={showActivityPoints}
-                  />
+
+                  <div className="pitch-with-controls">
+                    <div className="pitch-canvas-area">
+                      <Pitch
+                        pitchCorners={visualizationData.pitchCorners}
+                        trackingPoints={segment.trackingPoints}
+                        width={visualizationData.canvasWidth}
+                        height={visualizationData.canvasHeight}
+                        duration={segment.duration}
+                        distance={segment.distance}
+                        avgHeartRate={segment.avgHeartRate}
+                        rotationAngle={visualizationData.rotationAngle}
+                        showActivityPoints={showActivityPoints}
+                        satellite={visualizationData.satellite}
+                        satelliteTransform={satelliteTransform}
+                      />
+                    </div>
+
+                    {/* Konfigurator satelity - ukryty, odkomentuj do konfiguracji nowych boisk */}
+                    {/* {visualizationData.satellite && (
+                      <div className="satellite-controls-side">
+                        <SatelliteControls
+                          transform={satelliteTransform}
+                          onChange={setSatelliteTransform}
+                          pitchId={detectedPitch}
+                        />
+                      </div>
+                    )} */}
+                  </div>
                 </div>
               ))}
             </div>

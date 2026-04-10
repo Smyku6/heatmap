@@ -1,7 +1,7 @@
 import React from 'react';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true }) => {
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 } }) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
@@ -16,6 +16,12 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
   const centerX = width / 2;
   const centerY = height / 2;
 
+  // Centrum boiska dla obrazu satelitarnego (punkt odniesienia dla transformacji)
+  const pitchCenter = {
+    x: (pitchCorners.topLeft.x + pitchCorners.topRight.x + pitchCorners.bottomLeft.x + pitchCorners.bottomRight.x) / 4,
+    y: (pitchCorners.topLeft.y + pitchCorners.topRight.y + pitchCorners.bottomLeft.y + pitchCorners.bottomRight.y) / 4
+  };
+
 
   return (
     <div className="pitch-container">
@@ -26,10 +32,30 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
         {/* Grupa z rotacją - wszystko co ma się obracać */}
         <g transform={`rotate(${rotationAngle}, ${centerX}, ${centerY})`}>
 
+        {/* Obraz satelitarny w tle (jeśli istnieje) */}
+        {satellite && (
+          <g transform={`
+            translate(${pitchCenter.x}, ${pitchCenter.y})
+            rotate(${satelliteTransform.rotation})
+            scale(${satelliteTransform.scale})
+            translate(${satelliteTransform.translateX}, ${satelliteTransform.translateY})
+          `}>
+            <image
+              href={`${import.meta.env.BASE_URL}${satellite.image.startsWith('/') ? satellite.image.slice(1) : satellite.image}`}
+              x={-width}
+              y={-height}
+              width={width * 2}
+              height={height * 2}
+              opacity={0.6}
+              preserveAspectRatio="xMidYMid meet"
+            />
+          </g>
+        )}
+
         {/* Boisko - czworokąt z 4 narożników GPS */}
         <polygon
           points={pitchPolygonPoints}
-          fill="#2d5016"
+          fill={satellite ? "rgba(45, 80, 22, 0.3)" : "#2d5016"}
           stroke="#fff"
           strokeWidth="3"
         />

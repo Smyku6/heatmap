@@ -12,11 +12,9 @@ export const PITCHES = {
     },
     satellite: {
       image: '/images/lawendowe.jpg',
-      imageCorners: {
-        topLeft: { x: 623, y: 394 },
-        topRight: { x: 864, y: 177 },
-        bottomRight: { x: 1333, y: 703 },
-        bottomLeft: { x: 1089, y: 920 }
+      transforms: {
+        original: { scale: 0.94, rotation: 90, translateX: -73, translateY: 0 },
+        horizontal: { scale: 0.94, rotation: 90, translateX: -73, translateY: 0 }
       }
     }
   },
