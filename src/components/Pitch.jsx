@@ -2,7 +2,7 @@ import React from 'react';
 import HeatmapLayer from './HeatmapLayer';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 } }) => {
+const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 }, centerCircleRadius = 5, pitchDimensions = { length: 56, width: 26 }, goal = { width: 5, depth: 1 }, penaltyBox = { width: 10, depth: 5 } }) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
@@ -22,6 +22,75 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
     x: (pitchCorners.topLeft.x + pitchCorners.topRight.x + pitchCorners.bottomLeft.x + pitchCorners.bottomRight.x) / 4,
     y: (pitchCorners.topLeft.y + pitchCorners.topRight.y + pitchCorners.bottomLeft.y + pitchCorners.bottomRight.y) / 4
   };
+
+  // Punkt środkowy linii środkowej (środek boiska)
+  const midlineCenter = {
+    x: ((pitchCorners.topLeft.x + pitchCorners.bottomLeft.x) / 2 + (pitchCorners.topRight.x + pitchCorners.bottomRight.x) / 2) / 2,
+    y: ((pitchCorners.topLeft.y + pitchCorners.bottomLeft.y) / 2 + (pitchCorners.topRight.y + pitchCorners.bottomRight.y) / 2) / 2
+  };
+
+  // Oblicz promień koła środkowego w pikselach SVG
+  // Szerokość boiska w metrach i szerokość w pikselach SVG
+  const pitchWidthMeters = pitchDimensions.width;
+  const pitchWidthPixels = Math.sqrt(
+    Math.pow(pitchCorners.topLeft.x - pitchCorners.topRight.x, 2) +
+    Math.pow(pitchCorners.topLeft.y - pitchCorners.topRight.y, 2)
+  );
+  const metersToPixels = pitchWidthPixels / pitchWidthMeters;
+  const centerCircleRadiusPixels = centerCircleRadius * metersToPixels;
+
+  // Oblicz wymiary bramki w pikselach
+  const goalWidthPixels = goal.width * metersToPixels;
+  const goalDepthPixels = goal.depth * metersToPixels;
+
+  // Oblicz pozycje bramek
+  // Górna bramka (między topLeft i topRight)
+  const topGoalCenter = {
+    x: (pitchCorners.topLeft.x + pitchCorners.topRight.x) / 2,
+    y: (pitchCorners.topLeft.y + pitchCorners.topRight.y) / 2
+  };
+
+  // Wektor od topLeft do topRight (kierunek bramki)
+  const topGoalVector = {
+    x: pitchCorners.topRight.x - pitchCorners.topLeft.x,
+    y: pitchCorners.topRight.y - pitchCorners.topLeft.y
+  };
+  const topGoalVectorLength = Math.sqrt(topGoalVector.x ** 2 + topGoalVector.y ** 2);
+  const topGoalVectorNormalized = {
+    x: topGoalVector.x / topGoalVectorLength,
+    y: topGoalVector.y / topGoalVectorLength
+  };
+
+  // Wektor prostopadły (na zewnątrz boiska)
+  const topGoalPerpendicular = {
+    x: topGoalVectorNormalized.y,
+    y: -topGoalVectorNormalized.x
+  };
+
+  // Dolna bramka (między bottomLeft i bottomRight)
+  const bottomGoalCenter = {
+    x: (pitchCorners.bottomLeft.x + pitchCorners.bottomRight.x) / 2,
+    y: (pitchCorners.bottomLeft.y + pitchCorners.bottomRight.y) / 2
+  };
+
+  const bottomGoalVector = {
+    x: pitchCorners.bottomRight.x - pitchCorners.bottomLeft.x,
+    y: pitchCorners.bottomRight.y - pitchCorners.bottomLeft.y
+  };
+  const bottomGoalVectorLength = Math.sqrt(bottomGoalVector.x ** 2 + bottomGoalVector.y ** 2);
+  const bottomGoalVectorNormalized = {
+    x: bottomGoalVector.x / bottomGoalVectorLength,
+    y: bottomGoalVector.y / bottomGoalVectorLength
+  };
+
+  const bottomGoalPerpendicular = {
+    x: -bottomGoalVectorNormalized.y,
+    y: bottomGoalVectorNormalized.x
+  };
+
+  // Oblicz wymiary pola karnego w pikselach
+  const penaltyBoxWidthPixels = penaltyBox.width * metersToPixels;
+  const penaltyBoxDepthPixels = penaltyBox.depth * metersToPixels;
 
 
   return (
@@ -61,6 +130,86 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
           strokeWidth="3"
         />
 
+        {/* Linia środkowa boiska */}
+        <line
+          x1={(pitchCorners.topLeft.x + pitchCorners.bottomLeft.x) / 2}
+          y1={(pitchCorners.topLeft.y + pitchCorners.bottomLeft.y) / 2}
+          x2={(pitchCorners.topRight.x + pitchCorners.bottomRight.x) / 2}
+          y2={(pitchCorners.topRight.y + pitchCorners.bottomRight.y) / 2}
+          stroke="#fff"
+          strokeWidth="2"
+          opacity={0.5}
+        />
+
+        {/* Koło środkowe */}
+        <circle
+          cx={midlineCenter.x}
+          cy={midlineCenter.y}
+          r={centerCircleRadiusPixels}
+          fill="none"
+          stroke="#fff"
+          strokeWidth="2"
+          opacity={0.5}
+        />
+
+        {/* Pola karne */}
+        {/* Górne pole karne - wchodzi w boisko (odwrotny kierunek niż bramka) */}
+        <polygon
+          points={`
+            ${topGoalCenter.x - (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.x},${topGoalCenter.y - (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.y}
+            ${topGoalCenter.x + (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.x},${topGoalCenter.y + (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.y}
+            ${topGoalCenter.x + (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.x - topGoalPerpendicular.x * penaltyBoxDepthPixels},${topGoalCenter.y + (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.y - topGoalPerpendicular.y * penaltyBoxDepthPixels}
+            ${topGoalCenter.x - (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.x - topGoalPerpendicular.x * penaltyBoxDepthPixels},${topGoalCenter.y - (penaltyBoxWidthPixels / 2) * topGoalVectorNormalized.y - topGoalPerpendicular.y * penaltyBoxDepthPixels}
+          `}
+          fill="none"
+          stroke="#fff"
+          strokeWidth="2"
+          opacity={0.5}
+        />
+
+        {/* Dolne pole karne - wchodzi w boisko (odwrotny kierunek niż bramka) */}
+        <polygon
+          points={`
+            ${bottomGoalCenter.x - (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.x},${bottomGoalCenter.y - (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.y}
+            ${bottomGoalCenter.x + (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.x},${bottomGoalCenter.y + (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.y}
+            ${bottomGoalCenter.x + (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.x - bottomGoalPerpendicular.x * penaltyBoxDepthPixels},${bottomGoalCenter.y + (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.y - bottomGoalPerpendicular.y * penaltyBoxDepthPixels}
+            ${bottomGoalCenter.x - (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.x - bottomGoalPerpendicular.x * penaltyBoxDepthPixels},${bottomGoalCenter.y - (penaltyBoxWidthPixels / 2) * bottomGoalVectorNormalized.y - bottomGoalPerpendicular.y * penaltyBoxDepthPixels}
+          `}
+          fill="none"
+          stroke="#fff"
+          strokeWidth="2"
+          opacity={0.5}
+        />
+
+        {/* Bramki */}
+        {/* Górna bramka - polygon z 4 punktami */}
+        <polygon
+          points={`
+            ${topGoalCenter.x - (goalWidthPixels / 2) * topGoalVectorNormalized.x},${topGoalCenter.y - (goalWidthPixels / 2) * topGoalVectorNormalized.y}
+            ${topGoalCenter.x + (goalWidthPixels / 2) * topGoalVectorNormalized.x},${topGoalCenter.y + (goalWidthPixels / 2) * topGoalVectorNormalized.y}
+            ${topGoalCenter.x + (goalWidthPixels / 2) * topGoalVectorNormalized.x + topGoalPerpendicular.x * goalDepthPixels},${topGoalCenter.y + (goalWidthPixels / 2) * topGoalVectorNormalized.y + topGoalPerpendicular.y * goalDepthPixels}
+            ${topGoalCenter.x - (goalWidthPixels / 2) * topGoalVectorNormalized.x + topGoalPerpendicular.x * goalDepthPixels},${topGoalCenter.y - (goalWidthPixels / 2) * topGoalVectorNormalized.y + topGoalPerpendicular.y * goalDepthPixels}
+          `}
+          fill="none"
+          stroke="#fff"
+          strokeWidth="2"
+          opacity={0.6}
+        />
+
+        {/* Dolna bramka - polygon z 4 punktami */}
+        <polygon
+          points={`
+            ${bottomGoalCenter.x - (goalWidthPixels / 2) * bottomGoalVectorNormalized.x},${bottomGoalCenter.y - (goalWidthPixels / 2) * bottomGoalVectorNormalized.y}
+            ${bottomGoalCenter.x + (goalWidthPixels / 2) * bottomGoalVectorNormalized.x},${bottomGoalCenter.y + (goalWidthPixels / 2) * bottomGoalVectorNormalized.y}
+            ${bottomGoalCenter.x + (goalWidthPixels / 2) * bottomGoalVectorNormalized.x + bottomGoalPerpendicular.x * goalDepthPixels},${bottomGoalCenter.y + (goalWidthPixels / 2) * bottomGoalVectorNormalized.y + bottomGoalPerpendicular.y * goalDepthPixels}
+            ${bottomGoalCenter.x - (goalWidthPixels / 2) * bottomGoalVectorNormalized.x + bottomGoalPerpendicular.x * goalDepthPixels},${bottomGoalCenter.y - (goalWidthPixels / 2) * bottomGoalVectorNormalized.y + bottomGoalPerpendicular.y * goalDepthPixels}
+          `}
+          fill="none"
+          stroke="#fff"
+          strokeWidth="2"
+          opacity={0.6}
+        />
+
         {/* Warstwa heatmapy */}
         {showHeatmap && (
           <HeatmapLayer
@@ -75,25 +224,14 @@ const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, durat
 
         {/* Markery narożników boiska */}
         {Object.entries(pitchCorners).map(([key, corner]) => (
-          <g key={key}>
-            <circle
-              cx={corner.x}
-              cy={corner.y}
-              r={8}
-              fill="#ff00ff"
-              opacity={0.8}
-            />
-            <text
-              x={corner.x}
-              y={corner.y - 15}
-              fill="#fff"
-              fontSize="12"
-              textAnchor="middle"
-              fontWeight="bold"
-            >
-              {key}
-            </text>
-          </g>
+          <circle
+            key={key}
+            cx={corner.x}
+            cy={corner.y}
+            r={4}
+            fill="#ff00ff"
+            opacity={0.6}
+          />
         ))}
 
         {/* Punkty GPS trackingu */}

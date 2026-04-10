@@ -380,6 +380,9 @@ export const prepareVisualizationData = (trackingPoints, segmentType = 'full', p
     segmentType,
     rotationAngle, // Kąt rotacji dla CSS transform
     satellite: pitch.satellite || null, // Dane obrazu satelitarnego
+    centerCircleRadius: pitch.centerCircleRadius || 5, // Promień koła środkowego w metrach
+    goal: pitch.goal || { width: 5, depth: 1 }, // Wymiary bramki w metrach
+    penaltyBox: pitch.penaltyBox || { width: 10, depth: 5 }, // Wymiary pola karnego w metrach
     pitchInfo: {
       id: pitch.id,
       name: pitch.name,

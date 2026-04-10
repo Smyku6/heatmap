@@ -196,6 +196,10 @@ function App() {
                         heatmapSettings={heatmapSettings}
                         satellite={visualizationData.satellite}
                         satelliteTransform={satelliteTransform}
+                        centerCircleRadius={visualizationData.centerCircleRadius}
+                        pitchDimensions={visualizationData.pitchInfo.dimensions}
+                        goal={visualizationData.goal}
+                        penaltyBox={visualizationData.penaltyBox}
                       />
                     </div>
 
