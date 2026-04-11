@@ -55,6 +55,13 @@ export interface PitchCorner {
   y: number;
 }
 
+export interface PitchCorners {
+  topLeft: PitchCorner;
+  topRight: PitchCorner;
+  bottomLeft: PitchCorner;
+  bottomRight: PitchCorner;
+}
+
 // ============================================
 // VISUALIZATION TYPES
 // ============================================

@@ -1,7 +1,13 @@
 import React from 'react';
+import type { SegmentType } from '../types';
 import './SegmentSelector.css';
 
-const SegmentSelector = ({ selectedSegment, onChange }) => {
+interface SegmentSelectorProps {
+  selectedSegment: SegmentType;
+  onChange: (segment: SegmentType) => void;
+}
+
+const SegmentSelector: React.FC<SegmentSelectorProps> = ({ selectedSegment, onChange }) => {
   const segments = [
     { id: 'full', label: 'Całość', description: 'Cała aktywność' },
     { id: 'halves', label: '1/2', description: 'Podziel na 2 połowy' },
@@ -20,7 +26,7 @@ const SegmentSelector = ({ selectedSegment, onChange }) => {
               name="segment"
               value={segment.id}
               checked={selectedSegment === segment.id}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value as SegmentType)}
             />
             <span className="segment-button">
               <span className="segment-title">{segment.label}</span>

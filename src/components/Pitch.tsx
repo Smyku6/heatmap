@@ -1,9 +1,64 @@
 import React from 'react';
 import HeatmapLayer from './HeatmapLayer';
 import SprintLayer from './SprintLayer';
+import type {
+  TransformedPoint,
+  HeatmapSettings,
+  SatelliteTransform,
+  SatelliteData,
+  Sprint,
+  SprintSettings,
+  GoalDimensions,
+  PenaltyBoxDimensions,
+  PitchCorners
+} from '../types';
 import './Pitch.css';
 
-const Pitch = ({ pitchCorners, trackingPoints, width = 1000, height = 800, duration, distance, avgHeartRate, rotationAngle = 0, showActivityPoints = true, showHeatmap = false, heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 }, satellite = null, satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 }, centerCircleRadius = 5, pitchDimensions = { length: 56, width: 26 }, goal = { width: 5, depth: 1 }, penaltyBox = { width: 10, depth: 5 }, showSprints = false, sprints = [], sprintSettings = { minSpeed: 16.5, minDuration: 2, minDistance: 10, simplified: true, showNumbers: false } }) => {
+interface PitchProps {
+  pitchCorners: PitchCorners;
+  trackingPoints: TransformedPoint[];
+  width?: number;
+  height?: number;
+  duration?: { formatted: string; seconds: number; timeRange?: string };
+  distance?: { formatted: string; meters: number };
+  avgHeartRate?: number | null;
+  rotationAngle?: number;
+  showActivityPoints?: boolean;
+  showHeatmap?: boolean;
+  heatmapSettings?: HeatmapSettings;
+  satellite?: SatelliteData | null;
+  satelliteTransform?: SatelliteTransform;
+  centerCircleRadius?: number;
+  pitchDimensions?: { length: number; width: number };
+  goal?: GoalDimensions;
+  penaltyBox?: PenaltyBoxDimensions;
+  showSprints?: boolean;
+  sprints?: Sprint[];
+  sprintSettings?: SprintSettings;
+}
+
+const Pitch: React.FC<PitchProps> = ({
+  pitchCorners,
+  trackingPoints,
+  width = 1000,
+  height = 800,
+  duration,
+  distance,
+  avgHeartRate,
+  rotationAngle = 0,
+  showActivityPoints = true,
+  showHeatmap = false,
+  heatmapSettings = { intensity: 14, opacity: 0.65, densityRadius: 10, colorPalette: 'classic', minThreshold: 0 },
+  satellite = null,
+  satelliteTransform = { scale: 1, rotation: 0, translateX: 0, translateY: 0 },
+  centerCircleRadius = 5,
+  pitchDimensions = { length: 56, width: 26 },
+  goal = { width: 5, height: 1 },
+  penaltyBox = { width: 10, length: 5, goalBoxWidth: 5, goalBoxLength: 2 },
+  showSprints = false,
+  sprints = [],
+  sprintSettings = { minSpeed: 16.5, minDuration: 2, minDistance: 10, simplified: true, showNumbers: false }
+}) => {
   if (!pitchCorners || !trackingPoints) return null;
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
