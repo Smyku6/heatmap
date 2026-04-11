@@ -15,24 +15,24 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Strict Type Checking (Enterprise Level - Gradual Migration) */
+    /* Strict Type Checking (Enterprise Level - Progressive Enablement) */
     "strict": true,
-    "noImplicitAny": false, // TODO: Enable after fixing implicit any
-    "strictNullChecks": false, // TODO: Enable after fixing null checks
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "strictPropertyInitialization": false, // TODO: Enable with strictNullChecks
-    "noImplicitThis": true,
-    "alwaysStrict": true,
+    "noImplicitAny": true, // ✅ ENABLED - No implicit any types
+    "strictNullChecks": false, // 🔄 TODO: Enable after null safety fixes (~150 errors)
+    "strictFunctionTypes": true, // ✅ ENABLED
+    "strictBindCallApply": true, // ✅ ENABLED
+    "strictPropertyInitialization": false, // 🔄 Requires strictNullChecks
+    "noImplicitThis": true, // ✅ ENABLED
+    "alwaysStrict": true, // ✅ ENABLED
 
     /* Additional Checks */
-    "noUnusedLocals": false, // TODO: Enable after cleanup
-    "noUnusedParameters": false, // TODO: Enable after cleanup
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": false, // TODO: Enable after fixing array access
-    "noImplicitOverride": true,
-    "noPropertyAccessFromIndexSignature": false, // TODO: Enable after fixing index signatures
+    "noUnusedLocals": false, // 🔄 TODO: Enable after cleanup (~30 warnings)
+    "noUnusedParameters": false, // 🔄 TODO: Enable after cleanup
+    "noImplicitReturns": true, // ✅ ENABLED
+    "noFallthroughCasesInSwitch": true, // ✅ ENABLED
+    "noUncheckedIndexedAccess": false, // 🔄 TODO: Enable after array safety (~20 errors)
+    "noImplicitOverride": true, // ✅ ENABLED
+    "noPropertyAccessFromIndexSignature": false, // 🔄 TODO: Enable after index signature fixes
 
     /* Import/Export Strictness */
     "esModuleInterop": true,
