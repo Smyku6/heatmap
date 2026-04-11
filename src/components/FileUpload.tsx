@@ -1,12 +1,16 @@
 import React, { useState, useRef } from 'react';
 import './FileUpload.css';
 
-const FileUpload = ({ onFileLoad }) => {
+interface FileUploadProps {
+  onFileLoad: (content: string) => void;
+}
+
+const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const fileInputRef = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const processFile = (file) => {
+  const processFile = (file: File | undefined) => {
     if (!file) return;
 
     if (!file.name.endsWith('.tcx')) {
@@ -19,7 +23,10 @@ const FileUpload = ({ onFileLoad }) => {
     const reader = new FileReader();
     reader.onload = (event) => {
       setTimeout(() => {
-        onFileLoad(event.target.result);
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          onFileLoad(result);
+        }
         setIsUploading(false);
       }, 500); // Small delay for animation
     };
@@ -30,28 +37,28 @@ const FileUpload = ({ onFileLoad }) => {
     reader.readAsText(file);
   };
 
-  const handleFileChange = (e) => {
-    processFile(e.target.files[0]);
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    processFile(e.target.files?.[0]);
   };
 
-  const handleDragEnter = (e) => {
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   };
 
-  const handleDragLeave = (e) => {
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   };
 
-  const handleDragOver = (e) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
