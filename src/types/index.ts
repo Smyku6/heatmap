@@ -42,6 +42,7 @@ export interface TransformedPoint {
 // ============================================
 
 export interface PitchInfo {
+  id?: string;
   name: string;
   dimensions: {
     width: number;
@@ -67,7 +68,7 @@ export interface PitchCorners {
 // ============================================
 
 export interface VisualizationData {
-  pitchCorners: PitchCorner[];
+  pitchCorners: PitchCorners;
   segments: SegmentData[];
   canvasWidth: number;
   canvasHeight: number;
@@ -93,7 +94,7 @@ export interface SegmentData {
 }
 
 export interface SatelliteData {
-  url: string;
+  image: string; // Path to satellite image
   transforms: {
     [key: string]: SatelliteTransform;
   };
@@ -108,14 +109,12 @@ export interface SatelliteTransform {
 
 export interface GoalDimensions {
   width: number;
-  height: number;
+  depth: number; // How far the goal extends beyond the pitch
 }
 
 export interface PenaltyBoxDimensions {
   width: number;
-  length: number;
-  goalBoxWidth: number;
-  goalBoxLength: number;
+  depth: number; // How far it extends into the pitch
 }
 
 // ============================================
