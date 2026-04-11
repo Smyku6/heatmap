@@ -1,15 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { Session } from '../types';
 import './SessionsTable.css';
 
-const SessionsTable = ({ sessions }) => {
+interface SessionsTableProps {
+  sessions: Session[];
+}
+
+const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
   const navigate = useNavigate();
 
-  const handleAnalyze = (sessionId) => {
+  const handleAnalyze = (sessionId: string) => {
     navigate('/analysis', { state: { sessionId } });
   };
 
-  const formatDuration = (duration) => {
+  const formatDuration = (duration: string | { formatted: string } | undefined): string => {
     if (!duration) return '-';
     const durationStr = typeof duration === 'string' ? duration : (duration.formatted || '');
     if (!durationStr) return '-';
@@ -20,20 +25,20 @@ const SessionsTable = ({ sessions }) => {
     return `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
   };
 
-  const formatDistance = (distance) => {
+  const formatDistance = (distance: string | number | { formatted: string } | undefined): string => {
     if (!distance) return '-';
-    let distanceStr;
+    let distanceStr: string;
     if (typeof distance === 'number') {
       distanceStr = (distance / 1000).toFixed(2);
     } else if (typeof distance === 'string') {
       distanceStr = distance.replace(' km', '');
     } else {
-      distanceStr = (distance.formatted || distance.toString()).replace(' km', '');
+      distanceStr = ((distance as any).formatted || distance.toString()).replace(' km', '');
     }
     return parseFloat(distanceStr).toFixed(2);
   };
 
-  const formatDate = (date) => {
+  const formatDate = (date: Date | string | undefined): string => {
     if (!date) return '-';
     if (date instanceof Date) {
       return date.toLocaleDateString('pl-PL', {

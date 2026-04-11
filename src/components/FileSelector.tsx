@@ -2,12 +2,17 @@ import React, { useRef, useState } from 'react';
 import { getPerformancesList } from '../config/performances';
 import './FileSelector.css';
 
-const FileSelector = ({ onFileLoad, onLoadPerformance }) => {
-  const fileInputRef = useRef(null);
+interface FileSelectorProps {
+  onFileLoad: (fileContent: string) => void;
+  onLoadPerformance: (tcxContent: string, pitchId: string) => void;
+}
+
+const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerformance }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (!file) return;
 
     if (!file.name.endsWith('.tcx')) {
