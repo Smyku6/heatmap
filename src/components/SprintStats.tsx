@@ -1,7 +1,12 @@
 import React from 'react';
+import type { Sprint } from '../types';
 import './SprintStats.css';
 
-const SprintStats = ({ sprints }) => {
+interface SprintStatsProps {
+  sprints?: Sprint[];
+}
+
+const SprintStats: React.FC<SprintStatsProps> = ({ sprints }) => {
   if (!sprints || sprints.length === 0) {
     return (
       <div className="sprint-stats">
