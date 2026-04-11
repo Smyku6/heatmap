@@ -1,15 +1,13 @@
 import React from 'react';
-import { useApp } from '../context/AppContext';
+import useAppStore from '../store/useAppStore';
 import FileSelector from '../components/FileSelector';
 import SessionsTable from '../components/SessionsTable';
 import '../App.css';
 
 const Dashboard = () => {
-  const {
-    sessions,
-    handleFileLoad,
-    handleLoadPerformance
-  } = useApp();
+  const sessions = useAppStore((state) => state.sessions);
+  const handleFileLoad = useAppStore((state) => state.handleFileLoad);
+  const handleLoadPerformance = useAppStore((state) => state.handleLoadPerformance);
 
   return (
     <>

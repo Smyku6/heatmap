@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useApp } from '../context/AppContext';
+import { useAnalysis } from '../hooks/useAnalysis';
 import PitchInfoBanner from '../components/PitchInfoBanner';
 import Pitch from '../components/Pitch';
 import SegmentSelector from '../components/SegmentSelector';
@@ -14,6 +14,8 @@ import '../App.css';
 const Analysis = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  // Get all analysis state and actions from custom hook
   const {
     visualizationData,
     selectedSegment,
@@ -31,15 +33,21 @@ const Analysis = () => {
     setShowSprints,
     setHeatmapSettings,
     setSprintSettings,
-    loadSessionForAnalysis
-  } = useApp();
+    loadSessionForAnalysis,
+    updateVisualizationData
+  } = useAnalysis();
 
   // Załaduj sesję gdy przechodzimy z Dashboard
   useEffect(() => {
     if (location.state?.sessionId) {
       loadSessionForAnalysis(location.state.sessionId);
     }
-  }, [location.state?.sessionId]);
+  }, [location.state?.sessionId, loadSessionForAnalysis]);
+
+  // Aktualizuj wizualizację gdy zmieniają się ustawienia
+  useEffect(() => {
+    updateVisualizationData();
+  }, [selectedSegment, selectedOrientation, showSprints, sprintSettings]);
 
   const handleSegmentChange = (segmentType) => {
     setSelectedSegment(segmentType);
