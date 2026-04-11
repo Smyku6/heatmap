@@ -122,9 +122,11 @@ export interface PenaltyBoxDimensions {
 // ============================================
 
 export interface Sprint {
-  startIndex: number;
-  endIndex: number;
-  points: TransformedPoint[];
+  startIndex?: number;
+  endIndex?: number;
+  startPoint?: TrackPoint;
+  endPoint?: TrackPoint;
+  points: TrackPoint[];
   duration: number;
   distance: number;
   avgSpeed: number;

@@ -95,7 +95,9 @@ const SatelliteControls = ({ transform, onChange, pitchId }) => {
       const reader = new FileReader();
       reader.onload = (e) => {
         try {
-          const config = JSON.parse(e.target.result);
+          const result = e.target?.result;
+          if (typeof result !== 'string') return;
+          const config = JSON.parse(result);
           if (config.transform) {
             onChange(config.transform);
             setScaleInput(config.transform.scale.toString());

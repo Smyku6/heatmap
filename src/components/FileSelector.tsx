@@ -24,7 +24,10 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
     const reader = new FileReader();
     reader.onload = (event) => {
       setTimeout(() => {
-        onFileLoad(event.target.result);
+        const result = event.target?.result;
+        if (typeof result === 'string') {
+          onFileLoad(result);
+        }
         setIsLoading(false);
       }, 300);
     };

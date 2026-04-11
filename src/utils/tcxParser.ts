@@ -6,7 +6,8 @@ import type {
   OrientationType,
   VisualizationData,
   SprintSettings,
-  PitchCorners
+  PitchCorners,
+  Sprint
 } from '../types';
 
 /**
@@ -248,10 +249,10 @@ export const calculatePitchDimensions = (corners) => {
 };
 
 // Oblicza prędkość w km/h między dwoma punktami
-const calculateSpeed = (point1, point2) => {
+const calculateSpeed = (point1: TrackPoint, point2: TrackPoint): number => {
   const time1 = new Date(point1.time);
   const time2 = new Date(point2.time);
-  const timeDiffSeconds = (time2 - time1) / 1000;
+  const timeDiffSeconds = (time2.getTime() - time1.getTime()) / 1000;
 
   if (timeDiffSeconds === 0) return 0;
 
@@ -263,7 +264,10 @@ const calculateSpeed = (point1, point2) => {
 };
 
 // Wykrywa sprinty w danych trackingowych
-export const detectSprints = (trackingPoints, settings = {}) => {
+export const detectSprints = (
+  trackingPoints: TrackPoint[],
+  settings: Partial<SprintSettings> = {}
+): Sprint[] => {
   const {
     minSpeed = 16.5,      // Minimalna prędkość w km/h
     minDuration = 2,      // Minimalna długość sprintu w sekundach
@@ -319,10 +323,22 @@ export const detectSprints = (trackingPoints, settings = {}) => {
 };
 
 // Finalizuje sprint i sprawdza czy spełnia minimalne wymagania
-const finalizeSprint = (sprint, minDuration, minDistance) => {
+interface SprintInProgress {
+  startIndex: number;
+  endIndex: number;
+  points: TrackPoint[];
+  speeds: number[];
+  maxSpeed: number;
+}
+
+const finalizeSprint = (
+  sprint: SprintInProgress,
+  minDuration: number,
+  minDistance: number
+): Sprint | null => {
   const startTime = new Date(sprint.points[0].time);
   const endTime = new Date(sprint.points[sprint.points.length - 1].time);
-  const duration = (endTime - startTime) / 1000; // w sekundach
+  const duration = (endTime.getTime() - startTime.getTime()) / 1000; // w sekundach
 
   // Oblicz całkowity dystans sprintu
   let distance = 0;
@@ -356,7 +372,7 @@ const finalizeSprint = (sprint, minDuration, minDistance) => {
 };
 
 // Oblicza całkowitą przebiegniętą odległość
-export const calculateTotalDistance = (trackingPoints) => {
+export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => {
   if (trackingPoints.length < 2) return 0;
 
   let totalDistance = 0;
@@ -370,13 +386,13 @@ export const calculateTotalDistance = (trackingPoints) => {
 };
 
 // Oblicza czas trwania aktywności
-export const calculateDuration = (trackingPoints) => {
+export const calculateDuration = (trackingPoints: TrackPoint[]) => {
   if (trackingPoints.length < 2) return null;
 
   const startTime = new Date(trackingPoints[0].time);
   const endTime = new Date(trackingPoints[trackingPoints.length - 1].time);
 
-  const durationMs = endTime - startTime;
+  const durationMs = endTime.getTime() - startTime.getTime();
   const durationSeconds = Math.floor(durationMs / 1000);
 
   const hours = Math.floor(durationSeconds / 3600);
@@ -403,7 +419,10 @@ export const calculateDuration = (trackingPoints) => {
 };
 
 // Dzieli punkty na segmenty czasowe (według czasu, nie liczby punktów)
-export const splitIntoSegments = (trackingPoints, segmentType) => {
+export const splitIntoSegments = (
+  trackingPoints: TrackPoint[],
+  segmentType: SegmentType
+): TrackPoint[][] => {
   if (segmentType === 'full' || trackingPoints.length === 0) {
     return [trackingPoints];
   }
@@ -413,7 +432,7 @@ export const splitIntoSegments = (trackingPoints, segmentType) => {
   // Oblicz całkowity czas trwania
   const startTime = new Date(trackingPoints[0].time);
   const endTime = new Date(trackingPoints[trackingPoints.length - 1].time);
-  const totalDuration = endTime - startTime;
+  const totalDuration = endTime.getTime() - startTime.getTime();
   const segmentDuration = totalDuration / count;
 
   const segments = [];
@@ -536,10 +555,9 @@ export const prepareVisualizationData = (
 
     return {
       trackingPoints: pointsSVG,
-      duration,
-      distance,
+      duration: duration || { formatted: '0:00', seconds: 0 },
+      distance: { formatted: `${Math.round(distance)}m`, meters: distance },
       avgHeartRate,
-      pointCount: segmentPoints.length,
       sprints
     };
   });
@@ -564,13 +582,12 @@ export const prepareVisualizationData = (
     segments: segmentsSVG,
     canvasWidth,
     canvasHeight,
-    totalDuration,
-    totalDistance,
+    totalDuration: totalDuration || { formatted: '0:00', seconds: 0 },
+    totalDistance: { formatted: `${Math.round(totalDistance)}m`, meters: totalDistance },
     totalAvgHeartRate,
     totalPointCount: trackingPoints.length,
-    segmentType,
     rotationAngle, // Kąt rotacji dla CSS transform
-    satellite: pitch.satellite || null, // Dane obrazu satelitarnego
+    satellite: pitch.satellite || undefined, // Dane obrazu satelitarnego
     centerCircleRadius: pitch.centerCircleRadius || 5, // Promień koła środkowego w metrach
     goal: pitch.goal || { width: 5, depth: 1 }, // Wymiary bramki w metrach
     penaltyBox: pitch.penaltyBox || { width: 10, depth: 5 }, // Wymiary pola karnego w metrach
