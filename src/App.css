@@ -1,15 +1,4 @@
-.app {
-  display: flex;
-  min-height: 100vh;
-  background-color: var(--color-surface);
-}
-
-.app-main {
-  margin-left: 256px;
-  flex: 1;
-  padding: 6rem 2rem 3rem;
-  min-height: 100vh;
-}
+/* App styles are now in Layout.css */
 
 .app-header {
   margin-bottom: 2rem;
