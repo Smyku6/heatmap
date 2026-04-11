@@ -6,6 +6,7 @@ const Sidebar = ({ currentView, onViewChange }) => {
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
     { id: 'analysis', label: 'Analysis', icon: 'analytics' },
     { id: 'history', label: 'History', icon: 'history' },
+    { id: 'squad-maker', label: 'Squad Maker', icon: 'groups', badge: 'WIP' },
     { id: 'settings', label: 'Settings', icon: 'settings' }
   ];
 
@@ -25,6 +26,7 @@ const Sidebar = ({ currentView, onViewChange }) => {
           >
             <span className="material-symbols-outlined">{item.icon}</span>
             <span>{item.label}</span>
+            {item.badge && <span className="sidebar-nav-badge">{item.badge}</span>}
           </button>
         ))}
       </nav>

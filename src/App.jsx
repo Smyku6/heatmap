@@ -11,6 +11,7 @@ import SatelliteControls from './components/SatelliteControls';
 import HeatmapControls from './components/HeatmapControls';
 import SprintControls from './components/SprintControls';
 import SprintStats from './components/SprintStats';
+import SquadMaker from './components/SquadMaker';
 import { parseTCX, prepareVisualizationData } from './utils/tcxParser';
 import { DEFAULT_PITCH_ID } from './config/pitches';
 import { autoDetectPitch } from './utils/pitchDetection';
@@ -140,12 +141,16 @@ function App() {
       <Sidebar currentView={currentView} onViewChange={setCurrentView} />
 
       <main className="app-main">
-        <header className="app-header">
-          <h1 className="app-header-title">DASHBOARD</h1>
-          <p className="app-header-subtitle">Witaj ponownie. Twoje dane są gotowe do analizy.</p>
-        </header>
+        {currentView === 'squad-maker' ? (
+          <SquadMaker />
+        ) : (
+          <>
+            <header className="app-header">
+              <h1 className="app-header-title">DASHBOARD</h1>
+              <p className="app-header-subtitle">Witaj ponownie. Twoje dane są gotowe do analizy.</p>
+            </header>
 
-        <FileUpload onFileLoad={handleFileLoad} />
+            <FileUpload onFileLoad={handleFileLoad} />
 
         <PerformanceSelector onLoadPerformance={handleLoadPerformance} />
 
@@ -278,10 +283,12 @@ function App() {
               />
             )}
           </>
-        ) : (
-          <div className="empty-state">
-            <p>Wczytaj plik TCX, aby zobaczyć dane na boisku</p>
-          </div>
+          ) : (
+            <div className="empty-state">
+              <p>Wczytaj plik TCX, aby zobaczyć dane na boisku</p>
+            </div>
+          )}
+          </>
         )}
       </main>
     </div>

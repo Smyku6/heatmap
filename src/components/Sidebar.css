@@ -55,6 +55,7 @@
   border-right: 2px solid transparent;
   text-align: left;
   letter-spacing: -0.02em;
+  gap: 0.5rem;
 }
 
 .sidebar-nav-item .material-symbols-outlined {
@@ -113,4 +114,17 @@
   text-transform: uppercase;
   letter-spacing: -0.02em;
   color: #64748b;
+}
+
+.sidebar-nav-badge {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(202, 253, 0, 0.15);
+  color: var(--color-primary);
+  border-radius: 0.25rem;
+  border: 1px solid rgba(202, 253, 0, 0.3);
 }
