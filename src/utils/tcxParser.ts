@@ -1,37 +1,63 @@
-export const parseTCX = (xmlString) => {
+import { getPitch, DEFAULT_PITCH_ID } from '../config/pitches';
+import { getPerspectiveTransform, transformPoint } from './perspectiveTransform';
+import type {
+  TrackPoint,
+  SegmentType,
+  OrientationType,
+  VisualizationData,
+  SprintSettings,
+  PitchCorners
+} from '../types';
+
+/**
+ * Parses TCX (Training Center XML) file and extracts GPS tracking points
+ *
+ * @param xmlString - Raw XML content of the TCX file
+ * @returns Array of tracking points with GPS coordinates, time, and heart rate data
+ *
+ * @example
+ * ```typescript
+ * const tcxContent = await readFile('activity.tcx', 'utf-8');
+ * const points = parseTCX(tcxContent);
+ * console.log(`Parsed ${points.length} GPS points`);
+ * ```
+ */
+export const parseTCX = (xmlString: string): TrackPoint[] => {
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
   const trackpoints = xmlDoc.getElementsByTagName('Trackpoint');
-  const points = [];
+  const points: TrackPoint[] = [];
 
   for (let i = 0; i < trackpoints.length; i++) {
     const trackpoint = trackpoints[i];
     const position = trackpoint.getElementsByTagName('Position')[0];
 
     if (position) {
-      const lat = parseFloat(position.getElementsByTagName('LatitudeDegrees')[0]?.textContent);
-      const lon = parseFloat(position.getElementsByTagName('LongitudeDegrees')[0]?.textContent);
-      const time = trackpoint.getElementsByTagName('Time')[0]?.textContent;
-      const heartRate = trackpoint.getElementsByTagName('HeartRateBpm')[0]
+      const latText = position.getElementsByTagName('LatitudeDegrees')[0]?.textContent;
+      const lonText = position.getElementsByTagName('LongitudeDegrees')[0]?.textContent;
+      const timeText = trackpoint.getElementsByTagName('Time')[0]?.textContent;
+      const heartRateText = trackpoint.getElementsByTagName('HeartRateBpm')[0]
         ?.getElementsByTagName('Value')[0]?.textContent;
 
-      if (!isNaN(lat) && !isNaN(lon)) {
-        points.push({
-          lat,
-          lon,
-          time,
-          heartRate: heartRate ? parseInt(heartRate) : null
-        });
+      if (latText && lonText && timeText) {
+        const lat = parseFloat(latText);
+        const lon = parseFloat(lonText);
+
+        if (!isNaN(lat) && !isNaN(lon)) {
+          points.push({
+            lat,
+            lon,
+            time: new Date(timeText),
+            heartRate: heartRateText ? parseInt(heartRateText) : undefined
+          });
+        }
       }
     }
   }
 
   return points;
 };
-
-import { getPitch, DEFAULT_PITCH_ID } from '../config/pitches';
-import { getPerspectiveTransform, transformPoint } from './perspectiveTransform';
 
 // Pobiera współrzędne boiska (domyślne lub wybrane)
 const getPitchCorners = (pitchId = DEFAULT_PITCH_ID) => {
@@ -410,7 +436,38 @@ export const splitIntoSegments = (trackingPoints, segmentType) => {
 };
 
 // Konwertuje punkty trackingu i narożniki boiska na współrzędne SVG
-export const prepareVisualizationData = (trackingPoints, segmentType = 'full', pitchId = DEFAULT_PITCH_ID, orientation = 'original', sprintSettings = null) => {
+/**
+ * Prepares complete visualization data for rendering on pitch
+ *
+ * Transforms GPS tracking points into SVG coordinates, applies pitch orientation,
+ * splits data into time segments, and optionally detects sprints.
+ *
+ * @param trackingPoints - Array of GPS tracking points from TCX file
+ * @param segmentType - How to split the activity ('full' | 'halves' | 'thirds' | 'quarters')
+ * @param pitchId - ID of the pitch configuration to use
+ * @param orientation - Pitch orientation/rotation ('original' | 'rotated90' | 'rotated180' | 'rotated270')
+ * @param sprintSettings - Sprint detection settings, or null to skip sprint detection
+ * @returns Complete visualization data ready for rendering
+ *
+ * @example
+ * ```typescript
+ * const points = parseTCX(tcxContent);
+ * const vizData = prepareVisualizationData(
+ *   points,
+ *   'halves',
+ *   'orlik-kopernika',
+ *   'original',
+ *   { minSpeed: 16.5, minDuration: 2, minDistance: 10 }
+ * );
+ * ```
+ */
+export const prepareVisualizationData = (
+  trackingPoints: TrackPoint[],
+  segmentType: SegmentType = 'full',
+  pitchId: string = DEFAULT_PITCH_ID,
+  orientation: OrientationType = 'original',
+  sprintSettings: SprintSettings | null = null
+): VisualizationData => {
   // Podziel na segmenty
   const segments = splitIntoSegments(trackingPoints, segmentType);
 

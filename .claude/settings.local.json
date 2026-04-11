@@ -1,10 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run deploy:*)",
-      "Bash(for file in *.jsx)",
-      "Bash(do git mv \"$file\" \"$file%.jsx.tsx\")",
-      "Bash(done)"
+      "Bash(find:*)"
     ],
     "deny": [],
     "ask": []
