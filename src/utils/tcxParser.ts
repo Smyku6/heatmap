@@ -532,7 +532,7 @@ export const prepareVisualizationData = (
       : null;
 
     // Wykryj sprinty jeśli ustawienia są podane
-    let sprints = [];
+    let sprints: any[] = [];
     if (sprintSettings) {
       const detectedSprints = detectSprints(segmentPoints, sprintSettings);
       // Konwertuj punkty sprintów do współrzędnych SVG

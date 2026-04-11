@@ -2,11 +2,12 @@ import React from 'react';
 import Pitch from './Pitch';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { prepareVisualizationData } from '../utils/tcxParser';
+import type { TrackPoint } from '../types';
 import './SquadMaker.css';
 
 const SquadMaker = () => {
   // Przygotuj wizualizację z pustymi punktami tracking (używamy dokładnie tej samej logiki co główny widok)
-  const emptyPoints = [];
+  const emptyPoints: TrackPoint[] = [];
   const vizData = prepareVisualizationData(
     emptyPoints,
     'full',

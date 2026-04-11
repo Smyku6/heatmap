@@ -3,7 +3,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { parseTCX, prepareVisualizationData } from '../utils/tcxParser';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { autoDetectPitch } from '../utils/pitchDetection';
-import type { AppState } from '../types';
+import type { AppState, Session, TrackPoint, VisualizationData } from '../types';
 
 const useAppStore = create<AppState>()(
   devtools(
@@ -14,17 +14,17 @@ const useAppStore = create<AppState>()(
         // ============================================
 
         // Sessions
-        sessions: [],
-        currentSessionId: null,
+        sessions: [] as Session[],
+        currentSessionId: null as string | null,
 
         // Visualization data
-        rawPoints: null,
-        visualizationData: null,
+        rawPoints: null as TrackPoint[] | null,
+        visualizationData: null as VisualizationData | null,
 
         // UI Settings
         selectedSegment: 'full',
         selectedOrientation: 'original',
-        detectedPitch: null,
+        detectedPitch: null as string | null,
 
         // Display toggles
         showHeatmap: true,
