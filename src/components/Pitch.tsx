@@ -335,7 +335,7 @@ const Pitch: React.FC<PitchProps> = ({
         {distance !== undefined && (
           <div className="stat-item">
             <span className="stat-label">Dystans:</span>
-            <span className="stat-value">{(distance / 1000).toFixed(2)} km</span>
+            <span className="stat-value">{(distance.meters / 1000).toFixed(2)} km</span>
           </div>
         )}
         {avgHeartRate && (

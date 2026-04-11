@@ -1,5 +1,11 @@
 import React from 'react';
 
+interface DensityPoint {
+  x: number;
+  y: number;
+  count: number;
+}
+
 /**
  * Komponent renderujący warstwę heatmapy w SVG
  * Używa radial gradients dla każdego punktu aby stworzyć efekt ciepłej mapy
@@ -15,7 +21,7 @@ const HeatmapLayer = ({
   if (!trackingPoints || trackingPoints.length === 0) return null;
 
   // Grupuj punkty po pozycji (agreguj punkty w tym samym miejscu)
-  const pointDensity = {};
+  const pointDensity: Record<string, DensityPoint> = {};
 
   trackingPoints.forEach(point => {
     const key = `${Math.round(point.x / densityRadius)}_${Math.round(point.y / densityRadius)}`;
