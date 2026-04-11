@@ -1,11 +1,18 @@
 import React from 'react';
 import './PitchInfoBanner.css';
+import type { PitchInfo } from '../types';
 
-const PitchInfoBanner = ({ pitchInfo, activityDate, duration }) => {
+interface PitchInfoBannerProps {
+  pitchInfo: PitchInfo;
+  activityDate?: Date;
+  duration?: any;
+}
+
+const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDate, duration }) => {
   if (!pitchInfo) return null;
 
   // Generuj kalendarz dla miesiąca aktywności
-  const generateCalendar = (date) => {
+  const generateCalendar = (date: Date) => {
     if (!date) return null;
 
     const year = date.getFullYear();
@@ -61,18 +68,18 @@ const PitchInfoBanner = ({ pitchInfo, activityDate, duration }) => {
   const calendar = activityDate ? generateCalendar(activityDate) : null;
 
   // Pobierz pierwszą literę z nazwy boiska dla avatara
-  const getPitchInitial = (name) => {
+  const getPitchInitial = (name: string) => {
     return name?.charAt(0).toUpperCase() || 'P';
   };
 
   // Losowy kolor dla każdego boiska (możesz to zastąpić mapą)
-  const getPitchColor = (name) => {
+  const getPitchColor = (name: string) => {
     const colors = [
       'linear-gradient(135deg, rgba(202, 253, 0, 0.3) 0%, rgba(202, 253, 0, 0.1) 100%)',
       'linear-gradient(135deg, rgba(78, 205, 196, 0.3) 0%, rgba(78, 205, 196, 0.1) 100%)',
       'linear-gradient(135deg, rgba(255, 115, 81, 0.3) 0%, rgba(255, 115, 81, 0.1) 100%)',
     ];
-    const hash = name?.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0) || 0;
+    const hash = name?.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) || 0;
     return colors[hash % colors.length];
   };
 

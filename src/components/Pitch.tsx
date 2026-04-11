@@ -353,7 +353,7 @@ const Pitch: React.FC<PitchProps> = ({
   );
 };
 
-const getColorByHeartRate = (hr) => {
+const getColorByHeartRate = (hr: number | undefined): string => {
   if (!hr) return '#4ecdc4';
   if (hr < 100) return '#4ecdc4';
   if (hr < 130) return '#95e1d3';

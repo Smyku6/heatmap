@@ -49,11 +49,11 @@ const Analysis = () => {
     updateVisualizationData();
   }, [selectedSegment, selectedOrientation, showSprints, sprintSettings]);
 
-  const handleSegmentChange = (segmentType) => {
+  const handleSegmentChange = (segmentType: any) => {
     setSelectedSegment(segmentType);
   };
 
-  const handleOrientationChange = (orientation) => {
+  const handleOrientationChange = (orientation: any) => {
     setSelectedOrientation(orientation);
   };
 
@@ -110,7 +110,7 @@ const Analysis = () => {
 
       <PitchInfoBanner
         pitchInfo={visualizationData.pitchInfo}
-        activityDate={visualizationData.activityDate}
+        activityDate={visualizationData.activityDate as Date}
         duration={visualizationData.totalDuration}
       />
 

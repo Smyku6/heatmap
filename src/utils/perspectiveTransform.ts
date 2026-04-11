@@ -72,9 +72,9 @@ export function getPerspectiveTransform(
 /**
  * Rozwiązuje układ równań liniowych A * x = b metodą eliminacji Gaussa
  */
-function solveLinearSystem(A, b) {
+function solveLinearSystem(A: number[][], b: number[]): number[] {
   const n = b.length;
-  const augmented = A.map((row, i) => [...row, b[i]]);
+  const augmented = A.map((row: number[], i: number) => [...row, b[i]]);
 
   // Forward elimination
   for (let i = 0; i < n; i++) {

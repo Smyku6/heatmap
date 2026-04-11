@@ -68,7 +68,7 @@ const getPitchCorners = (pitchId = DEFAULT_PITCH_ID) => {
 
 // Oblicza kąt obrotu boiska dla CSS transform (w stopniach)
 // Obliczany na podstawie lewej krawędzi boiska (TL -> BL) w SVG
-const calculatePitchRotationAngle = (pitchCornersSVG, orientation) => {
+const calculatePitchRotationAngle = (pitchCornersSVG: PitchCorners, orientation: OrientationType): number => {
   if (orientation === 'original') {
     return 0; // Bez rotacji
   }
@@ -79,19 +79,13 @@ const calculatePitchRotationAngle = (pitchCornersSVG, orientation) => {
   const currentAngleRad = Math.atan2(dy, dx);
   const currentAngleDeg = currentAngleRad * 180 / Math.PI;
 
-  // Dla horizontal: długość boiska powinna być pozioma (kąt = 0° lub 180°)
-  // Dla vertical: długość boiska powinna być pionowa (kąt = 90° lub 270°)
-
-  if (orientation === 'horizontal') {
-    // Chcemy żeby długość była pozioma (0° w prawo, lub 180° w lewo)
-    // Obracamy tak żeby kąt był najbliżej 0° lub 180°
-    const targetAngle = Math.abs(currentAngleDeg) < 90 ? 0 : 180;
-    return targetAngle - currentAngleDeg;
-  } else if (orientation === 'vertical') {
-    // Chcemy żeby długość była pionowa (90° w dół, lub 270° w górę)
-    // Obracamy tak żeby kąt był najbliżej 90° lub 270°
-    const targetAngle = (currentAngleDeg + 90) % 360 < 180 ? 90 : 270;
-    return targetAngle - currentAngleDeg;
+  // Handle rotated orientations
+  if (orientation === 'rotated90') {
+    return 90;
+  } else if (orientation === 'rotated180') {
+    return 180;
+  } else if (orientation === 'rotated270') {
+    return 270;
   }
 
   return 0;
@@ -100,7 +94,7 @@ const calculatePitchRotationAngle = (pitchCornersSVG, orientation) => {
 // Konwertuje GPS lat/lon na współrzędne SVG
 // Używa transformacji perspektywicznej (homografia) aby zmapować czworokąt GPS na prostokąt canvas
 // Zachowuje rzeczywiste proporcje boiska (obliczone z GPS)
-export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 800, pitchCorners = null) => {
+export const convertGPSToSVG = (allPoints: TrackPoint[], canvasWidth = 1000, canvasHeight = 800, pitchCorners: any = null) => {
   // Oblicz rzeczywiste wymiary boiska w metrach
   const pitchWidth = calculateDistance(
     pitchCorners.topLeft.lat, pitchCorners.topLeft.lon,
@@ -145,14 +139,14 @@ export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 80
     pitchCorners.topRight.lat,
     pitchCorners.bottomLeft.lat,
     pitchCorners.bottomRight.lat,
-    ...allPoints.map(p => p.lat)
+    ...allPoints.map((p: TrackPoint) => p.lat)
   ];
   const allLons = [
     pitchCorners.topLeft.lon,
     pitchCorners.topRight.lon,
     pitchCorners.bottomLeft.lon,
     pitchCorners.bottomRight.lon,
-    ...allPoints.map(p => p.lon)
+    ...allPoints.map((p: TrackPoint) => p.lon)
   ];
 
   const minLat = Math.min(...allLats);
@@ -164,7 +158,7 @@ export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 80
   const lonRange = maxLon - minLon;
 
   // Znormalizuj współrzędne GPS do [0,1] × [0,1]
-  const normalizeGPS = (lat, lon) => ({
+  const normalizeGPS = (lat: number, lon: number) => ({
     x: (lon - minLon) / lonRange,
     y: (lat - minLat) / latRange
   });
@@ -189,7 +183,7 @@ export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 80
   const perspectiveMatrix = getPerspectiveTransform(sourcePoints, destPoints);
 
   // Funkcja konwertująca GPS na SVG
-  const toSVG = (lat, lon) => {
+  const toSVG = (lat: number, lon: number) => {
     // Znormalizuj punkt GPS
     const normalized = normalizeGPS(lat, lon);
 
@@ -206,7 +200,7 @@ export const convertGPSToSVG = (allPoints, canvasWidth = 1000, canvasHeight = 80
 };
 
 // Oblicza odległość między dwoma punktami GPS (w metrach) - wzór Haversine
-const calculateDistance = (lat1, lon1, lat2, lon2) => {
+const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const R = 6371000; // promień Ziemi w metrach
   const dLat = (lat2 - lat1) * Math.PI / 180;
   const dLon = (lon2 - lon1) * Math.PI / 180;
@@ -219,7 +213,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 };
 
 // Oblicza wymiary boiska na podstawie narożników GPS
-export const calculatePitchDimensions = (corners) => {
+export const calculatePitchDimensions = (corners: any) => {
   // Szerokość (górna i dolna krawędź)
   const topWidth = calculateDistance(
     corners.topLeft.lat, corners.topLeft.lon,
@@ -400,7 +394,7 @@ export const calculateDuration = (trackingPoints: TrackPoint[]) => {
   const seconds = durationSeconds % 60;
 
   // Format czasu jako HH:MM
-  const formatTime = (date) => {
+  const formatTime = (date: Date) => {
     return `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
   };
 
@@ -502,7 +496,7 @@ export const prepareVisualizationData = (
     ...trackingPoints
   ];
 
-  const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(allGPSPoints, 1000, 800, PITCH_CORNERS);
+  const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(allGPSPoints as any, 1000, 800, PITCH_CORNERS);
 
   // Konwertuj narożniki boiska
   const pitchCornersSVG = {

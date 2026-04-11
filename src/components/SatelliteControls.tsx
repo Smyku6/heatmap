@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import './SatelliteControls.css';
+import type { SatelliteTransform } from '../types';
 
-const SatelliteControls = ({ transform, onChange, pitchId }) => {
+interface SatelliteControlsProps {
+  transform: SatelliteTransform;
+  onChange: (transform: SatelliteTransform) => void;
+  pitchId: string;
+}
+
+const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChange, pitchId }) => {
   const [scaleInput, setScaleInput] = useState(transform.scale.toString());
   const [rotationInput, setRotationInput] = useState(transform.rotation.toString());
   const [translateXInput, setTranslateXInput] = useState(transform.translateX.toString());
   const [translateYInput, setTranslateYInput] = useState(transform.translateY.toString());
 
-  const handleScaleChange = (value) => {
+  const handleScaleChange = (value: string) => {
     setScaleInput(value);
     const numValue = parseFloat(value);
     if (!isNaN(numValue) && numValue >= 0.1 && numValue <= 5.0) {
@@ -15,13 +22,13 @@ const SatelliteControls = ({ transform, onChange, pitchId }) => {
     }
   };
 
-  const handleScaleDelta = (delta) => {
+  const handleScaleDelta = (delta: number) => {
     const newScale = Math.max(0.1, Math.min(5.0, transform.scale + delta));
     setScaleInput(newScale.toString());
     onChange({ ...transform, scale: newScale });
   };
 
-  const handleRotationChange = (value) => {
+  const handleRotationChange = (value: string) => {
     setRotationInput(value);
     const numValue = parseFloat(value);
     if (!isNaN(numValue)) {
@@ -29,7 +36,7 @@ const SatelliteControls = ({ transform, onChange, pitchId }) => {
     }
   };
 
-  const handleTranslateXChange = (value) => {
+  const handleTranslateXChange = (value: string) => {
     setTranslateXInput(value);
     const numValue = parseFloat(value);
     if (!isNaN(numValue)) {
@@ -37,7 +44,7 @@ const SatelliteControls = ({ transform, onChange, pitchId }) => {
     }
   };
 
-  const handleTranslateYChange = (value) => {
+  const handleTranslateYChange = (value: string) => {
     setTranslateYInput(value);
     const numValue = parseFloat(value);
     if (!isNaN(numValue)) {
@@ -45,7 +52,7 @@ const SatelliteControls = ({ transform, onChange, pitchId }) => {
     }
   };
 
-  const handleTranslateDelta = (axis, delta) => {
+  const handleTranslateDelta = (axis: string, delta: number) => {
     if (axis === 'x') {
       const newValue = transform.translateX + delta;
       setTranslateXInput(newValue.toString());
@@ -89,8 +96,8 @@ const SatelliteControls = ({ transform, onChange, pitchId }) => {
     });
   };
 
-  const handleLoadConfig = (event) => {
-    const file = event.target.files[0];
+  const handleLoadConfig = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (e) => {
