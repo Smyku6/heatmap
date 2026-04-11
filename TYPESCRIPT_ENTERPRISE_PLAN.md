@@ -5,20 +5,28 @@
 
 ## 📊 AKTUALNY STATUS
 
-### ✅ Zrobione (Week 1):
+### ✅ Zrobione (Week 1-2):
 - [x] TypeScript setup z strict mode
 - [x] Wszystkie komponenty React (.tsx)
 - [x] Store Zustand z typami
 - [x] Podstawowe type definitions (src/types/index.ts)
 - [x] Build działa bez błędów
+- [x] **PHASE 1.1**: Wszystkie utils migrowane do .ts (tcxParser, pitchDetection, perspectiveTransform)
+- [x] **PHASE 1.1**: Wszystkie config migrowane do .ts (pitches, performances)
+- [x] **PHASE 1.2**: Enhanced TypeScript configuration (gradual migration)
+- [x] **PHASE 1.2**: CSS module type declarations (vite-env.d.ts)
+- [x] **PHASE 1.2**: Fixed type definition conflicts (GoalDimensions, PenaltyBoxDimensions, SatelliteData)
 
-### ⚠️ Do zrobienia:
-- [ ] 5 plików utils/.js → .ts
-- [ ] 2 pliki config/.js → .ts
-- [ ] Brak typów dla zewnętrznych bibliotek
-- [ ] Brak zaawansowanych TypeScript patterns
-- [ ] Brak automatycznej walidacji typów
-- [ ] Brak type guards i type narrowing
+### 🔄 W trakcie (Phase 1.2 - Strict Configuration):
+- [~] 21 błędów TypeScript do naprawienia przed włączeniem wszystkich strict rules
+  - Głównie: implicit any, null checks, type narrowing
+
+### ⚠️ Do zrobienia (Phase 1.3+):
+- [ ] Naprawić pozostałe 21 błędów kompilacji
+- [ ] Włączyć wszystkie strict rules (noImplicitAny, strictNullChecks, etc.)
+- [ ] Type guards i type narrowing (Phase 1.3)
+- [ ] Brak zaawansowanych TypeScript patterns (Phase 2)
+- [ ] ESLint + TypeScript rules (Phase 3)
 
 ---
 
@@ -801,4 +809,38 @@ const orlinkSessions = useAppStore(state => selectSessionsByPitch(state, 'orlik-
 
 **Total Time:** ~10 godzin dla Phase 1
 
-Chcesz zacząć od którejś z tych części? 🚀
+---
+
+## 📋 REMAINING ISSUES (21 errors)
+
+### Critical Fixes Needed Before Full Strict Mode:
+
+**1. FileReader type safety (2 errors)**
+- `src/components/FileSelector.tsx:27` - ArrayBuffer vs string type
+- `src/components/SatelliteControls.tsx:98` - ArrayBuffer vs string type
+- **Fix**: Add type guard for FileReader result
+
+**2. HeatmapLayer type narrowing (6 errors)**
+- Lines 34, 38, 57, 64, 65 - `unknown` type issues
+- **Fix**: Add proper type annotations for heatmap data structures
+
+**3. tcxParser type issues (11 errors)**
+- Lines 254, 268-270, 325, 379, 416 - Arithmetic operations on unknown types
+- Line 564 - SegmentData array type mismatch
+- Line 568 - Distance should be object not number
+- **Fix**: Add explicit types to helper functions
+
+**4. Pitch component (1 error)**
+- Line 338 - Arithmetic operation type
+- **Fix**: Type guard for numeric values
+
+**5. SquadMaker pitchCorners (1 error)**
+- Type mismatch PitchCorner[] vs PitchCorners
+- **Fix**: Use correct type from beginning
+
+### Next Action Items:
+1. Fix FileReader type safety with type guards
+2. Add explicit return types to tcxParser helpers
+3. Enable `noImplicitAny` after fixes
+4. Enable `strictNullChecks` after null safety
+5. Full strict mode enabled → Phase 1 complete! 🎉
