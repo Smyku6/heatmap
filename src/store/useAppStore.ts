@@ -3,8 +3,9 @@ import { devtools, persist } from 'zustand/middleware';
 import { parseTCX, prepareVisualizationData } from '../utils/tcxParser';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { autoDetectPitch } from '../utils/pitchDetection';
+import type { AppState } from '../types';
 
-const useAppStore = create(
+const useAppStore = create<AppState>()(
   devtools(
     persist(
       (set, get) => ({
