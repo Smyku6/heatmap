@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
+import type { HeatmapSettings } from '../types';
 import './HeatmapControls.css';
 
-const HeatmapControls = ({ settings, onChange }) => {
+interface HeatmapControlsProps {
+  settings: HeatmapSettings;
+  onChange: (settings: HeatmapSettings) => void;
+}
+
+const HeatmapControls: React.FC<HeatmapControlsProps> = ({ settings, onChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (

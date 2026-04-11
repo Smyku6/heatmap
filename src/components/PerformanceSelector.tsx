@@ -2,10 +2,14 @@ import React from 'react';
 import { getPerformancesList } from '../config/performances';
 import './PerformanceSelector.css';
 
-const PerformanceSelector = ({ onLoadPerformance }) => {
+interface PerformanceSelectorProps {
+  onLoadPerformance: (tcxContent: string, pitchId: string) => void;
+}
+
+const PerformanceSelector: React.FC<PerformanceSelectorProps> = ({ onLoadPerformance }) => {
   const performances = getPerformancesList();
 
-  const handleChange = async (e) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const performanceId = e.target.value;
     if (!performanceId) return;
 

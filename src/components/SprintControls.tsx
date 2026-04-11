@@ -1,7 +1,13 @@
 import React, { useState } from 'react';
+import type { SprintSettings } from '../types';
 import './SprintControls.css';
 
-const SprintControls = ({ settings, onChange }) => {
+interface SprintControlsProps {
+  settings: SprintSettings;
+  onChange: (settings: SprintSettings) => void;
+}
+
+const SprintControls: React.FC<SprintControlsProps> = ({ settings, onChange }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (

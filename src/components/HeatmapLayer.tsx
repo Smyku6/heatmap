@@ -1,4 +1,5 @@
 import React from 'react';
+import type { TransformedPoint } from '../types';
 
 interface DensityPoint {
   x: number;
@@ -6,11 +7,20 @@ interface DensityPoint {
   count: number;
 }
 
+interface HeatmapLayerProps {
+  trackingPoints: TransformedPoint[];
+  intensity?: number;
+  opacity?: number;
+  densityRadius?: number;
+  colorPalette?: string;
+  minThreshold?: number;
+}
+
 /**
  * Komponent renderujący warstwę heatmapy w SVG
  * Używa radial gradients dla każdego punktu aby stworzyć efekt ciepłej mapy
  */
-const HeatmapLayer = ({
+const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
   trackingPoints,
   intensity = 30,
   opacity = 0.6,
@@ -79,7 +89,7 @@ const HeatmapLayer = ({
 };
 
 // Funkcja zwracająca kolor dla danej intensywności (0-1)
-const getHeatColor = (intensity, palette) => {
+const getHeatColor = (intensity: number, palette: string): string => {
   switch (palette) {
     case 'classic':
       // Klasyczna paleta: niebieski -> cyan -> zielony -> żółty -> pomarańczowy -> czerwony
