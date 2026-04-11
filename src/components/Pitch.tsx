@@ -97,7 +97,7 @@ const Pitch: React.FC<PitchProps> = ({
 
   // Oblicz wymiary bramki w pikselach
   const goalWidthPixels = goal.width * metersToPixels;
-  const goalDepthPixels = goal.depth * metersToPixels;
+  const goalDepthPixels = (goal.depth ?? 0) * metersToPixels;
 
   // Oblicz pozycje bramek
   // Górna bramka (między topLeft i topRight)
@@ -146,7 +146,7 @@ const Pitch: React.FC<PitchProps> = ({
 
   // Oblicz wymiary pola karnego w pikselach
   const penaltyBoxWidthPixels = penaltyBox.width * metersToPixels;
-  const penaltyBoxDepthPixels = penaltyBox.depth * metersToPixels;
+  const penaltyBoxDepthPixels = (penaltyBox.depth ?? 0) * metersToPixels;
 
 
   return (

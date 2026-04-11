@@ -67,11 +67,6 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
 
   const calendar = activityDate ? generateCalendar(activityDate) : null;
 
-  // Pobierz pierwszą literę z nazwy boiska dla avatara
-  const getPitchInitial = (name: string) => {
-    return name?.charAt(0).toUpperCase() || 'P';
-  };
-
   // Losowy kolor dla każdego boiska (możesz to zastąpić mapą)
   const getPitchColor = (name: string) => {
     const colors = [

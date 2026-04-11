@@ -1,4 +1,4 @@
-import { getPitchesList } from '../config/pitches';
+import { getPitchesList, type PitchConfig } from '../config/pitches';
 import type { TrackPoint } from '../types';
 
 interface GPSPoint {
@@ -71,7 +71,7 @@ export const autoDetectPitch = (trackingPoints: TrackPoint[]): string | null => 
   }
 
   const pitches = getPitchesList();
-  let bestMatch: { id: string; name: string } | null = null;
+  let bestMatch: PitchConfig | null = null;
   let maxPointsInside = 0;
 
   // Dla każdego boiska policz ile punktów jest w środku
@@ -93,9 +93,9 @@ export const autoDetectPitch = (trackingPoints: TrackPoint[]): string | null => 
 
   // Jeśli przynajmniej 10% punktów jest w boisku, uznaj za dopasowanie
   const threshold = trackingPoints.length * 0.1;
-  if (maxPointsInside >= threshold && bestMatch) {
-    console.log(`Auto-detected pitch: ${bestMatch.name} (${maxPointsInside}/${trackingPoints.length} points inside)`);
-    return bestMatch.id;
+  if (maxPointsInside >= threshold && bestMatch !== null) {
+    console.log(`Auto-detected pitch: ${(bestMatch as PitchConfig).name} (${maxPointsInside}/${trackingPoints.length} points inside)`);
+    return (bestMatch as PitchConfig).id;
   }
 
   console.log('No pitch detected, using default');

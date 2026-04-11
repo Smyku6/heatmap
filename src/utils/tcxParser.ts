@@ -68,16 +68,10 @@ const getPitchCorners = (pitchId = DEFAULT_PITCH_ID) => {
 
 // Oblicza kąt obrotu boiska dla CSS transform (w stopniach)
 // Obliczany na podstawie lewej krawędzi boiska (TL -> BL) w SVG
-const calculatePitchRotationAngle = (pitchCornersSVG: PitchCorners, orientation: OrientationType): number => {
+const calculatePitchRotationAngle = (_pitchCornersSVG: PitchCorners, orientation: OrientationType): number => {
   if (orientation === 'original') {
     return 0; // Bez rotacji
   }
-
-  // Oblicz kąt obecnej orientacji boiska w SVG (lewa krawędź TL -> BL)
-  const dx = pitchCornersSVG.bottomLeft.x - pitchCornersSVG.topLeft.x;
-  const dy = pitchCornersSVG.bottomLeft.y - pitchCornersSVG.topLeft.y;
-  const currentAngleRad = Math.atan2(dy, dx);
-  const currentAngleDeg = currentAngleRad * 180 / Math.PI;
 
   // Handle rotated orientations
   if (orientation === 'rotated90') {
@@ -520,7 +514,7 @@ export const prepareVisualizationData = (
     const distance = calculateTotalDistance(segmentPoints);
 
     // Oblicz średnie tętno
-    const heartRates = segmentPoints.filter(p => p.heartRate).map(p => p.heartRate);
+    const heartRates = segmentPoints.filter(p => p.heartRate).map(p => p.heartRate!);
     const avgHeartRate = heartRates.length > 0
       ? Math.round(heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length)
       : null;
@@ -559,7 +553,7 @@ export const prepareVisualizationData = (
   // Oblicz całkowite statystyki
   const totalDuration = calculateDuration(trackingPoints);
   const totalDistance = calculateTotalDistance(trackingPoints);
-  const allHeartRates = trackingPoints.filter(p => p.heartRate).map(p => p.heartRate);
+  const allHeartRates = trackingPoints.filter(p => p.heartRate).map(p => p.heartRate!);
   const totalAvgHeartRate = allHeartRates.length > 0
     ? Math.round(allHeartRates.reduce((sum, hr) => sum + hr, 0) / allHeartRates.length)
     : null;
@@ -569,7 +563,7 @@ export const prepareVisualizationData = (
   const dimensions = calculatePitchDimensions(PITCH_CORNERS);
 
   // Pobierz datę aktywności z pierwszego punktu
-  const activityDate = trackingPoints.length > 0 ? new Date(trackingPoints[0].time) : null;
+  const activityDate: Date | string = trackingPoints.length > 0 ? new Date(trackingPoints[0].time) : '';
 
   return {
     pitchCorners: pitchCornersSVG,

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAnalysis } from '../hooks/useAnalysis';
 import PitchInfoBanner from '../components/PitchInfoBanner';

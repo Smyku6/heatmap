@@ -1,4 +1,4 @@
-import React from 'react';
+
 import useAppStore from '../store/useAppStore';
 import FileSelector from '../components/FileSelector';
 import SessionsTable from '../components/SessionsTable';

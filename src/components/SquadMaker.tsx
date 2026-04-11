@@ -1,4 +1,4 @@
-import React from 'react';
+
 import Pitch from './Pitch';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { prepareVisualizationData } from '../utils/tcxParser';

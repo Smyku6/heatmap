@@ -179,9 +179,6 @@ export function drawPerspectiveImage(
     destCorners.bottomLeft
   ];
 
-  // Oblicz macierz transformacji
-  const matrix = getPerspectiveTransform(srcPoints, dstPoints);
-
   // Znajdź bounding box punktów docelowych
   const allX = dstPoints.map(p => p.x);
   const allY = dstPoints.map(p => p.y);
@@ -193,6 +190,8 @@ export function drawPerspectiveImage(
   // Utwórz temporary canvas dla transformacji
   const tempCanvas = document.createElement('canvas');
   const tempCtx = tempCanvas.getContext('2d');
+  if (!tempCtx) throw new Error('Could not get 2d context');
+
   tempCanvas.width = maxX - minX;
   tempCanvas.height = maxY - minY;
 
@@ -202,6 +201,8 @@ export function drawPerspectiveImage(
   // Narysuj obraz na temporary canvas
   const imgCanvas = document.createElement('canvas');
   const imgCtx = imgCanvas.getContext('2d');
+  if (!imgCtx) throw new Error('Could not get 2d context');
+
   imgCanvas.width = img.width;
   imgCanvas.height = img.height;
   imgCtx.drawImage(img, 0, 0);
