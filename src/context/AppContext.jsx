@@ -15,6 +15,8 @@ export const useApp = () => {
 
 export const AppProvider = ({ children }) => {
   // State management - wszystkie stany z App.jsx
+  const [sessions, setSessions] = useState([]); // Lista wszystkich sesji
+  const [currentSessionId, setCurrentSessionId] = useState(null); // ID aktualnie analizowanej sesji
   const [rawPoints, setRawPoints] = useState(null);
   const [visualizationData, setVisualizationData] = useState(null);
   const [selectedSegment, setSelectedSegment] = useState('full');
@@ -73,11 +75,34 @@ export const AppProvider = ({ children }) => {
       const points = parseTCX(fileContent);
 
       if (points.length > 0) {
-        setRawPoints(points);
-
         // Auto-wykryj boisko
         const pitchId = autoDetectPitch(points) || DEFAULT_PITCH_ID;
-        setDetectedPitch(pitchId);
+
+        // Przygotuj dane wizualizacji
+        const vizData = prepareVisualizationData(
+          points,
+          'full',
+          pitchId,
+          'original',
+          null
+        );
+
+        // Stwórz nową sesję
+        const newSession = {
+          id: Date.now().toString(),
+          rawPoints: points,
+          pitchId: pitchId,
+          activityDate: vizData.activityDate,
+          totalDuration: vizData.totalDuration?.formatted || vizData.totalDuration,
+          totalDistance: vizData.totalDistance?.formatted || vizData.totalDistance,
+          totalAvgHeartRate: vizData.totalAvgHeartRate,
+          totalPointCount: vizData.totalPointCount,
+          pitchInfo: vizData.pitchInfo,
+          visualizationData: vizData
+        };
+
+        // Dodaj do listy sesji
+        setSessions(prev => [newSession, ...prev]);
       }
     } catch (error) {
       console.error('Błąd parsowania pliku TCX:', error);
@@ -91,13 +116,48 @@ export const AppProvider = ({ children }) => {
       const points = parseTCX(tcxContent);
 
       if (points.length > 0) {
-        setRawPoints(points);
-        setDetectedPitch(pitchId);
-        setSelectedSegment('full');
+        // Przygotuj dane wizualizacji
+        const vizData = prepareVisualizationData(
+          points,
+          'full',
+          pitchId,
+          'original',
+          null
+        );
+
+        // Stwórz nową sesję
+        const newSession = {
+          id: Date.now().toString(),
+          rawPoints: points,
+          pitchId: pitchId,
+          activityDate: vizData.activityDate,
+          totalDuration: vizData.totalDuration?.formatted || vizData.totalDuration,
+          totalDistance: vizData.totalDistance?.formatted || vizData.totalDistance,
+          totalAvgHeartRate: vizData.totalAvgHeartRate,
+          totalPointCount: vizData.totalPointCount,
+          pitchInfo: vizData.pitchInfo,
+          visualizationData: vizData
+        };
+
+        // Dodaj do listy sesji
+        setSessions(prev => [newSession, ...prev]);
       }
     } catch (error) {
       console.error('Błąd parsowania pliku TCX:', error);
       alert('Nie można wczytać pliku TCX. Sprawdź format pliku.');
+    }
+  };
+
+  // Handler do załadowania sesji do analizy
+  const loadSessionForAnalysis = (sessionId) => {
+    const session = sessions.find(s => s.id === sessionId);
+    if (session) {
+      setCurrentSessionId(sessionId);
+      setRawPoints(session.rawPoints);
+      setDetectedPitch(session.pitchId);
+      setVisualizationData(session.visualizationData);
+      setSelectedSegment('full');
+      setSelectedOrientation('original');
     }
   };
 
@@ -108,6 +168,8 @@ export const AppProvider = ({ children }) => {
 
   const value = {
     // State
+    sessions,
+    currentSessionId,
     rawPoints,
     visualizationData,
     selectedSegment,
@@ -122,6 +184,8 @@ export const AppProvider = ({ children }) => {
     selectedPitchId,
 
     // Setters
+    setSessions,
+    setCurrentSessionId,
     setRawPoints,
     setVisualizationData,
     setSelectedSegment,
@@ -137,7 +201,8 @@ export const AppProvider = ({ children }) => {
     // Handlers
     handleFileLoad,
     handleLoadPerformance,
-    handlePitchChange
+    handlePitchChange,
+    loadSessionForAnalysis
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

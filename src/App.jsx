@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import Layout from './components/Layout';
 import Dashboard from './pages/Dashboard';
+import Analysis from './pages/Analysis';
 import SquadMaker from './pages/SquadMaker';
 import './App.css';
 
@@ -14,8 +15,8 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="analysis" element={<Analysis />} />
             <Route path="squad-maker" element={<SquadMaker />} />
-            <Route path="analysis" element={<div className="empty-state"><p>Analysis - Coming Soon</p></div>} />
             <Route path="history" element={<div className="empty-state"><p>History - Coming Soon</p></div>} />
             <Route path="settings" element={<div className="empty-state"><p>Settings - Coming Soon</p></div>} />
           </Route>
