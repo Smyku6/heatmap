@@ -2,7 +2,12 @@ import React from 'react';
 import { getPitchesList } from '../config/pitches';
 import './PitchSelector.css';
 
-const PitchSelector = ({ selectedPitchId, onChange }) => {
+interface PitchSelectorProps {
+  selectedPitchId: string;
+  onChange: (pitchId: string) => void;
+}
+
+const PitchSelector: React.FC<PitchSelectorProps> = ({ selectedPitchId, onChange }) => {
   const pitches = getPitchesList();
 
   return (

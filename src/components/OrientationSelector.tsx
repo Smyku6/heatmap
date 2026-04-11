@@ -1,7 +1,13 @@
 import React from 'react';
+import type { OrientationType } from '../types';
 import './OrientationSelector.css';
 
-const OrientationSelector = ({ selectedOrientation, onChange }) => {
+interface OrientationSelectorProps {
+  selectedOrientation: OrientationType;
+  onChange: (orientation: OrientationType) => void;
+}
+
+const OrientationSelector: React.FC<OrientationSelectorProps> = ({ selectedOrientation, onChange }) => {
   const orientations = [
     { id: 'original', label: 'Pionowo', description: 'Boisko pionowo' },
     { id: 'horizontal', label: 'Poziomo', description: 'Boisko poziomo' }
@@ -18,7 +24,7 @@ const OrientationSelector = ({ selectedOrientation, onChange }) => {
               name="orientation"
               value={orientation.id}
               checked={selectedOrientation === orientation.id}
-              onChange={(e) => onChange(e.target.value)}
+              onChange={(e) => onChange(e.target.value as OrientationType)}
             />
             <span className="orientation-button">
               <span className="orientation-title">{orientation.label}</span>
