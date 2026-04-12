@@ -3,15 +3,15 @@ import type { OrientationType, SatelliteTransform } from '../types';
 /**
  * GPS coordinates for a single point
  */
-interface GPSCoordinates {
+export interface GPSCoordinates {
   lat: number;
   lon: number;
 }
 
 /**
- * Four corner points defining a pitch boundary
+ * Four corner points defining a pitch boundary in GPS coordinates
  */
-interface PitchCorners {
+export interface GPSPitchCorners {
   topLeft: GPSCoordinates;
   topRight: GPSCoordinates;
   bottomLeft: GPSCoordinates;
@@ -57,7 +57,7 @@ export interface PitchConfig {
   id: string;
   name: string;
   location: string;
-  corners: PitchCorners;
+  corners: GPSPitchCorners;
   dimensions?: PitchDimensions;
   centerCircleRadius?: number;
   goal?: GoalDimensions;
