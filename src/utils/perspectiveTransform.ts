@@ -99,7 +99,7 @@ function solveLinearSystem(A: number[][], b: number[]): number[] {
   }
 
   // Back substitution
-  const x = new Array(n);
+  const x: number[] = Array(n).fill(0) as number[];
   for (let i = n - 1; i >= 0; i--) {
     x[i] = augmented[i][n];
     for (let j = i + 1; j < n; j++) {
