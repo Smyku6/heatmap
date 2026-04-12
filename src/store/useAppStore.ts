@@ -65,7 +65,7 @@ const useAppStore = create<AppState>()(
 
         selectedPitchId: () => {
           const state = get();
-          return state.detectedPitch || DEFAULT_PITCH_ID;
+          return state.detectedPitch ?? DEFAULT_PITCH_ID;
         },
 
         // ============================================
@@ -107,7 +107,7 @@ const useAppStore = create<AppState>()(
 
             if (points.length > 0) {
               // Auto-detect pitch
-              const pitchId = autoDetectPitch(points) || DEFAULT_PITCH_ID;
+              const pitchId = autoDetectPitch(points) ?? DEFAULT_PITCH_ID;
 
               // Prepare visualization data
               const vizData = prepareVisualizationData(
@@ -137,7 +137,7 @@ const useAppStore = create<AppState>()(
             }
           } catch (error) {
             console.error('Błąd parsowania pliku TCX:', error);
-            alert('Nie można wczytać pliku TCX. Sprawdź format pliku.');
+            console.error('Nie można wczytać pliku TCX. Sprawdź format pliku.');
           }
         },
 
@@ -174,7 +174,7 @@ const useAppStore = create<AppState>()(
             }
           } catch (error) {
             console.error('Błąd parsowania pliku TCX:', error);
-            alert('Nie można wczytać pliku TCX. Sprawdź format pliku.');
+            console.error('Nie można wczytać pliku TCX. Sprawdź format pliku.');
           }
         },
 
@@ -206,7 +206,7 @@ const useAppStore = create<AppState>()(
             const vizData = prepareVisualizationData(
               state.rawPoints,
               state.selectedSegment,
-              state.detectedPitch || DEFAULT_PITCH_ID,
+              state.detectedPitch ?? DEFAULT_PITCH_ID,
               state.selectedOrientation,
               state.showSprints ? state.sprintSettings : null
             );

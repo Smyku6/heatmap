@@ -34,7 +34,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
     } else if (typeof distance === 'string') {
       distanceStr = distance.replace(' km', '');
     } else {
-      distanceStr = ((distance as any).formatted || distance.toString()).replace(' km', '');
+      distanceStr = ((distance as any).formatted ?? distance.toString()).replace(' km', '');
     }
     return parseFloat(distanceStr).toFixed(2);
   };
@@ -109,7 +109,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
                 <td>
                   <div className="cell-content">
                     <span className="material-symbols-outlined cell-icon icon-heart">favorite</span>
-                    <span className="cell-text">{session.totalAvgHeartRate || '-'} bpm</span>
+                    <span className="cell-text">{session.totalAvgHeartRate ?? '-'} bpm</span>
                   </div>
                 </td>
                 <td>

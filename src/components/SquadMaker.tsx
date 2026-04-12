@@ -66,7 +66,7 @@ const SquadMaker = () => {
             showActivityPoints={false}
             showHeatmap={false}
             satellite={vizData.satellite}
-            satelliteTransform={vizData.satellite?.transforms?.original || { scale: 1.0, rotation: 0, translateX: 0, translateY: 0 }}
+            satelliteTransform={vizData.satellite?.transforms?.original ?? { scale: 1.0, rotation: 0, translateX: 0, translateY: 0 }}
             centerCircleRadius={vizData.centerCircleRadius}
             pitchDimensions={vizData.pitchInfo.dimensions}
             goal={vizData.goal}

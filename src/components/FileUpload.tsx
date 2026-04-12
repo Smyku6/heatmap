@@ -14,7 +14,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
     if (!file) {return;}
 
     if (!file.name.endsWith('.tcx')) {
-      alert('Proszę wybrać plik TCX');
+      console.error('Proszę wybrać plik TCX');
       return;
     }
 
@@ -31,7 +31,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
       }, 500); // Small delay for animation
     };
     reader.onerror = () => {
-      alert('Błąd wczytywania pliku');
+      console.error('Błąd wczytywania pliku');
       setIsUploading(false);
     };
     reader.readAsText(file);

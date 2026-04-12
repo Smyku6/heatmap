@@ -29,7 +29,7 @@ const PerformanceSelector: React.FC<PerformanceSelectorProps> = ({ onLoadPerform
       onLoadPerformance(tcxContent, performance.pitchId);
     } catch (error) {
       console.error('Błąd ładowania występu:', error);
-      alert('Nie można załadować przykładowego występu');
+      console.error('Nie można załadować przykładowego występu');
       // Resetuj select tylko jeśli błąd
       e.target.value = '';
     }

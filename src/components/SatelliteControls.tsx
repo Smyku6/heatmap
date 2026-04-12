@@ -83,7 +83,7 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
     // Skopiuj transform do schowka w formacie gotowym do wklejenia
     const transformStr = JSON.stringify(transform, null, 2);
     navigator.clipboard.writeText(transformStr).then(() => {
-      alert(`Transform skopiowany do schowka!\n\nWklej do pitches.js jako:\ntransforms: {\n  original: ${transformStr}\n}`);
+      console.warn(`Transform skopiowany do schowka!\n\nWklej do pitches.js jako:\ntransforms: {\n  original: ${transformStr}\n}`);
     }).catch(() => {
       // Fallback: zapisz jako plik
       const jsonStr = JSON.stringify(config, null, 2);
@@ -114,7 +114,7 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
             setTranslateYInput(config.transform.translateY.toString());
           }
         } catch (error) {
-          alert('Błąd wczytywania konfiguracji');
+          console.error('Błąd wczytywania konfiguracji');
         }
       };
       reader.readAsText(file);

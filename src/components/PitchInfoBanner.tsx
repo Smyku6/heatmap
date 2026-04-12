@@ -132,7 +132,7 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
                         key={`${weekIdx}-${dayIdx}`}
                         className={`calendar-day ${day === calendar.activeDay ? 'active' : ''} ${!day ? 'empty' : ''}`}
                       >
-                        {day || ''}
+                        {day ?? ''}
                       </div>
                     ))}
                   </React.Fragment>

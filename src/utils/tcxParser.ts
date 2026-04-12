@@ -544,7 +544,7 @@ export const prepareVisualizationData = (
 
     return {
       trackingPoints: pointsSVG,
-      duration: duration || { formatted: '0:00', seconds: 0 },
+      duration: duration ?? { formatted: '0:00', seconds: 0 },
       distance: { formatted: `${Math.round(distance)}m`, meters: distance },
       avgHeartRate,
       sprints
@@ -571,15 +571,15 @@ export const prepareVisualizationData = (
     segments: segmentsSVG,
     canvasWidth,
     canvasHeight,
-    totalDuration: totalDuration || { formatted: '0:00', seconds: 0 },
+    totalDuration: totalDuration ?? { formatted: '0:00', seconds: 0 },
     totalDistance: { formatted: `${Math.round(totalDistance)}m`, meters: totalDistance },
     totalAvgHeartRate,
     totalPointCount: trackingPoints.length,
     rotationAngle, // Kąt rotacji dla CSS transform
-    satellite: pitch.satellite || undefined, // Dane obrazu satelitarnego
-    centerCircleRadius: pitch.centerCircleRadius || 5, // Promień koła środkowego w metrach
-    goal: pitch.goal || { width: 5, depth: 1 }, // Wymiary bramki w metrach
-    penaltyBox: pitch.penaltyBox || { width: 10, depth: 5 }, // Wymiary pola karnego w metrach
+    satellite: pitch.satellite ?? undefined, // Dane obrazu satelitarnego
+    centerCircleRadius: pitch.centerCircleRadius ?? 5, // Promień koła środkowego w metrach
+    goal: pitch.goal ?? { width: 5, depth: 1 }, // Wymiary bramki w metrach
+    penaltyBox: pitch.penaltyBox ?? { width: 10, depth: 5 }, // Wymiary pola karnego w metrach
     activityDate: activityDate, // Data aktywności
     pitchInfo: {
       id: pitch.id,

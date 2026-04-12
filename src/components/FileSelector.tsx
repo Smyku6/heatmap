@@ -17,7 +17,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
     if (!file) {return;}
 
     if (!file.name.endsWith('.tcx')) {
-      alert('Proszę wybrać plik TCX');
+      console.error('Proszę wybrać plik TCX');
       return;
     }
 
@@ -33,7 +33,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
       }, 300);
     };
     reader.onerror = () => {
-      alert('Błąd wczytywania pliku');
+      console.error('Błąd wczytywania pliku');
       setIsLoading(false);
     };
     reader.readAsText(file);
@@ -59,7 +59,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
       }, 300);
     } catch (error) {
       console.error('Błąd ładowania występu:', error);
-      alert('Nie można załadować przykładowego pliku');
+      console.error('Nie można załadować przykładowego pliku');
       setIsLoading(false);
     }
   };
