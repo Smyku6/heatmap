@@ -1,4 +1,5 @@
 import React from 'react';
+
 import { getPerformancesList } from '../config/performances';
 import './PerformanceSelector.css';
 
@@ -11,10 +12,10 @@ const PerformanceSelector: React.FC<PerformanceSelectorProps> = ({ onLoadPerform
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const performanceId = e.target.value;
-    if (!performanceId) return;
+    if (!performanceId) {return;}
 
     const performance = performances.find(p => p.id === performanceId);
-    if (!performance) return;
+    if (!performance) {return;}
 
     try {
       // Pobierz plik TCX

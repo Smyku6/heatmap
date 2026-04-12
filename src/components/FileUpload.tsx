@@ -11,7 +11,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = (file: File | undefined) => {
-    if (!file) return;
+    if (!file) {return;}
 
     if (!file.name.endsWith('.tcx')) {
       alert('Proszę wybrać plik TCX');
@@ -38,6 +38,8 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+
     processFile(e.target.files?.[0]);
   };
 
@@ -89,7 +91,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
       >
-        <div className="upload-zone-background"></div>
+        <div className="upload-zone-background" />
 
         <div className="upload-zone-content">
           <div className="upload-icon-circle">

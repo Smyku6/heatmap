@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import type { Session } from '../types';
 import './SessionsTable.css';
 
@@ -11,22 +12,22 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
   const navigate = useNavigate();
 
   const handleAnalyze = (sessionId: string) => {
-    navigate('/analysis', { state: { sessionId } });
+    void navigate('/analysis', { state: { sessionId } });
   };
 
   const formatDuration = (duration: string | { formatted: string } | undefined): string => {
-    if (!duration) return '-';
+    if (!duration) {return '-';}
     const durationStr = typeof duration === 'string' ? duration : (duration.formatted || '');
-    if (!durationStr) return '-';
+    if (!durationStr) {return '-';}
 
     const match = durationStr.match(/(\d+)h (\d+)m (\d+)s/);
-    if (!match) return durationStr;
+    if (!match) {return durationStr;}
     const [, hours, minutes, seconds] = match;
     return `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
   };
 
   const formatDistance = (distance: string | number | { formatted: string } | undefined): string => {
-    if (!distance) return '-';
+    if (!distance) {return '-';}
     let distanceStr: string;
     if (typeof distance === 'number') {
       distanceStr = (distance / 1000).toFixed(2);
@@ -39,7 +40,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
   };
 
   const formatDate = (date: Date | string | undefined): string => {
-    if (!date) return '-';
+    if (!date) {return '-';}
     if (date instanceof Date) {
       return date.toLocaleDateString('pl-PL', {
         year: 'numeric',

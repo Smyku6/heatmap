@@ -1,6 +1,8 @@
 import React from 'react';
+
 import HeatmapLayer from './HeatmapLayer';
 import SprintLayer from './SprintLayer';
+
 import type {
   TransformedPoint,
   HeatmapSettings,
@@ -59,7 +61,7 @@ const Pitch: React.FC<PitchProps> = ({
   sprints = [],
   sprintSettings = { minSpeed: 16.5, minDuration: 2, minDistance: 10, simplified: true, showNumbers: false }
 }) => {
-  if (!pitchCorners || !trackingPoints) return null;
+  if (!pitchCorners || !trackingPoints) {return null;}
 
   // Czworokąt boiska (polygon z 4 narożników GPS)
   const pitchPolygonPoints = `
@@ -354,10 +356,10 @@ const Pitch: React.FC<PitchProps> = ({
 };
 
 const getColorByHeartRate = (hr: number | undefined): string => {
-  if (!hr) return '#4ecdc4';
-  if (hr < 100) return '#4ecdc4';
-  if (hr < 130) return '#95e1d3';
-  if (hr < 160) return '#ffd93d';
+  if (!hr) {return '#4ecdc4';}
+  if (hr < 100) {return '#4ecdc4';}
+  if (hr < 130) {return '#95e1d3';}
+  if (hr < 160) {return '#ffd93d';}
   return '#ff6b6b';
 };
 

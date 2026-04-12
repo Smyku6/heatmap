@@ -1,4 +1,5 @@
 import React from 'react';
+
 import type { SegmentType } from '../types';
 import './SegmentSelector.css';
 

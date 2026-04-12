@@ -2,6 +2,7 @@
 import Pitch from '../components/Pitch';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { prepareVisualizationData } from '../utils/tcxParser';
+
 import type { TrackPoint } from '../types';
 import '../components/SquadMaker.css';
 

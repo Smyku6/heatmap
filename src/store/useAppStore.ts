@@ -1,8 +1,10 @@
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
-import { parseTCX, prepareVisualizationData } from '../utils/tcxParser';
+
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { autoDetectPitch } from '../utils/pitchDetection';
+import { parseTCX, prepareVisualizationData } from '../utils/tcxParser';
+
 import type { AppState, Session, TrackPoint, VisualizationData } from '../types';
 
 const useAppStore = create<AppState>()(

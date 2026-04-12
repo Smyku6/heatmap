@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import './SatelliteControls.css';
 import type { SatelliteTransform } from '../types';
 
@@ -103,7 +104,7 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
       reader.onload = (e) => {
         try {
           const result = e.target?.result;
-          if (typeof result !== 'string') return;
+          if (typeof result !== 'string') {return;}
           const config = JSON.parse(result);
           if (config.transform) {
             onChange(config.transform);

@@ -1,1 +1,1 @@
-console.log('Happy developing ✨')
+console.warn('Happy developing ✨')

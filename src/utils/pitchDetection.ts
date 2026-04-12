@@ -1,4 +1,5 @@
 import { getPitchesList, type PitchConfig } from '../config/pitches';
+
 import type { TrackPoint } from '../types';
 
 interface GPSPoint {
@@ -38,7 +39,7 @@ const isPointInPolygon = (point: GPSPoint, polygon: PitchPolygon): boolean => {
 
     const intersect = ((yi > lat) !== (yj > lat))
       && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
-    if (intersect) inside = !inside;
+    if (intersect) {inside = !inside;}
   }
 
   return inside;

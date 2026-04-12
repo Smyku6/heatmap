@@ -1,4 +1,5 @@
 import React, { useRef, useState } from 'react';
+
 import { getPerformancesList } from '../config/performances';
 import './FileSelector.css';
 
@@ -13,7 +14,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {return;}
 
     if (!file.name.endsWith('.tcx')) {
       alert('Proszę wybrać plik TCX');
@@ -40,7 +41,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
 
   const handleExampleFile = async () => {
     const performances = getPerformancesList();
-    if (performances.length === 0) return;
+    if (performances.length === 0) {return;}
 
     const performance = performances[0]; // Bierzemy pierwszy przykładowy plik
     setIsLoading(true);
@@ -106,7 +107,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
 
         {isLoading && (
           <div className="file-selector-loading">
-            <div className="loading-spinner"></div>
+            <div className="loading-spinner" />
           </div>
         )}
       </div>

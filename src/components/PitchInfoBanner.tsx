@@ -1,4 +1,5 @@
 import React from 'react';
+
 import './PitchInfoBanner.css';
 import type { PitchInfo } from '../types';
 
@@ -9,11 +10,11 @@ interface PitchInfoBannerProps {
 }
 
 const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDate, duration }) => {
-  if (!pitchInfo) return null;
+  if (!pitchInfo) {return null;}
 
   // Generuj kalendarz dla miesiąca aktywności
   const generateCalendar = (date: Date) => {
-    if (!date) return null;
+    if (!date) {return null;}
 
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -49,7 +50,7 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
       }
 
       weeks.push(week);
-      if (dayCounter > daysInMonth) break;
+      if (dayCounter > daysInMonth) {break;}
     }
 
     const monthNames = [
@@ -141,7 +142,7 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
 
             {/* Data i czas aktywności */}
             <div className="calendar-footer">
-              {duration && duration.timeRange ? (
+              {duration?.timeRange ? (
                 <>
                   <span className="activity-time">
                     <span className="material-symbols-outlined">schedule</span>

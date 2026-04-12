@@ -1,7 +1,7 @@
 
-import useAppStore from '../store/useAppStore';
 import FileSelector from '../components/FileSelector';
 import SessionsTable from '../components/SessionsTable';
+import useAppStore from '../store/useAppStore';
 import '../App.css';
 
 const Dashboard = () => {

@@ -1,4 +1,5 @@
 import React from 'react';
+
 import type { OrientationType } from '../types';
 import './OrientationSelector.css';
 

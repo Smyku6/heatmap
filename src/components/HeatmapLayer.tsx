@@ -1,4 +1,5 @@
 import React from 'react';
+
 import type { TransformedPoint } from '../types';
 
 interface DensityPoint {
@@ -28,7 +29,7 @@ const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
   colorPalette = 'classic',
   minThreshold = 0
 }) => {
-  if (!trackingPoints || trackingPoints.length === 0) return null;
+  if (!trackingPoints || trackingPoints.length === 0) {return null;}
 
   // Grupuj punkty po pozycji (agreguj punkty w tym samym miejscu)
   const pointDensity: Record<string, DensityPoint> = {};
@@ -93,35 +94,35 @@ const getHeatColor = (intensity: number, palette: string): string => {
   switch (palette) {
     case 'classic':
       // Klasyczna paleta: niebieski -> cyan -> zielony -> żółty -> pomarańczowy -> czerwony
-      if (intensity < 0.2) return 'rgba(0, 0, 255, 0.8)';
-      if (intensity < 0.4) return 'rgba(0, 255, 255, 0.9)';
-      if (intensity < 0.6) return 'rgba(0, 255, 0, 1)';
-      if (intensity < 0.8) return 'rgba(255, 255, 0, 1)';
-      if (intensity < 0.95) return 'rgba(255, 128, 0, 1)';
+      if (intensity < 0.2) {return 'rgba(0, 0, 255, 0.8)';}
+      if (intensity < 0.4) {return 'rgba(0, 255, 255, 0.9)';}
+      if (intensity < 0.6) {return 'rgba(0, 255, 0, 1)';}
+      if (intensity < 0.8) {return 'rgba(255, 255, 0, 1)';}
+      if (intensity < 0.95) {return 'rgba(255, 128, 0, 1)';}
       return 'rgba(255, 0, 0, 1)';
 
     case 'thermal':
       // Termalna paleta: czarny -> ciemnoczerwony -> czerwony -> pomarańczowy -> żółty
-      if (intensity < 0.2) return 'rgba(0, 0, 0, 0.8)';
-      if (intensity < 0.4) return 'rgba(128, 0, 0, 0.9)';
-      if (intensity < 0.6) return 'rgba(255, 0, 0, 1)';
-      if (intensity < 0.8) return 'rgba(255, 128, 0, 1)';
+      if (intensity < 0.2) {return 'rgba(0, 0, 0, 0.8)';}
+      if (intensity < 0.4) {return 'rgba(128, 0, 0, 0.9)';}
+      if (intensity < 0.6) {return 'rgba(255, 0, 0, 1)';}
+      if (intensity < 0.8) {return 'rgba(255, 128, 0, 1)';}
       return 'rgba(255, 255, 0, 1)';
 
     case 'purple':
       // Fioletowa paleta: fiolet -> różowy -> pomarańczowy -> żółty -> biały
-      if (intensity < 0.2) return 'rgba(128, 0, 128, 0.8)';
-      if (intensity < 0.4) return 'rgba(255, 0, 255, 0.9)';
-      if (intensity < 0.6) return 'rgba(255, 128, 128, 1)';
-      if (intensity < 0.8) return 'rgba(255, 255, 0, 1)';
+      if (intensity < 0.2) {return 'rgba(128, 0, 128, 0.8)';}
+      if (intensity < 0.4) {return 'rgba(255, 0, 255, 0.9)';}
+      if (intensity < 0.6) {return 'rgba(255, 128, 128, 1)';}
+      if (intensity < 0.8) {return 'rgba(255, 255, 0, 1)';}
       return 'rgba(255, 255, 255, 1)';
 
     case 'mono':
       // Monochromatyczna paleta: ciemny cyan -> jasny cyan
-      if (intensity < 0.2) return 'rgba(0, 128, 128, 0.6)';
-      if (intensity < 0.4) return 'rgba(0, 180, 180, 0.7)';
-      if (intensity < 0.6) return 'rgba(0, 220, 220, 0.8)';
-      if (intensity < 0.8) return 'rgba(0, 255, 255, 0.9)';
+      if (intensity < 0.2) {return 'rgba(0, 128, 128, 0.6)';}
+      if (intensity < 0.4) {return 'rgba(0, 180, 180, 0.7)';}
+      if (intensity < 0.6) {return 'rgba(0, 220, 220, 0.8)';}
+      if (intensity < 0.8) {return 'rgba(0, 255, 255, 0.9)';}
       return 'rgba(100, 255, 255, 1)';
 
     default:

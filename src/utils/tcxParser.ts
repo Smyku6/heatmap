@@ -1,5 +1,6 @@
-import { getPitch, DEFAULT_PITCH_ID } from '../config/pitches';
 import { getPerspectiveTransform, transformPoint } from './perspectiveTransform';
+import { getPitch, DEFAULT_PITCH_ID } from '../config/pitches';
+
 import type {
   TrackPoint,
   SegmentType,
@@ -242,7 +243,7 @@ const calculateSpeed = (point1: TrackPoint, point2: TrackPoint): number => {
   const time2 = new Date(point2.time);
   const timeDiffSeconds = (time2.getTime() - time1.getTime()) / 1000;
 
-  if (timeDiffSeconds === 0) return 0;
+  if (timeDiffSeconds === 0) {return 0;}
 
   const distance = calculateDistance(point1.lat, point1.lon, point2.lat, point2.lon);
   const speedMetersPerSecond = distance / timeDiffSeconds;
@@ -262,7 +263,7 @@ export const detectSprints = (
     minDistance = 10      // Minimalny dystans w metrach
   } = settings;
 
-  if (trackingPoints.length < 2) return [];
+  if (trackingPoints.length < 2) {return [];}
 
   const sprints = [];
   let currentSprint = null;
@@ -361,7 +362,7 @@ const finalizeSprint = (
 
 // Oblicza całkowitą przebiegniętą odległość
 export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => {
-  if (trackingPoints.length < 2) return 0;
+  if (trackingPoints.length < 2) {return 0;}
 
   let totalDistance = 0;
   for (let i = 1; i < trackingPoints.length; i++) {
@@ -375,7 +376,7 @@ export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => 
 
 // Oblicza czas trwania aktywności
 export const calculateDuration = (trackingPoints: TrackPoint[]) => {
-  if (trackingPoints.length < 2) return null;
+  if (trackingPoints.length < 2) {return null;}
 
   const startTime = new Date(trackingPoints[0].time);
   const endTime = new Date(trackingPoints[trackingPoints.length - 1].time);

@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import Layout from './components/Layout';
-import Dashboard from './pages/Dashboard';
 import Analysis from './pages/Analysis';
+import Dashboard from './pages/Dashboard';
 import SquadMaker from './pages/SquadMaker';
 import './App.css';
 

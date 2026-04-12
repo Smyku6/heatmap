@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAnalysis } from '../hooks/useAnalysis';
-import PitchInfoBanner from '../components/PitchInfoBanner';
-import Pitch from '../components/Pitch';
-import SegmentSelector from '../components/SegmentSelector';
-import OrientationSelector from '../components/OrientationSelector';
-import TotalSummary from '../components/TotalSummary';
+
 import HeatmapControls from '../components/HeatmapControls';
+import OrientationSelector from '../components/OrientationSelector';
+import Pitch from '../components/Pitch';
+import PitchInfoBanner from '../components/PitchInfoBanner';
+import SegmentSelector from '../components/SegmentSelector';
 import SprintControls from '../components/SprintControls';
 import SprintStats from '../components/SprintStats';
+import TotalSummary from '../components/TotalSummary';
+import { useAnalysis } from '../hooks/useAnalysis';
 import '../App.css';
 
 const Analysis = () => {
@@ -175,7 +176,7 @@ const Analysis = () => {
               {selectedSegment === 'halves' && `${index + 1}. połowa`}
               {selectedSegment === 'thirds' && `${index + 1}. tercja`}
               {selectedSegment === 'quarters' && `${index + 1}. ćwiartka`}
-              {segment.duration && segment.duration.timeRange && (
+              {segment.duration?.timeRange && (
                 <span className="segment-time"> • {segment.duration.timeRange}</span>
               )}
             </h3>
