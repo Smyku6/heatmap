@@ -4,6 +4,7 @@ import typescriptParser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import importPlugin from 'eslint-plugin-import';
+import prettierConfig from 'eslint-config-prettier';
 
 export default [
   js.configs.recommended,
@@ -193,4 +194,6 @@ export default [
       'index.js',
     ],
   },
+  // Prettier config must be last to override conflicting rules
+  prettierConfig,
 ];

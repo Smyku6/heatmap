@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+package-lock.json
+
+# Build outputs
+dist
+build
+.vite
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Environment
+.env
+.env.local
+
+# IDE
+.vscode
+.idea
+
+# Git
+.git
+
+# Public assets (don't format images, fonts, etc)
+public/images
+public/fonts
+
+# Generated files
+coverage
+.nyc_output
+
+# OS
+.DS_Store
+Thumbs.db
