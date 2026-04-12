@@ -10,10 +10,16 @@ import SprintControls from '../components/SprintControls';
 import SprintStats from '../components/SprintStats';
 import TotalSummary from '../components/TotalSummary';
 import { useAnalysis } from '../hooks/useAnalysis';
+
+import type { SegmentType, OrientationType } from '../types';
 import '../App.css';
 
+interface LocationState {
+  sessionId?: string;
+}
+
 const Analysis = () => {
-  const location = useLocation();
+  const location = useLocation() as ReturnType<typeof useLocation> & { state: LocationState };
   const navigate = useNavigate();
 
   // Get all analysis state and actions from custom hook
@@ -40,21 +46,22 @@ const Analysis = () => {
 
   // Załaduj sesję gdy przechodzimy z Dashboard
   useEffect(() => {
-    if (location.state?.sessionId) {
-      loadSessionForAnalysis(location.state.sessionId);
+    const state = location.state as LocationState | null;
+    if (state?.sessionId) {
+      loadSessionForAnalysis(state.sessionId);
     }
-  }, [location.state?.sessionId, loadSessionForAnalysis]);
+  }, [location.state, loadSessionForAnalysis]);
 
   // Aktualizuj wizualizację gdy zmieniają się ustawienia
   useEffect(() => {
     updateVisualizationData();
-  }, [selectedSegment, selectedOrientation, showSprints, sprintSettings]);
+  }, [selectedSegment, selectedOrientation, showSprints, sprintSettings, updateVisualizationData]);
 
-  const handleSegmentChange = (segmentType: any) => {
+  const handleSegmentChange = (segmentType: SegmentType) => {
     setSelectedSegment(segmentType);
   };
 
-  const handleOrientationChange = (orientation: any) => {
+  const handleOrientationChange = (orientation: OrientationType) => {
     setSelectedOrientation(orientation);
   };
 
