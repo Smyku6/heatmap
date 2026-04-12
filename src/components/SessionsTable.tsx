@@ -1,6 +1,8 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { isDurationObject, isDistanceObject } from '../utils/typeGuards';
+
 import type { Session } from '../types';
 import './SessionsTable.css';
 
@@ -17,7 +19,9 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
 
   const formatDuration = (duration: string | { formatted: string } | undefined): string => {
     if (!duration) {return '-';}
-    const durationStr = typeof duration === 'string' ? duration : (duration.formatted || '');
+
+    // Use type guard for safe property access
+    const durationStr = isDurationObject(duration) ? duration.formatted : String(duration);
     if (!durationStr) {return '-';}
 
     const match = durationStr.match(/(\d+)h (\d+)m (\d+)s/);
@@ -28,13 +32,15 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
 
   const formatDistance = (distance: string | number | { formatted: string } | undefined): string => {
     if (!distance) {return '-';}
+
+    // Use type guard for safe property access
     let distanceStr: string;
     if (typeof distance === 'number') {
       distanceStr = (distance / 1000).toFixed(2);
+    } else if (isDistanceObject(distance)) {
+      distanceStr = distance.formatted.replace(' km', '');
     } else if (typeof distance === 'string') {
       distanceStr = distance.replace(' km', '');
-    } else if (typeof distance === 'object' && distance && 'formatted' in distance) {
-      distanceStr = distance.formatted.replace(' km', '');
     } else {
       distanceStr = '0';
     }

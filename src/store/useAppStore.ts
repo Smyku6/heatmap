@@ -4,6 +4,7 @@ import { devtools, persist } from 'zustand/middleware';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { autoDetectPitch } from '../utils/pitchDetection';
 import { parseTCX, prepareVisualizationData } from '../utils/tcxParser';
+import { isSession, isArrayOf } from '../utils/typeGuards';
 
 import type { AppState, Session, TrackPoint, VisualizationData } from '../types';
 
@@ -234,7 +235,28 @@ const useAppStore = create<AppState>()(
         partialize: (state) => ({
           // Only persist sessions, don't persist UI state
           sessions: state.sessions
-        })
+        }),
+        // Validate data on rehydration from localStorage
+        merge: (persistedState, currentState) => {
+          const isSessionArray = isArrayOf(isSession);
+
+          // Type guard for persisted state structure
+          if (
+            persistedState &&
+            typeof persistedState === 'object' &&
+            'sessions' in persistedState &&
+            isSessionArray(persistedState.sessions)
+          ) {
+            return {
+              ...currentState,
+              sessions: persistedState.sessions
+            };
+          }
+
+          // If validation fails, log error and use current state (empty sessions)
+          console.warn('Invalid session data in localStorage, using fresh state');
+          return currentState;
+        }
       }
     ),
     {
