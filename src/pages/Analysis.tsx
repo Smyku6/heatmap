@@ -11,11 +11,11 @@ import SprintStats from '../components/SprintStats';
 import TotalSummary from '../components/TotalSummary';
 import { useAnalysis } from '../hooks/useAnalysis';
 
-import type { SegmentType, OrientationType } from '../types';
+import type { SegmentType, OrientationType, SessionId } from '../types';
 import '../App.css';
 
 interface LocationState {
-  sessionId?: string;
+  sessionId?: SessionId;
 }
 
 const Analysis = () => {

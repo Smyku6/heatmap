@@ -6,6 +6,7 @@
  * pieces of state, preventing unnecessary re-renders.
  */
 
+import type { PitchId } from '../types';
 import type { AppState } from './types';
 
 // ============================================
@@ -39,7 +40,7 @@ export const selectCurrentSession = (state: AppState) => {
  *
  * @param pitchId - ID of the pitch to filter by
  */
-export const selectSessionsByPitch = (pitchId: string) => (state: AppState) => {
+export const selectSessionsByPitch = (pitchId: PitchId) => (state: AppState) => {
   return state.sessions.filter((s) => s.pitchId === pitchId);
 };
 

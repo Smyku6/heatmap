@@ -1,3 +1,7 @@
+import { createPitchId } from '../types';
+
+import type { PitchId } from '../types';
+
 /**
  * Example performance/training session for quick loading
  */
@@ -6,7 +10,7 @@ export interface PerformanceConfig {
   name: string;
   date: string; // YYYY-MM-DD format
   description: string;
-  pitchId: string;
+  pitchId: PitchId;
   tcxFile: string; // Path to TCX file
 }
 
@@ -19,7 +23,7 @@ export const EXAMPLE_PERFORMANCES: PerformanceConfig[] = [
     name: 'Mecz 09.04.2026',
     date: '2026-04-09',
     description: 'Mecz piłkarski - Lawendowe Wzgórze',
-    pitchId: 'lawendowe-wzgorze-orlik',
+    pitchId: createPitchId('lawendowe-wzgorze-orlik'),
     tcxFile: '/heatmap/examples/activity_22470142520.tcx'
   }
   // Dodaj więcej przykładowych występów tutaj:

@@ -8,10 +8,11 @@
  */
 
 import { DEFAULT_PITCH_ID } from '../../config/pitches';
+import { createSessionId } from '../../types';
 import { autoDetectPitch } from '../../utils/pitchDetection';
 import { parseTCX, prepareVisualizationData } from '../../utils/tcxParser';
 
-import type { TrackPoint, VisualizationData } from '../../types';
+import type { TrackPoint, VisualizationData, PitchId } from '../../types';
 import type { AppState } from '../types';
 import type { StateCreator } from 'zustand';
 
@@ -24,11 +25,11 @@ export interface VisualizationSlice {
   visualizationData: VisualizationData | null;
 
   // Computed Values
-  selectedPitchId: () => string;
+  selectedPitchId: () => PitchId;
 
   // Actions
   handleFileLoad: (fileContent: string) => void;
-  handleLoadPerformance: (tcxContent: string, pitchId: string) => void;
+  handleLoadPerformance: (tcxContent: string, pitchId: PitchId) => void;
   updateVisualizationData: () => void;
 }
 
@@ -90,7 +91,7 @@ export const createVisualizationSlice: StateCreator<
 
         // Create new session
         const newSession = {
-          id: Date.now().toString(),
+          id: createSessionId(Date.now().toString()),
           rawPoints: points,
           pitchId: pitchId,
           activityDate: vizData.activityDate,
@@ -130,7 +131,7 @@ export const createVisualizationSlice: StateCreator<
 
         // Create new session
         const newSession = {
-          id: Date.now().toString(),
+          id: createSessionId(Date.now().toString()),
           rawPoints: points,
           pitchId: pitchId,
           activityDate: vizData.activityDate,

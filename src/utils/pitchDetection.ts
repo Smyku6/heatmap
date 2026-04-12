@@ -1,6 +1,6 @@
 import { getPitchesList, type PitchConfig } from '../config/pitches';
 
-import type { TrackPoint } from '../types';
+import type { TrackPoint, PitchId } from '../types';
 
 interface GPSPoint {
   lat: number;
@@ -64,7 +64,7 @@ const isPointInPolygon = (point: GPSPoint, polygon: PitchPolygon): boolean => {
  * }
  * ```
  */
-export const autoDetectPitch = (trackingPoints: TrackPoint[]): string | null => {
+export const autoDetectPitch = (trackingPoints: TrackPoint[]): PitchId | null => {
   if (!trackingPoints || trackingPoints.length === 0) {
     return null;
   }

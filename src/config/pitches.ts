@@ -1,4 +1,6 @@
-import type { OrientationType, SatelliteTransform } from '../types';
+import { createPitchId, pitchIdToString } from '../types';
+
+import type { OrientationType, PitchId, SatelliteTransform } from '../types';
 
 /**
  * GPS coordinates for a single point
@@ -54,7 +56,7 @@ interface SatelliteConfig {
  * Complete configuration for a football pitch
  */
 export interface PitchConfig {
-  id: string;
+  id: PitchId;
   name: string;
   location: string;
   corners: GPSPitchCorners;
@@ -70,7 +72,7 @@ export interface PitchConfig {
  */
 export const PITCHES: Record<string, PitchConfig> = {
   'lawendowe-wzgorze-orlik': {
-    id: 'lawendowe-wzgorze-orlik',
+    id: createPitchId('lawendowe-wzgorze-orlik'),
     name: 'Lawendowe Wzgórze - Orlik',
     location: 'Gdańsk',
     corners: {
@@ -115,7 +117,7 @@ export const PITCHES: Record<string, PitchConfig> = {
 /**
  * Default pitch ID used when no pitch is detected
  */
-export const DEFAULT_PITCH_ID = 'lawendowe-wzgorze-orlik';
+export const DEFAULT_PITCH_ID = createPitchId('lawendowe-wzgorze-orlik');
 
 /**
  * Gets pitch configuration by ID
@@ -125,12 +127,12 @@ export const DEFAULT_PITCH_ID = 'lawendowe-wzgorze-orlik';
  *
  * @example
  * ```typescript
- * const pitch = getPitch('lawendowe-wzgorze-orlik');
+ * const pitch = getPitch(createPitchId('lawendowe-wzgorze-orlik'));
  * console.log(pitch.name); // "Lawendowe Wzgórze - Orlik"
  * ```
  */
-export const getPitch = (pitchId: string): PitchConfig => {
-  return PITCHES[pitchId] || PITCHES[DEFAULT_PITCH_ID];
+export const getPitch = (pitchId: PitchId): PitchConfig => {
+  return PITCHES[pitchIdToString(pitchId)] || PITCHES[pitchIdToString(DEFAULT_PITCH_ID)];
 };
 
 /**

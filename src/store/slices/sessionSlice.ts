@@ -7,7 +7,7 @@
  * - Session persistence to localStorage
  */
 
-import type { Session } from '../../types';
+import type { Session, SessionId } from '../../types';
 import type { AppState } from '../types';
 import type { StateCreator } from 'zustand';
 
@@ -17,13 +17,13 @@ import type { StateCreator } from 'zustand';
 export interface SessionSlice {
   // State
   sessions: Session[];
-  currentSessionId: string | null;
+  currentSessionId: SessionId | null;
 
   // Actions
   addSession: (session: Session) => void;
-  removeSession: (sessionId: string) => void;
+  removeSession: (sessionId: SessionId) => void;
   clearSessions: () => void;
-  loadSessionForAnalysis: (sessionId: string) => void;
+  loadSessionForAnalysis: (sessionId: SessionId) => void;
 }
 
 /**

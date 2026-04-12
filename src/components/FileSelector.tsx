@@ -1,11 +1,13 @@
 import React, { useRef, useState } from 'react';
 
 import { getPerformancesList } from '../config/performances';
+
+import type { PitchId } from '../types';
 import './FileSelector.css';
 
 interface FileSelectorProps {
   onFileLoad: (fileContent: string) => void;
-  onLoadPerformance: (tcxContent: string, pitchId: string) => void;
+  onLoadPerformance: (tcxContent: string, pitchId: PitchId) => void;
 }
 
 const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerformance }) => {

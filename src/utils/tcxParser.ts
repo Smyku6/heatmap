@@ -11,7 +11,8 @@ import type {
   Sprint,
   RawSprint,
   SprintPoint,
-  PitchCorners
+  PitchCorners,
+  PitchId
 } from '../types';
 
 /**
@@ -66,7 +67,7 @@ export const parseTCX = (xmlString: string): TrackPoint[] => {
 };
 
 // Pobiera współrzędne boiska (domyślne lub wybrane)
-const getPitchCorners = (pitchId = DEFAULT_PITCH_ID): GPSPitchCorners => {
+const getPitchCorners = (pitchId: PitchId = DEFAULT_PITCH_ID): GPSPitchCorners => {
   const pitch = getPitch(pitchId);
   return pitch.corners;
 };
@@ -617,7 +618,7 @@ export const splitIntoSegments = (
 export const prepareVisualizationData = (
   trackingPoints: TrackPoint[],
   segmentType: SegmentType = 'full',
-  pitchId: string = DEFAULT_PITCH_ID,
+  pitchId: PitchId = DEFAULT_PITCH_ID,
   orientation: OrientationType = 'original',
   sprintSettings: SprintSettings | null = null
 ): VisualizationData => {

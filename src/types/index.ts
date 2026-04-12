@@ -1,4 +1,23 @@
 // ============================================
+// BRANDED TYPES (Re-export from branded.ts)
+// ============================================
+
+import type { SessionId, PitchId, UserId } from './branded';
+
+export type { SessionId, PitchId, UserId };
+export {
+  createSessionId,
+  createPitchId,
+  createUserId,
+  isSessionId,
+  isPitchId,
+  isUserId,
+  sessionIdToString,
+  pitchIdToString,
+  userIdToString
+} from './branded';
+
+// ============================================
 // SESSION TYPES
 // ============================================
 
@@ -23,9 +42,9 @@
  * @example
  * ```typescript
  * const session: Session = {
- *   id: '1234567890',
+ *   id: createSessionId('1234567890'),
  *   rawPoints: parseTCX(tcxContent),
- *   pitchId: 'orlik-kopernika',
+ *   pitchId: createPitchId('orlik-kopernika'),
  *   activityDate: new Date(),
  *   totalDuration: '1:30:00',
  *   totalDistance: 5000,
@@ -37,9 +56,9 @@
  * ```
  */
 export interface Session {
-  id: string;
+  id: SessionId;
   rawPoints: TrackPoint[];
-  pitchId: string;
+  pitchId: PitchId;
   activityDate: Date | string;
   totalDuration: string | { formatted: string };
   totalDistance: string | number | { formatted: string };
@@ -102,7 +121,7 @@ export interface TransformedPoint {
 // ============================================
 
 export interface PitchInfo {
-  id?: string;
+  id?: PitchId;
   name: string;
   dimensions: {
     width: number;

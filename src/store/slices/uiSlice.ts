@@ -10,6 +10,7 @@
 import type {
   HeatmapSettings,
   OrientationType,
+  PitchId,
   SegmentType,
   SatelliteTransform,
   SprintSettings
@@ -24,7 +25,7 @@ export interface UISlice {
   // View State
   selectedSegment: SegmentType;
   selectedOrientation: OrientationType;
-  detectedPitch: string | null;
+  detectedPitch: PitchId | null;
 
   // Display Toggles
   showHeatmap: boolean;
@@ -39,14 +40,14 @@ export interface UISlice {
   // Actions
   setSelectedSegment: (segment: SegmentType) => void;
   setSelectedOrientation: (orientation: OrientationType) => void;
-  setDetectedPitch: (pitchId: string) => void;
+  setDetectedPitch: (pitchId: PitchId) => void;
   setShowHeatmap: (show: boolean) => void;
   setShowActivityPoints: (show: boolean) => void;
   setShowSprints: (show: boolean) => void;
   setHeatmapSettings: (settings: HeatmapSettings) => void;
   setSprintSettings: (settings: SprintSettings) => void;
   setSatelliteTransform: (transform: SatelliteTransform) => void;
-  handlePitchChange: (pitchId: string) => void;
+  handlePitchChange: (pitchId: PitchId) => void;
 }
 
 /**
