@@ -515,7 +515,7 @@ export const prepareVisualizationData = (
     const distance = calculateTotalDistance(segmentPoints);
 
     // Oblicz średnie tętno
-    const heartRates = segmentPoints.filter(p => p.heartRate).map(p => p.heartRate!);
+    const heartRates = segmentPoints.filter((p): p is TrackPoint & { heartRate: number } => p.heartRate !== undefined).map(p => p.heartRate);
     const avgHeartRate = heartRates.length > 0
       ? Math.round(heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length)
       : null;
@@ -554,7 +554,7 @@ export const prepareVisualizationData = (
   // Oblicz całkowite statystyki
   const totalDuration = calculateDuration(trackingPoints);
   const totalDistance = calculateTotalDistance(trackingPoints);
-  const allHeartRates = trackingPoints.filter(p => p.heartRate).map(p => p.heartRate!);
+  const allHeartRates = trackingPoints.filter((p): p is TrackPoint & { heartRate: number } => p.heartRate !== undefined).map(p => p.heartRate);
   const totalAvgHeartRate = allHeartRates.length > 0
     ? Math.round(allHeartRates.reduce((sum, hr) => sum + hr, 0) / allHeartRates.length)
     : null;

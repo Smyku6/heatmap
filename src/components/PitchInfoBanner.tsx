@@ -6,7 +6,10 @@ import type { PitchInfo } from '../types';
 interface PitchInfoBannerProps {
   pitchInfo: PitchInfo;
   activityDate?: Date;
-  duration?: any;
+  duration?: {
+    timeRange?: string;
+    formatted?: string;
+  };
 }
 
 const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDate, duration }) => {

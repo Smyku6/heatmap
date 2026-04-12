@@ -33,8 +33,10 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
       distanceStr = (distance / 1000).toFixed(2);
     } else if (typeof distance === 'string') {
       distanceStr = distance.replace(' km', '');
+    } else if (typeof distance === 'object' && distance && 'formatted' in distance) {
+      distanceStr = (distance.formatted ?? distance.toString()).replace(' km', '');
     } else {
-      distanceStr = ((distance as any).formatted ?? distance.toString()).replace(' km', '');
+      distanceStr = distance.toString();
     }
     return parseFloat(distanceStr).toFixed(2);
   };
