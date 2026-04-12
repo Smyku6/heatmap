@@ -29,7 +29,7 @@ const HeatmapControls: React.FC<HeatmapControlsProps> = ({ settings, onChange })
           <span>Paleta kolorów</span>
           <select
             value={settings.colorPalette}
-            onChange={(e) => onChange({ ...settings, colorPalette: e.target.value as any })}
+            onChange={(e) => onChange({ ...settings, colorPalette: e.target.value as HeatmapSettings['colorPalette'] })}
           >
             <option value="classic">Klasyczna (niebieski→czerwony)</option>
             <option value="thermal">Termalna (czarny→czerwony)</option>

@@ -170,7 +170,7 @@ export interface HeatmapSettings {
   intensity: number;
   opacity: number;
   densityRadius: number;
-  colorPalette: 'classic' | 'fire' | 'cool' | 'rainbow';
+  colorPalette: 'classic' | 'thermal' | 'purple' | 'mono';
   minThreshold: number;
 }
 

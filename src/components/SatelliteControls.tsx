@@ -105,7 +105,7 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
         try {
           const result = e.target?.result;
           if (typeof result !== 'string') {return;}
-          const config = JSON.parse(result);
+          const config = JSON.parse(result) as { transform?: SatelliteTransform };
           if (config.transform) {
             onChange(config.transform);
             setScaleInput(config.transform.scale.toString());

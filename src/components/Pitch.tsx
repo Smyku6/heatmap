@@ -12,6 +12,7 @@ import type {
   SprintSettings,
   GoalDimensions,
   PenaltyBoxDimensions,
+  PitchCorner,
   PitchCorners
 } from '../types';
 import './Pitch.css';
@@ -290,16 +291,19 @@ const Pitch: React.FC<PitchProps> = ({
         )}
 
         {/* Markery narożników boiska */}
-        {Object.entries(pitchCorners).map(([key, corner]) => (
-          <circle
-            key={key}
-            cx={corner.x}
-            cy={corner.y}
-            r={4}
-            fill="#ff00ff"
-            opacity={0.6}
-          />
-        ))}
+        {Object.entries(pitchCorners).map(([key, corner]) => {
+          const c = corner as PitchCorner;
+          return (
+            <circle
+              key={key}
+              cx={c.x}
+              cy={c.y}
+              r={4}
+              fill="#ff00ff"
+              opacity={0.6}
+            />
+          );
+        })}
 
         {/* Punkty GPS trackingu */}
         {showActivityPoints && trackingPoints.map((point, index) => (
