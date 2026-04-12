@@ -82,19 +82,24 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
 
     // Skopiuj transform do schowka w formacie gotowym do wklejenia
     const transformStr = JSON.stringify(transform, null, 2);
-    navigator.clipboard.writeText(transformStr).then(() => {
-      console.warn(`Transform skopiowany do schowka!\n\nWklej do pitches.js jako:\ntransforms: {\n  original: ${transformStr}\n}`);
-    }).catch(() => {
-      // Fallback: zapisz jako plik
-      const jsonStr = JSON.stringify(config, null, 2);
-      const blob = new Blob([jsonStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `satellite-config-${pitchId}.json`;
-      a.click();
-      URL.revokeObjectURL(url);
-    });
+    navigator.clipboard
+      .writeText(transformStr)
+      .then(() => {
+        console.warn(
+          `Transform skopiowany do schowka!\n\nWklej do pitches.js jako:\ntransforms: {\n  original: ${transformStr}\n}`
+        );
+      })
+      .catch(() => {
+        // Fallback: zapisz jako plik
+        const jsonStr = JSON.stringify(config, null, 2);
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `satellite-config-${pitchId}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
   };
 
   const handleLoadConfig = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -104,7 +109,9 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
       reader.onload = (e) => {
         try {
           const result = e.target?.result;
-          if (typeof result !== 'string') {return;}
+          if (typeof result !== 'string') {
+            return;
+          }
           const config = JSON.parse(result) as { transform?: SatelliteTransform };
           if (config.transform) {
             onChange(config.transform);
@@ -155,10 +162,26 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
             step="0.1"
           />
           <div className="button-group">
-            <button onClick={() => handleRotationChange((parseFloat(rotationInput) - 5).toString())}>-5°</button>
-            <button onClick={() => handleRotationChange((parseFloat(rotationInput) - 1).toString())}>-1°</button>
-            <button onClick={() => handleRotationChange((parseFloat(rotationInput) + 1).toString())}>+1°</button>
-            <button onClick={() => handleRotationChange((parseFloat(rotationInput) + 5).toString())}>+5°</button>
+            <button
+              onClick={() => handleRotationChange((parseFloat(rotationInput) - 5).toString())}
+            >
+              -5°
+            </button>
+            <button
+              onClick={() => handleRotationChange((parseFloat(rotationInput) - 1).toString())}
+            >
+              -1°
+            </button>
+            <button
+              onClick={() => handleRotationChange((parseFloat(rotationInput) + 1).toString())}
+            >
+              +1°
+            </button>
+            <button
+              onClick={() => handleRotationChange((parseFloat(rotationInput) + 5).toString())}
+            >
+              +5°
+            </button>
           </div>
         </div>
       </div>
@@ -200,8 +223,12 @@ const SatelliteControls: React.FC<SatelliteControlsProps> = ({ transform, onChan
       </div>
 
       <div className="control-actions">
-        <button className="reset-btn" onClick={handleReset}>Reset</button>
-        <button className="save-btn" onClick={handleSaveConfig}>Zapisz config</button>
+        <button className="reset-btn" onClick={handleReset}>
+          Reset
+        </button>
+        <button className="save-btn" onClick={handleSaveConfig}>
+          Zapisz config
+        </button>
         <label className="load-btn">
           Wczytaj config
           <input

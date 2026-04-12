@@ -20,7 +20,7 @@ const SegmentSelector: React.FC<SegmentSelectorProps> = ({ selectedSegment, onCh
     <div className="segment-selector">
       <div className="segment-label">Podział czasu:</div>
       <div className="segment-options">
-        {segments.map(segment => (
+        {segments.map((segment) => (
           <label key={segment.id} className="segment-option">
             <input
               type="radio"

@@ -12,10 +12,14 @@ const PerformanceSelector: React.FC<PerformanceSelectorProps> = ({ onLoadPerform
 
   const handleChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const performanceId = e.target.value;
-    if (!performanceId) {return;}
+    if (!performanceId) {
+      return;
+    }
 
-    const performance = performances.find(p => p.id === performanceId);
-    if (!performance) {return;}
+    const performance = performances.find((p) => p.id === performanceId);
+    if (!performance) {
+      return;
+    }
 
     try {
       // Pobierz plik TCX
@@ -46,8 +50,10 @@ const PerformanceSelector: React.FC<PerformanceSelectorProps> = ({ onLoadPerform
         className="performance-selector-dropdown"
         defaultValue=""
       >
-        <option value="" disabled>-- Wybierz występ --</option>
-        {performances.map(performance => (
+        <option value="" disabled>
+          -- Wybierz występ --
+        </option>
+        {performances.map((performance) => (
           <option key={performance.id} value={performance.id}>
             {performance.name} - {performance.description}
           </option>

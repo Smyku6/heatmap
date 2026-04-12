@@ -35,10 +35,7 @@ type Matrix3x3 = number[]; // 9 elements: [h0, h1, h2, h3, h4, h5, h6, h7, h8]
  * const matrix = getPerspectiveTransform(gpsCorners, canvasCorners);
  * ```
  */
-export function getPerspectiveTransform(
-  sourcePoints: Point2D[],
-  destPoints: Point2D[]
-): Matrix3x3 {
+export function getPerspectiveTransform(sourcePoints: Point2D[], destPoints: Point2D[]): Matrix3x3 {
   const src = sourcePoints;
   const dst = destPoints;
 
@@ -180,8 +177,8 @@ export function drawPerspectiveImage(
   ];
 
   // Znajdź bounding box punktów docelowych
-  const allX = dstPoints.map(p => p.x);
-  const allY = dstPoints.map(p => p.y);
+  const allX = dstPoints.map((p) => p.x);
+  const allY = dstPoints.map((p) => p.y);
   const minX = Math.floor(Math.min(...allX));
   const maxX = Math.ceil(Math.max(...allX));
   const minY = Math.floor(Math.min(...allY));
@@ -190,7 +187,9 @@ export function drawPerspectiveImage(
   // Utwórz temporary canvas dla transformacji
   const tempCanvas = document.createElement('canvas');
   const tempCtx = tempCanvas.getContext('2d');
-  if (!tempCtx) {throw new Error('Could not get 2d context');}
+  if (!tempCtx) {
+    throw new Error('Could not get 2d context');
+  }
 
   tempCanvas.width = maxX - minX;
   tempCanvas.height = maxY - minY;
@@ -201,7 +200,9 @@ export function drawPerspectiveImage(
   // Narysuj obraz na temporary canvas
   const imgCanvas = document.createElement('canvas');
   const imgCtx = imgCanvas.getContext('2d');
-  if (!imgCtx) {throw new Error('Could not get 2d context');}
+  if (!imgCtx) {
+    throw new Error('Could not get 2d context');
+  }
 
   imgCanvas.width = img.width;
   imgCanvas.height = img.height;
@@ -225,7 +226,7 @@ export function drawPerspectiveImage(
         const dstIdx = (dy * tempCanvas.width + dx) * 4;
 
         // Kopiuj piksele
-        data[dstIdx] = imgData.data[srcIdx];         // R
+        data[dstIdx] = imgData.data[srcIdx]; // R
         data[dstIdx + 1] = imgData.data[srcIdx + 1]; // G
         data[dstIdx + 2] = imgData.data[srcIdx + 2]; // B
         data[dstIdx + 3] = imgData.data[srcIdx + 3]; // A

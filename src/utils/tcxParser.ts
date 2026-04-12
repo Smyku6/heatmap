@@ -42,7 +42,8 @@ export const parseTCX = (xmlString: string): TrackPoint[] => {
       const latText = position.getElementsByTagName('LatitudeDegrees')[0]?.textContent;
       const lonText = position.getElementsByTagName('LongitudeDegrees')[0]?.textContent;
       const timeText = trackpoint.getElementsByTagName('Time')[0]?.textContent;
-      const heartRateText = trackpoint.getElementsByTagName('HeartRateBpm')[0]
+      const heartRateText = trackpoint
+        .getElementsByTagName('HeartRateBpm')[0]
         ?.getElementsByTagName('Value')[0]?.textContent;
 
       if (latText && lonText && timeText) {
@@ -72,7 +73,10 @@ const getPitchCorners = (pitchId = DEFAULT_PITCH_ID): GPSPitchCorners => {
 
 // Oblicza kąt obrotu boiska dla CSS transform (w stopniach)
 // Obliczany na podstawie lewej krawędzi boiska (TL -> BL) w SVG
-const calculatePitchRotationAngle = (_pitchCornersSVG: PitchCorners, orientation: OrientationType): number => {
+const calculatePitchRotationAngle = (
+  _pitchCornersSVG: PitchCorners,
+  orientation: OrientationType
+): number => {
   if (orientation === 'original') {
     return 0; // Bez rotacji
   }
@@ -122,15 +126,21 @@ export const convertGPSToSVG = (
 ) => {
   // Oblicz rzeczywiste wymiary boiska w metrach
   const pitchWidth = calculateDistance(
-    pitchCorners.topLeft.lat, pitchCorners.topLeft.lon,
-    pitchCorners.topRight.lat, pitchCorners.topRight.lon
+    pitchCorners.topLeft.lat,
+    pitchCorners.topLeft.lon,
+    pitchCorners.topRight.lat,
+    pitchCorners.topRight.lon
   );
   const pitchLength = calculateDistance(
-    pitchCorners.topLeft.lat, pitchCorners.topLeft.lon,
-    pitchCorners.bottomLeft.lat, pitchCorners.bottomLeft.lon
+    pitchCorners.topLeft.lat,
+    pitchCorners.topLeft.lon,
+    pitchCorners.bottomLeft.lat,
+    pitchCorners.bottomLeft.lon
   );
 
-  console.warn(`Rzeczywiste wymiary boiska: ${pitchWidth.toFixed(1)}m × ${pitchLength.toFixed(1)}m`);
+  console.warn(
+    `Rzeczywiste wymiary boiska: ${pitchWidth.toFixed(1)}m × ${pitchLength.toFixed(1)}m`
+  );
 
   // Oblicz ratio boiska
   const pitchRatio = pitchWidth / pitchLength; // szerokość / długość
@@ -164,14 +174,14 @@ export const convertGPSToSVG = (
     pitchCorners.topRight.lat,
     pitchCorners.bottomLeft.lat,
     pitchCorners.bottomRight.lat,
-    ...allPoints.map(p => p.lat)
+    ...allPoints.map((p) => p.lat)
   ];
   const allLons = [
     pitchCorners.topLeft.lon,
     pitchCorners.topRight.lon,
     pitchCorners.bottomLeft.lon,
     pitchCorners.bottomRight.lon,
-    ...allPoints.map(p => p.lon)
+    ...allPoints.map((p) => p.lon)
   ];
 
   const minLat = Math.min(...allLats);
@@ -198,10 +208,10 @@ export const convertGPSToSVG = (
 
   // Punkty docelowe: idealny prostokąt na canvas z prawdziwymi proporcjami
   const destPoints = [
-    { x: offsetX, y: offsetY },                           // topLeft
-    { x: offsetX + drawWidth, y: offsetY },               // topRight
-    { x: offsetX + drawWidth, y: offsetY + drawHeight },  // bottomRight
-    { x: offsetX, y: offsetY + drawHeight }               // bottomLeft
+    { x: offsetX, y: offsetY }, // topLeft
+    { x: offsetX + drawWidth, y: offsetY }, // topRight
+    { x: offsetX + drawWidth, y: offsetY + drawHeight }, // bottomRight
+    { x: offsetX, y: offsetY + drawHeight } // bottomLeft
   ];
 
   // Oblicz macierz transformacji perspektywicznej
@@ -227,12 +237,14 @@ export const convertGPSToSVG = (
 // Oblicza odległość między dwoma punktami GPS (w metrach) - wzór Haversine
 const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number): number => {
   const R = 6371000; // promień Ziemi w metrach
-  const dLat = (lat2 - lat1) * Math.PI / 180;
-  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    Math.cos((lat1 * Math.PI) / 180) *
+      Math.cos((lat2 * Math.PI) / 180) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
 };
@@ -256,23 +268,31 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
 export const calculatePitchDimensions = (corners: GPSPitchCorners) => {
   // Szerokość (górna i dolna krawędź)
   const topWidth = calculateDistance(
-    corners.topLeft.lat, corners.topLeft.lon,
-    corners.topRight.lat, corners.topRight.lon
+    corners.topLeft.lat,
+    corners.topLeft.lon,
+    corners.topRight.lat,
+    corners.topRight.lon
   );
   const bottomWidth = calculateDistance(
-    corners.bottomLeft.lat, corners.bottomLeft.lon,
-    corners.bottomRight.lat, corners.bottomRight.lon
+    corners.bottomLeft.lat,
+    corners.bottomLeft.lon,
+    corners.bottomRight.lat,
+    corners.bottomRight.lon
   );
   const width = (topWidth + bottomWidth) / 2;
 
   // Długość (lewa i prawa krawędź)
   const leftLength = calculateDistance(
-    corners.topLeft.lat, corners.topLeft.lon,
-    corners.bottomLeft.lat, corners.bottomLeft.lon
+    corners.topLeft.lat,
+    corners.topLeft.lon,
+    corners.bottomLeft.lat,
+    corners.bottomLeft.lon
   );
   const rightLength = calculateDistance(
-    corners.topRight.lat, corners.topRight.lon,
-    corners.bottomRight.lat, corners.bottomRight.lon
+    corners.topRight.lat,
+    corners.topRight.lon,
+    corners.bottomRight.lat,
+    corners.bottomRight.lon
   );
   const length = (leftLength + rightLength) / 2;
 
@@ -288,7 +308,9 @@ const calculateSpeed = (point1: TrackPoint, point2: TrackPoint): number => {
   const time2 = new Date(point2.time);
   const timeDiffSeconds = (time2.getTime() - time1.getTime()) / 1000;
 
-  if (timeDiffSeconds === 0) {return 0;}
+  if (timeDiffSeconds === 0) {
+    return 0;
+  }
 
   const distance = calculateDistance(point1.lat, point1.lon, point2.lat, point2.lon);
   const speedMetersPerSecond = distance / timeDiffSeconds;
@@ -323,12 +345,14 @@ export const detectSprints = (
   settings: Partial<SprintSettings> = {}
 ): RawSprint[] => {
   const {
-    minSpeed = 16.5,      // Minimalna prędkość w km/h
-    minDuration = 2,      // Minimalna długość sprintu w sekundach
-    minDistance = 10      // Minimalny dystans w metrach
+    minSpeed = 16.5, // Minimalna prędkość w km/h
+    minDuration = 2, // Minimalna długość sprintu w sekundach
+    minDistance = 10 // Minimalny dystans w metrach
   } = settings;
 
-  if (trackingPoints.length < 2) {return [];}
+  if (trackingPoints.length < 2) {
+    return [];
+  }
 
   const sprints = [];
   let currentSprint = null;
@@ -442,7 +466,9 @@ const finalizeSprint = (
  * ```
  */
 export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => {
-  if (trackingPoints.length < 2) {return 0;}
+  if (trackingPoints.length < 2) {
+    return 0;
+  }
 
   let totalDistance = 0;
   for (let i = 1; i < trackingPoints.length; i++) {
@@ -473,7 +499,9 @@ export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => 
  * ```
  */
 export const calculateDuration = (trackingPoints: TrackPoint[]) => {
-  if (trackingPoints.length < 2) {return null;}
+  if (trackingPoints.length < 2) {
+    return null;
+  }
 
   const startTime = new Date(trackingPoints[0].time);
   const endTime = new Date(trackingPoints[trackingPoints.length - 1].time);
@@ -495,9 +523,10 @@ export const calculateDuration = (trackingPoints: TrackPoint[]) => {
     minutes,
     seconds,
     totalSeconds: durationSeconds,
-    formatted: hours > 0
-      ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
-      : `${minutes}:${seconds.toString().padStart(2, '0')}`,
+    formatted:
+      hours > 0
+        ? `${hours}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`
+        : `${minutes}:${seconds.toString().padStart(2, '0')}`,
     startTime: formatTime(startTime),
     endTime: formatTime(endTime),
     timeRange: `${formatTime(startTime)}-${formatTime(endTime)}`
@@ -545,10 +574,12 @@ export const splitIntoSegments = (
     const segmentEndTime = new Date(startTime.getTime() + (i + 1) * segmentDuration);
 
     // Filtruj punkty dla tego segmentu czasowego
-    const segmentPoints = trackingPoints.filter(point => {
+    const segmentPoints = trackingPoints.filter((point) => {
       const pointTime = new Date(point.time);
-      return pointTime >= segmentStartTime &&
-             (i === count - 1 ? pointTime <= segmentEndTime : pointTime < segmentEndTime);
+      return (
+        pointTime >= segmentStartTime &&
+        (i === count - 1 ? pointTime <= segmentEndTime : pointTime < segmentEndTime)
+      );
     });
 
     segments.push(segmentPoints);
@@ -605,7 +636,12 @@ export const prepareVisualizationData = (
     ...trackingPoints
   ];
 
-  const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(allGPSPoints, 1000, 800, PITCH_CORNERS);
+  const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(
+    allGPSPoints,
+    1000,
+    800,
+    PITCH_CORNERS
+  );
 
   // Konwertuj narożniki boiska
   const pitchCornersSVG = {
@@ -619,8 +655,8 @@ export const prepareVisualizationData = (
   const rotationAngle = calculatePitchRotationAngle(pitchCornersSVG, orientation);
 
   // Konwertuj segmenty punktów trackingu
-  const segmentsSVG = segments.map(segmentPoints => {
-    const pointsSVG = segmentPoints.map(point => ({
+  const segmentsSVG = segments.map((segmentPoints) => {
+    const pointsSVG = segmentPoints.map((point) => ({
       ...point,
       ...toSVG(point.lat, point.lon)
     }));
@@ -629,17 +665,20 @@ export const prepareVisualizationData = (
     const distance = calculateTotalDistance(segmentPoints);
 
     // Oblicz średnie tętno
-    const heartRates = segmentPoints.filter((p): p is TrackPoint & { heartRate: number } => p.heartRate !== undefined).map(p => p.heartRate);
-    const avgHeartRate = heartRates.length > 0
-      ? Math.round(heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length)
-      : null;
+    const heartRates = segmentPoints
+      .filter((p): p is TrackPoint & { heartRate: number } => p.heartRate !== undefined)
+      .map((p) => p.heartRate);
+    const avgHeartRate =
+      heartRates.length > 0
+        ? Math.round(heartRates.reduce((sum, hr) => sum + hr, 0) / heartRates.length)
+        : null;
 
     // Wykryj sprinty jeśli ustawienia są podane
     let sprints: Sprint[] = [];
     if (sprintSettings) {
       const detectedSprints = detectSprints(segmentPoints, sprintSettings);
       // Konwertuj punkty sprintów do współrzędnych SVG
-      sprints = detectedSprints.map(sprint => ({
+      sprints = detectedSprints.map((sprint) => ({
         ...sprint,
         startPoint: {
           ...sprint.startPoint,
@@ -649,10 +688,13 @@ export const prepareVisualizationData = (
           ...sprint.endPoint,
           ...toSVG(sprint.endPoint.lat, sprint.endPoint.lon)
         } as SprintPoint,
-        points: sprint.points.map(p => ({
-          ...p,
-          ...toSVG(p.lat, p.lon)
-        } as SprintPoint))
+        points: sprint.points.map(
+          (p) =>
+            ({
+              ...p,
+              ...toSVG(p.lat, p.lon)
+            }) as SprintPoint
+        )
       }));
     }
 
@@ -668,17 +710,21 @@ export const prepareVisualizationData = (
   // Oblicz całkowite statystyki
   const totalDuration = calculateDuration(trackingPoints);
   const totalDistance = calculateTotalDistance(trackingPoints);
-  const allHeartRates = trackingPoints.filter((p): p is TrackPoint & { heartRate: number } => p.heartRate !== undefined).map(p => p.heartRate);
-  const totalAvgHeartRate = allHeartRates.length > 0
-    ? Math.round(allHeartRates.reduce((sum, hr) => sum + hr, 0) / allHeartRates.length)
-    : null;
+  const allHeartRates = trackingPoints
+    .filter((p): p is TrackPoint & { heartRate: number } => p.heartRate !== undefined)
+    .map((p) => p.heartRate);
+  const totalAvgHeartRate =
+    allHeartRates.length > 0
+      ? Math.round(allHeartRates.reduce((sum, hr) => sum + hr, 0) / allHeartRates.length)
+      : null;
 
   // Pobierz informacje o boisku
   const pitch = getPitch(pitchId);
   const dimensions = calculatePitchDimensions(PITCH_CORNERS);
 
   // Pobierz datę aktywności z pierwszego punktu
-  const activityDate: Date | string = trackingPoints.length > 0 ? new Date(trackingPoints[0].time) : '';
+  const activityDate: Date | string =
+    trackingPoints.length > 0 ? new Date(trackingPoints[0].time) : '';
 
   return {
     pitchCorners: pitchCornersSVG,

@@ -82,11 +82,11 @@ export const PITCHES: Record<string, PitchConfig> = {
     centerCircleRadius: 4, // Promień koła środkowego w metrach
     goal: {
       width: 5, // Szerokość bramki w metrach
-      depth: 1  // Głębokość bramki w metrach (jak daleko wystaje poza boisko)
+      depth: 1 // Głębokość bramki w metrach (jak daleko wystaje poza boisko)
     },
     penaltyBox: {
       width: 18.25, // Szerokość pola karnego w metrach
-      depth: 7.75   // Głębokość pola karnego w metrach (jak daleko wchodzi w boisko)
+      depth: 7.75 // Głębokość pola karnego w metrach (jak daleko wchodzi w boisko)
     },
     satellite: {
       image: '/images/lawendowe.jpg',
@@ -97,7 +97,7 @@ export const PITCHES: Record<string, PitchConfig> = {
         rotated270: { scale: 0.94, rotation: 90, translateX: -73, translateY: 0 }
       }
     }
-  },
+  }
   // Dodaj kolejne boiska tutaj:
   // 'nazwa-boiska': {
   //   id: 'nazwa-boiska',

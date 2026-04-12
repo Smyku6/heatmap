@@ -15,8 +15,22 @@ function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="analysis" element={<Analysis />} />
           <Route path="squad-maker" element={<SquadMaker />} />
-          <Route path="history" element={<div className="empty-state"><p>History - Coming Soon</p></div>} />
-          <Route path="settings" element={<div className="empty-state"><p>Settings - Coming Soon</p></div>} />
+          <Route
+            path="history"
+            element={
+              <div className="empty-state">
+                <p>History - Coming Soon</p>
+              </div>
+            }
+          />
+          <Route
+            path="settings"
+            element={
+              <div className="empty-state">
+                <p>Settings - Coming Soon</p>
+              </div>
+            }
+          />
         </Route>
       </Routes>
     </BrowserRouter>

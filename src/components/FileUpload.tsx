@@ -11,7 +11,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = (file: File | undefined) => {
-    if (!file) {return;}
+    if (!file) {
+      return;
+    }
 
     if (!file.name.endsWith('.tcx')) {
       console.error('Proszę wybrać plik TCX');
@@ -38,8 +40,6 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
-
     processFile(e.target.files?.[0]);
   };
 
@@ -75,11 +75,9 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
     fileInputRef.current?.click();
   };
 
-  const zoneClasses = [
-    'upload-zone',
-    isDragging && 'drag-over',
-    isUploading && 'uploading'
-  ].filter(Boolean).join(' ');
+  const zoneClasses = ['upload-zone', isDragging && 'drag-over', isUploading && 'uploading']
+    .filter(Boolean)
+    .join(' ');
 
   return (
     <div className="file-upload">
@@ -95,20 +93,15 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
 
         <div className="upload-zone-content">
           <div className="upload-icon-circle">
-            <span className="material-symbols-outlined">
-              {isUploading ? 'sync' : 'speed'}
-            </span>
+            <span className="material-symbols-outlined">{isUploading ? 'sync' : 'speed'}</span>
           </div>
 
-          <h3 className="upload-title">
-            {isUploading ? 'Wczytuję...' : 'Wgraj plik TCX'}
-          </h3>
+          <h3 className="upload-title">{isUploading ? 'Wczytuję...' : 'Wgraj plik TCX'}</h3>
 
           <p className="upload-description">
             {isUploading
               ? 'Przetwarzanie danych treningowych...'
-              : 'Przeciągnij i upuść plik treningowy z Twojego urządzenia Garmin lub wybierz go z dysku.'
-            }
+              : 'Przeciągnij i upuść plik treningowy z Twojego urządzenia Garmin lub wybierz go z dysku.'}
           </p>
 
           {!isUploading && (
@@ -122,10 +115,16 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
         <div className="upload-decoration">
           <svg className="technical-grid" width="100" height="100" viewBox="0 0 100 100">
             <path d="M0 0 H100 V100 H0 Z" fill="none" stroke="currentColor" strokeWidth="0.5" />
-            <path d="M10 0 V100 M20 0 V100 M30 0 V100 M40 0 V100 M50 0 V100 M60 0 V100 M70 0 V100 M80 0 V100 M90 0 V100"
-                  stroke="currentColor" strokeWidth="0.1" />
-            <path d="M0 10 H100 M0 20 H100 M0 30 H100 M0 40 H100 M0 50 H100 M0 60 H100 M0 70 H100 M0 80 H100 M0 90 H100"
-                  stroke="currentColor" strokeWidth="0.1" />
+            <path
+              d="M10 0 V100 M20 0 V100 M30 0 V100 M40 0 V100 M50 0 V100 M60 0 V100 M70 0 V100 M80 0 V100 M90 0 V100"
+              stroke="currentColor"
+              strokeWidth="0.1"
+            />
+            <path
+              d="M0 10 H100 M0 20 H100 M0 30 H100 M0 40 H100 M0 50 H100 M0 60 H100 M0 70 H100 M0 80 H100 M0 90 H100"
+              stroke="currentColor"
+              strokeWidth="0.1"
+            />
           </svg>
         </div>
       </div>

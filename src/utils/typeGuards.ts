@@ -391,12 +391,7 @@ export function isSprintSettings(obj: unknown): obj is SprintSettings {
  * @returns True if value is a valid SegmentType
  */
 export function isSegmentType(value: unknown): value is SegmentType {
-  return (
-    value === 'full' ||
-    value === 'halves' ||
-    value === 'thirds' ||
-    value === 'quarters'
-  );
+  return value === 'full' || value === 'halves' || value === 'thirds' || value === 'quarters';
 }
 
 /**

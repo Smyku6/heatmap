@@ -30,7 +30,7 @@ const Sidebar = () => {
       </div>
 
       <nav className="sidebar-nav">
-        {menuItems.map(item => (
+        {menuItems.map((item) => (
           <NavLink
             key={item.id}
             to={item.path}

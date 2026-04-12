@@ -21,7 +21,7 @@ export const EXAMPLE_PERFORMANCES: PerformanceConfig[] = [
     description: 'Mecz piłkarski - Lawendowe Wzgórze',
     pitchId: 'lawendowe-wzgorze-orlik',
     tcxFile: '/heatmap/examples/activity_22470142520.tcx'
-  },
+  }
   // Dodaj więcej przykładowych występów tutaj:
   // {
   //   id: 'unique-id',
@@ -48,7 +48,7 @@ export const EXAMPLE_PERFORMANCES: PerformanceConfig[] = [
  * ```
  */
 export const getPerformance = (performanceId: string): PerformanceConfig | undefined => {
-  return EXAMPLE_PERFORMANCES.find(p => p.id === performanceId);
+  return EXAMPLE_PERFORMANCES.find((p) => p.id === performanceId);
 };
 
 /**

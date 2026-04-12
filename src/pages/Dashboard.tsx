@@ -1,4 +1,3 @@
-
 import FileSelector from '../components/FileSelector';
 import SessionsTable from '../components/SessionsTable';
 import useAppStore from '../store/useAppStore';
@@ -16,14 +15,9 @@ const Dashboard = () => {
         <p className="app-header-subtitle">Witaj ponownie. Twoje dane są gotowe do analizy.</p>
       </header>
 
-      <FileSelector
-        onFileLoad={handleFileLoad}
-        onLoadPerformance={handleLoadPerformance}
-      />
+      <FileSelector onFileLoad={handleFileLoad} onLoadPerformance={handleLoadPerformance} />
 
-      {sessions.length > 0 && (
-        <SessionsTable sessions={sessions} />
-      )}
+      {sessions.length > 0 && <SessionsTable sessions={sessions} />}
     </>
   );
 };

@@ -8,7 +8,10 @@ interface OrientationSelectorProps {
   onChange: (orientation: OrientationType) => void;
 }
 
-const OrientationSelector: React.FC<OrientationSelectorProps> = ({ selectedOrientation, onChange }) => {
+const OrientationSelector: React.FC<OrientationSelectorProps> = ({
+  selectedOrientation,
+  onChange
+}) => {
   const orientations = [
     { id: 'original', label: 'Pionowo', description: 'Boisko pionowo' },
     { id: 'horizontal', label: 'Poziomo', description: 'Boisko poziomo' }
@@ -18,7 +21,7 @@ const OrientationSelector: React.FC<OrientationSelectorProps> = ({ selectedOrien
     <div className="orientation-selector">
       <div className="orientation-label">Orientacja boiska:</div>
       <div className="orientation-options">
-        {orientations.map(orientation => (
+        {orientations.map((orientation) => (
           <label key={orientation.id} className="orientation-option">
             <input
               type="radio"

@@ -20,7 +20,7 @@ const SprintStats: React.FC<SprintStatsProps> = ({ sprints }) => {
   const totalDistance = sprints.reduce((sum, s) => sum + s.distance, 0);
   const avgDistance = totalDistance / sprints.length;
   const avgDuration = sprints.reduce((sum, s) => sum + s.duration, 0) / sprints.length;
-  const maxSpeed = Math.max(...sprints.map(s => s.maxSpeed));
+  const maxSpeed = Math.max(...sprints.map((s) => s.maxSpeed));
   const avgSpeed = sprints.reduce((sum, s) => sum + s.avgSpeed, 0) / sprints.length;
 
   return (

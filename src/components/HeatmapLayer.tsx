@@ -29,12 +29,14 @@ const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
   colorPalette = 'classic',
   minThreshold = 0
 }) => {
-  if (!trackingPoints || trackingPoints.length === 0) {return null;}
+  if (!trackingPoints || trackingPoints.length === 0) {
+    return null;
+  }
 
   // Grupuj punkty po pozycji (agreguj punkty w tym samym miejscu)
   const pointDensity: Record<string, DensityPoint> = {};
 
-  trackingPoints.forEach(point => {
+  trackingPoints.forEach((point) => {
     const key = `${Math.round(point.x / densityRadius)}_${Math.round(point.y / densityRadius)}`;
     if (!pointDensity[key]) {
       pointDensity[key] = {
@@ -48,10 +50,10 @@ const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
 
   // Konwertuj na tablicę i sortuj po gęstości
   const densityPoints = Object.values(pointDensity);
-  const maxCount = Math.max(...densityPoints.map(p => p.count));
+  const maxCount = Math.max(...densityPoints.map((p) => p.count));
 
   // Filtruj punkty poniżej progu minimalnego
-  const filteredPoints = densityPoints.filter(point => {
+  const filteredPoints = densityPoints.filter((point) => {
     const normalizedIntensity = point.count / maxCount;
     return normalizedIntensity * 100 >= minThreshold;
   });
@@ -60,10 +62,18 @@ const HeatmapLayer: React.FC<HeatmapLayerProps> = ({
     <g className="heatmap-layer">
       <defs>
         {/* Gradient dla każdego poziomu intensywności */}
-        {[1, 2, 3, 4, 5].map(level => (
+        {[1, 2, 3, 4, 5].map((level) => (
           <radialGradient key={level} id={`heatGradient-${level}`}>
-            <stop offset="0%" stopColor={getHeatColor(level / 5, colorPalette)} stopOpacity={opacity} />
-            <stop offset="50%" stopColor={getHeatColor(level / 5, colorPalette)} stopOpacity={opacity * 0.5} />
+            <stop
+              offset="0%"
+              stopColor={getHeatColor(level / 5, colorPalette)}
+              stopOpacity={opacity}
+            />
+            <stop
+              offset="50%"
+              stopColor={getHeatColor(level / 5, colorPalette)}
+              stopOpacity={opacity * 0.5}
+            />
             <stop offset="100%" stopColor={getHeatColor(level / 5, colorPalette)} stopOpacity="0" />
           </radialGradient>
         ))}
@@ -94,35 +104,69 @@ const getHeatColor = (intensity: number, palette: string): string => {
   switch (palette) {
     case 'classic':
       // Klasyczna paleta: niebieski -> cyan -> zielony -> żółty -> pomarańczowy -> czerwony
-      if (intensity < 0.2) {return 'rgba(0, 0, 255, 0.8)';}
-      if (intensity < 0.4) {return 'rgba(0, 255, 255, 0.9)';}
-      if (intensity < 0.6) {return 'rgba(0, 255, 0, 1)';}
-      if (intensity < 0.8) {return 'rgba(255, 255, 0, 1)';}
-      if (intensity < 0.95) {return 'rgba(255, 128, 0, 1)';}
+      if (intensity < 0.2) {
+        return 'rgba(0, 0, 255, 0.8)';
+      }
+      if (intensity < 0.4) {
+        return 'rgba(0, 255, 255, 0.9)';
+      }
+      if (intensity < 0.6) {
+        return 'rgba(0, 255, 0, 1)';
+      }
+      if (intensity < 0.8) {
+        return 'rgba(255, 255, 0, 1)';
+      }
+      if (intensity < 0.95) {
+        return 'rgba(255, 128, 0, 1)';
+      }
       return 'rgba(255, 0, 0, 1)';
 
     case 'thermal':
       // Termalna paleta: czarny -> ciemnoczerwony -> czerwony -> pomarańczowy -> żółty
-      if (intensity < 0.2) {return 'rgba(0, 0, 0, 0.8)';}
-      if (intensity < 0.4) {return 'rgba(128, 0, 0, 0.9)';}
-      if (intensity < 0.6) {return 'rgba(255, 0, 0, 1)';}
-      if (intensity < 0.8) {return 'rgba(255, 128, 0, 1)';}
+      if (intensity < 0.2) {
+        return 'rgba(0, 0, 0, 0.8)';
+      }
+      if (intensity < 0.4) {
+        return 'rgba(128, 0, 0, 0.9)';
+      }
+      if (intensity < 0.6) {
+        return 'rgba(255, 0, 0, 1)';
+      }
+      if (intensity < 0.8) {
+        return 'rgba(255, 128, 0, 1)';
+      }
       return 'rgba(255, 255, 0, 1)';
 
     case 'purple':
       // Fioletowa paleta: fiolet -> różowy -> pomarańczowy -> żółty -> biały
-      if (intensity < 0.2) {return 'rgba(128, 0, 128, 0.8)';}
-      if (intensity < 0.4) {return 'rgba(255, 0, 255, 0.9)';}
-      if (intensity < 0.6) {return 'rgba(255, 128, 128, 1)';}
-      if (intensity < 0.8) {return 'rgba(255, 255, 0, 1)';}
+      if (intensity < 0.2) {
+        return 'rgba(128, 0, 128, 0.8)';
+      }
+      if (intensity < 0.4) {
+        return 'rgba(255, 0, 255, 0.9)';
+      }
+      if (intensity < 0.6) {
+        return 'rgba(255, 128, 128, 1)';
+      }
+      if (intensity < 0.8) {
+        return 'rgba(255, 255, 0, 1)';
+      }
       return 'rgba(255, 255, 255, 1)';
 
     case 'mono':
       // Monochromatyczna paleta: ciemny cyan -> jasny cyan
-      if (intensity < 0.2) {return 'rgba(0, 128, 128, 0.6)';}
-      if (intensity < 0.4) {return 'rgba(0, 180, 180, 0.7)';}
-      if (intensity < 0.6) {return 'rgba(0, 220, 220, 0.8)';}
-      if (intensity < 0.8) {return 'rgba(0, 255, 255, 0.9)';}
+      if (intensity < 0.2) {
+        return 'rgba(0, 128, 128, 0.6)';
+      }
+      if (intensity < 0.4) {
+        return 'rgba(0, 180, 180, 0.7)';
+      }
+      if (intensity < 0.6) {
+        return 'rgba(0, 220, 220, 0.8)';
+      }
+      if (intensity < 0.8) {
+        return 'rgba(0, 255, 255, 0.9)';
+      }
       return 'rgba(100, 255, 255, 1)';
 
     default:

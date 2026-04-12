@@ -25,21 +25,19 @@ interface PitchPolygon {
  */
 const isPointInPolygon = (point: GPSPoint, polygon: PitchPolygon): boolean => {
   const { lat, lon } = point;
-  const vertices = [
-    polygon.topLeft,
-    polygon.topRight,
-    polygon.bottomRight,
-    polygon.bottomLeft
-  ];
+  const vertices = [polygon.topLeft, polygon.topRight, polygon.bottomRight, polygon.bottomLeft];
 
   let inside = false;
   for (let i = 0, j = vertices.length - 1; i < vertices.length; j = i++) {
-    const xi = vertices[i].lon, yi = vertices[i].lat;
-    const xj = vertices[j].lon, yj = vertices[j].lat;
+    const xi = vertices[i].lon,
+      yi = vertices[i].lat;
+    const xj = vertices[j].lon,
+      yj = vertices[j].lat;
 
-    const intersect = ((yi > lat) !== (yj > lat))
-      && (lon < (xj - xi) * (lat - yi) / (yj - yi) + xi);
-    if (intersect) {inside = !inside;}
+    const intersect = yi > lat !== yj > lat && lon < ((xj - xi) * (lat - yi)) / (yj - yi) + xi;
+    if (intersect) {
+      inside = !inside;
+    }
   }
 
   return inside;
@@ -76,10 +74,10 @@ export const autoDetectPitch = (trackingPoints: TrackPoint[]): string | null => 
   let maxPointsInside = 0;
 
   // Dla każdego boiska policz ile punktów jest w środku
-  pitches.forEach(pitch => {
+  pitches.forEach((pitch) => {
     let pointsInside = 0;
 
-    trackingPoints.forEach(point => {
+    trackingPoints.forEach((point) => {
       if (isPointInPolygon(point, pitch.corners)) {
         pointsInside++;
       }
@@ -95,7 +93,9 @@ export const autoDetectPitch = (trackingPoints: TrackPoint[]): string | null => 
   // Jeśli przynajmniej 10% punktów jest w boisku, uznaj za dopasowanie
   const threshold = trackingPoints.length * 0.1;
   if (maxPointsInside >= threshold && bestMatch !== null) {
-    console.warn(`Auto-detected pitch: ${(bestMatch as PitchConfig).name} (${maxPointsInside}/${trackingPoints.length} points inside)`);
+    console.warn(
+      `Auto-detected pitch: ${(bestMatch as PitchConfig).name} (${maxPointsInside}/${trackingPoints.length} points inside)`
+    );
     return (bestMatch as PitchConfig).id;
   }
 

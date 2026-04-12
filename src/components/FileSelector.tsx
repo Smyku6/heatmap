@@ -14,7 +14,9 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) {return;}
+    if (!file) {
+      return;
+    }
 
     if (!file.name.endsWith('.tcx')) {
       console.error('Proszę wybrać plik TCX');
@@ -41,7 +43,9 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
 
   const handleExampleFile = async () => {
     const performances = getPerformancesList();
-    if (performances.length === 0) {return;}
+    if (performances.length === 0) {
+      return;
+    }
 
     const performance = performances[0]; // Bierzemy pierwszy przykładowy plik
     setIsLoading(true);
@@ -76,7 +80,9 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
               {isLoading ? 'Wczytuję dane...' : 'Rozpocznij analizę'}
             </h3>
             <p className="file-selector-subtitle">
-              {isLoading ? 'Przetwarzanie danych treningowych' : 'Wybierz plik TCX z Garmin lub użyj przykładu'}
+              {isLoading
+                ? 'Przetwarzanie danych treningowych'
+                : 'Wybierz plik TCX z Garmin lub użyj przykładu'}
             </p>
           </div>
         </div>
@@ -95,10 +101,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
               <span>lub</span>
             </div>
 
-            <button
-              className="file-selector-btn secondary"
-              onClick={handleExampleFile}
-            >
+            <button className="file-selector-btn secondary" onClick={handleExampleFile}>
               <span className="material-symbols-outlined">bolt</span>
               <span>Przykładowy plik</span>
             </button>

@@ -18,20 +18,30 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
   };
 
   const formatDuration = (duration: string | { formatted: string } | undefined): string => {
-    if (!duration) {return '-';}
+    if (!duration) {
+      return '-';
+    }
 
     // Use type guard for safe property access
     const durationStr = isDurationObject(duration) ? duration.formatted : String(duration);
-    if (!durationStr) {return '-';}
+    if (!durationStr) {
+      return '-';
+    }
 
     const match = durationStr.match(/(\d+)h (\d+)m (\d+)s/);
-    if (!match) {return durationStr;}
+    if (!match) {
+      return durationStr;
+    }
     const [, hours, minutes, seconds] = match;
     return `${hours}:${minutes.padStart(2, '0')}:${seconds.padStart(2, '0')}`;
   };
 
-  const formatDistance = (distance: string | number | { formatted: string } | undefined): string => {
-    if (!distance) {return '-';}
+  const formatDistance = (
+    distance: string | number | { formatted: string } | undefined
+  ): string => {
+    if (!distance) {
+      return '-';
+    }
 
     // Use type guard for safe property access
     let distanceStr: string;
@@ -48,7 +58,9 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
   };
 
   const formatDate = (date: Date | string | undefined): string => {
-    if (!date) {return '-';}
+    if (!date) {
+      return '-';
+    }
     if (date instanceof Date) {
       return date.toLocaleDateString('pl-PL', {
         year: 'numeric',
@@ -72,7 +84,9 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
     <div className="sessions-table-container">
       <div className="sessions-table-header">
         <h2 className="sessions-table-title">Twoje sesje treningowe</h2>
-        <p className="sessions-table-subtitle">Kliknij &quot;Analizuj&quot; aby zobaczyć szczegółową analizę</p>
+        <p className="sessions-table-subtitle">
+          Kliknij &quot;Analizuj&quot; aby zobaczyć szczegółową analizę
+        </p>
       </div>
 
       <div className="sessions-table-wrapper">
@@ -92,19 +106,27 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
               <tr key={session.id}>
                 <td>
                   <div className="cell-content">
-                    <span className="material-symbols-outlined cell-icon icon-date">calendar_today</span>
+                    <span className="material-symbols-outlined cell-icon icon-date">
+                      calendar_today
+                    </span>
                     <span className="cell-text">{formatDate(session.activityDate)}</span>
                   </div>
                 </td>
                 <td>
                   <div className="cell-content">
-                    <span className="material-symbols-outlined cell-icon icon-pitch">location_on</span>
-                    <span className="cell-text">{session.pitchInfo?.name || 'Nieznane boisko'}</span>
+                    <span className="material-symbols-outlined cell-icon icon-pitch">
+                      location_on
+                    </span>
+                    <span className="cell-text">
+                      {session.pitchInfo?.name || 'Nieznane boisko'}
+                    </span>
                   </div>
                 </td>
                 <td>
                   <div className="cell-content">
-                    <span className="material-symbols-outlined cell-icon icon-duration">schedule</span>
+                    <span className="material-symbols-outlined cell-icon icon-duration">
+                      schedule
+                    </span>
                     <span className="cell-text">{formatDuration(session.totalDuration)}</span>
                   </div>
                 </td>
@@ -121,10 +143,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
                   </div>
                 </td>
                 <td>
-                  <button
-                    className="analyze-btn"
-                    onClick={() => handleAnalyze(session.id)}
-                  >
+                  <button className="analyze-btn" onClick={() => handleAnalyze(session.id)}>
                     <span className="material-symbols-outlined">analytics</span>
                     <span>Analizuj</span>
                   </button>

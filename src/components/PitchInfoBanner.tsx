@@ -13,11 +13,15 @@ interface PitchInfoBannerProps {
 }
 
 const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDate, duration }) => {
-  if (!pitchInfo) {return null;}
+  if (!pitchInfo) {
+    return null;
+  }
 
   // Generuj kalendarz dla miesiąca aktywności
   const generateCalendar = (date: Date) => {
-    if (!date) {return null;}
+    if (!date) {
+      return null;
+    }
 
     const year = date.getFullYear();
     const month = date.getMonth();
@@ -37,7 +41,8 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
     let dayCounter = 1;
 
     // Wypełnij kalendarz
-    for (let i = 0; i < 6; i++) { // Max 6 tygodni
+    for (let i = 0; i < 6; i++) {
+      // Max 6 tygodni
       week = new Array(7).fill(null);
 
       for (let j = 0; j < 7; j++) {
@@ -53,12 +58,24 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
       }
 
       weeks.push(week);
-      if (dayCounter > daysInMonth) {break;}
+      if (dayCounter > daysInMonth) {
+        break;
+      }
     }
 
     const monthNames = [
-      'Styczeń', 'Luty', 'Marzec', 'Kwiecień', 'Maj', 'Czerwiec',
-      'Lipiec', 'Sierpień', 'Wrzesień', 'Październik', 'Listopad', 'Grudzień'
+      'Styczeń',
+      'Luty',
+      'Marzec',
+      'Kwiecień',
+      'Maj',
+      'Czerwiec',
+      'Lipiec',
+      'Sierpień',
+      'Wrzesień',
+      'Październik',
+      'Listopad',
+      'Grudzień'
     ];
 
     return {
@@ -76,9 +93,10 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
     const colors = [
       'linear-gradient(135deg, rgba(202, 253, 0, 0.3) 0%, rgba(202, 253, 0, 0.1) 100%)',
       'linear-gradient(135deg, rgba(78, 205, 196, 0.3) 0%, rgba(78, 205, 196, 0.1) 100%)',
-      'linear-gradient(135deg, rgba(255, 115, 81, 0.3) 0%, rgba(255, 115, 81, 0.1) 100%)',
+      'linear-gradient(135deg, rgba(255, 115, 81, 0.3) 0%, rgba(255, 115, 81, 0.1) 100%)'
     ];
-    const hash = name?.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) || 0;
+    const hash =
+      name?.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0) || 0;
     return colors[hash % colors.length];
   };
 
@@ -86,10 +104,7 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
     <div className="pitch-info-banner">
       <div className="pitch-info-left">
         {/* Avatar boiska */}
-        <div
-          className="pitch-avatar"
-          style={{ background: getPitchColor(pitchInfo.name) }}
-        >
+        <div className="pitch-avatar" style={{ background: getPitchColor(pitchInfo.name) }}>
           <span className="material-symbols-outlined">stadium</span>
         </div>
 
@@ -122,7 +137,9 @@ const PitchInfoBanner: React.FC<PitchInfoBannerProps> = ({ pitchInfo, activityDa
               {/* Nagłówki dni tygodnia */}
               <div className="calendar-weekdays">
                 {['PN', 'WT', 'ŚR', 'CZ', 'PT', 'SB', 'ND'].map((day, i) => (
-                  <div key={i} className="calendar-weekday">{day}</div>
+                  <div key={i} className="calendar-weekday">
+                    {day}
+                  </div>
                 ))}
               </div>
 

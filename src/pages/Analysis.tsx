@@ -69,7 +69,12 @@ const Analysis = () => {
   if (!visualizationData) {
     return (
       <div className="empty-state">
-        <span className="material-symbols-outlined" style={{ fontSize: '4rem', opacity: 0.3, marginBottom: '1rem' }}>analytics</span>
+        <span
+          className="material-symbols-outlined"
+          style={{ fontSize: '4rem', opacity: 0.3, marginBottom: '1rem' }}
+        >
+          analytics
+        </span>
         <p>Brak danych do analizy</p>
         <button
           onClick={() => navigate('/dashboard')}
@@ -156,24 +161,11 @@ const Analysis = () => {
         </label>
       </div>
 
-      {showHeatmap && (
-        <HeatmapControls
-          settings={heatmapSettings}
-          onChange={setHeatmapSettings}
-        />
-      )}
+      {showHeatmap && <HeatmapControls settings={heatmapSettings} onChange={setHeatmapSettings} />}
 
-      {showSprints && (
-        <SprintControls
-          settings={sprintSettings}
-          onChange={setSprintSettings}
-        />
-      )}
+      {showSprints && <SprintControls settings={sprintSettings} onChange={setSprintSettings} />}
 
-      <SegmentSelector
-        selectedSegment={selectedSegment}
-        onChange={handleSegmentChange}
-      />
+      <SegmentSelector selectedSegment={selectedSegment} onChange={handleSegmentChange} />
 
       <div className="pitch-grid">
         {visualizationData.segments.map((segment, index) => (
@@ -215,9 +207,7 @@ const Analysis = () => {
               </div>
             </div>
 
-            {showSprints && segment.sprints && (
-              <SprintStats sprints={segment.sprints} />
-            )}
+            {showSprints && segment.sprints && <SprintStats sprints={segment.sprints} />}
           </div>
         ))}
       </div>

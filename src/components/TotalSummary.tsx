@@ -32,7 +32,8 @@ const TotalSummary: React.FC<TotalSummaryProps> = ({
             <span className="total-stat-value">
               {typeof totalDistance === 'number'
                 ? (totalDistance / 1000).toFixed(2)
-                : (totalDistance.meters / 1000).toFixed(2)} km
+                : (totalDistance.meters / 1000).toFixed(2)}{' '}
+              km
             </span>
           </div>
         )}

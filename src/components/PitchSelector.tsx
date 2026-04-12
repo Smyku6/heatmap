@@ -22,7 +22,7 @@ const PitchSelector: React.FC<PitchSelectorProps> = ({ selectedPitchId, onChange
         onChange={(e) => onChange(e.target.value)}
         className="pitch-selector-dropdown"
       >
-        {pitches.map(pitch => (
+        {pitches.map((pitch) => (
           <option key={pitch.id} value={pitch.id}>
             {pitch.name} - {pitch.location}
           </option>

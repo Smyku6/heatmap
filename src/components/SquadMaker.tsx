@@ -1,4 +1,3 @@
-
 import Pitch from './Pitch';
 import { DEFAULT_PITCH_ID } from '../config/pitches';
 import { prepareVisualizationData } from '../utils/tcxParser';
@@ -9,13 +8,7 @@ import './SquadMaker.css';
 const SquadMaker = () => {
   // Przygotuj wizualizację z pustymi punktami tracking (używamy dokładnie tej samej logiki co główny widok)
   const emptyPoints: TrackPoint[] = [];
-  const vizData = prepareVisualizationData(
-    emptyPoints,
-    'full',
-    DEFAULT_PITCH_ID,
-    'original',
-    null
-  );
+  const vizData = prepareVisualizationData(emptyPoints, 'full', DEFAULT_PITCH_ID, 'original', null);
 
   // Generuj 14 graczy
   const players = Array.from({ length: 14 }, (_, i) => ({
@@ -66,7 +59,14 @@ const SquadMaker = () => {
             showActivityPoints={false}
             showHeatmap={false}
             satellite={vizData.satellite}
-            satelliteTransform={vizData.satellite?.transforms?.original ?? { scale: 1.0, rotation: 0, translateX: 0, translateY: 0 }}
+            satelliteTransform={
+              vizData.satellite?.transforms?.original ?? {
+                scale: 1.0,
+                rotation: 0,
+                translateX: 0,
+                translateY: 0
+              }
+            }
             centerCircleRadius={vizData.centerCircleRadius}
             pitchDimensions={vizData.pitchInfo.dimensions}
             goal={vizData.goal}

@@ -11,22 +11,34 @@ interface SprintLayerProps {
 /**
  * Komponent renderujący warstwę sprintów jako strzałki w SVG
  */
-const SprintLayer: React.FC<SprintLayerProps> = ({ sprints, simplified = true, showNumbers = false }) => {
-  if (!sprints || sprints.length === 0) {return null;}
+const SprintLayer: React.FC<SprintLayerProps> = ({
+  sprints,
+  simplified = true,
+  showNumbers = false
+}) => {
+  if (!sprints || sprints.length === 0) {
+    return null;
+  }
 
   // Funkcja zwracająca kolor na podstawie prędkości
   const getSpeedColor = (speed: number): string => {
-    if (speed >= 25) {return '#ff0000';}      // Czerwony >25 km/h
-    if (speed >= 23) {return '#ff8800';}      // Pomarańczowy 23-25 km/h
-    if (speed >= 20) {return '#ffdd00';}      // Żółty 20-23 km/h
-    return '#00ff00';                        // Zielony 18-20 km/h
+    if (speed >= 25) {
+      return '#ff0000';
+    } // Czerwony >25 km/h
+    if (speed >= 23) {
+      return '#ff8800';
+    } // Pomarańczowy 23-25 km/h
+    if (speed >= 20) {
+      return '#ffdd00';
+    } // Żółty 20-23 km/h
+    return '#00ff00'; // Zielony 18-20 km/h
   };
 
   return (
     <g className="sprint-layer">
       <defs>
         {/* Definicje strzałek dla różnych kolorów */}
-        {['#00ff00', '#ffdd00', '#ff8800', '#ff0000'].map(color => (
+        {['#00ff00', '#ffdd00', '#ff8800', '#ff0000'].map((color) => (
           <marker
             key={color}
             id={`arrowhead-${color.replace('#', '')}`}
@@ -37,10 +49,7 @@ const SprintLayer: React.FC<SprintLayerProps> = ({ sprints, simplified = true, s
             orient="auto"
             markerUnits="strokeWidth"
           >
-            <path
-              d="M0,0 L0,6 L9,3 z"
-              fill={color}
-            />
+            <path d="M0,0 L0,6 L9,3 z" fill={color} />
           </marker>
         ))}
       </defs>
@@ -82,7 +91,7 @@ const SprintLayer: React.FC<SprintLayerProps> = ({ sprints, simplified = true, s
           );
         } else {
           // Szczegółowa polyline pokazująca dokładną ścieżkę
-          const points = sprint.points.map(p => `${p.x},${p.y}`).join(' ');
+          const points = sprint.points.map((p) => `${p.x},${p.y}`).join(' ');
           return (
             <g key={index}>
               <polyline
