@@ -43,7 +43,7 @@ const SquadMaker = () => {
           <span className="material-symbols-outlined">info</span>
           <div className="info-content">
             <h3>Coming Soon</h3>
-            <p>This feature is currently under development. Soon you'll be able to:</p>
+            <p>This feature is currently under development. Soon you&apos;ll be able to:</p>
             <ul>
               <li>Create custom formations (4-3-3, 4-4-2, etc.)</li>
               <li>Drag and drop players on the pitch</li>

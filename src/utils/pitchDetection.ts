@@ -95,10 +95,10 @@ export const autoDetectPitch = (trackingPoints: TrackPoint[]): string | null => 
   // Jeśli przynajmniej 10% punktów jest w boisku, uznaj za dopasowanie
   const threshold = trackingPoints.length * 0.1;
   if (maxPointsInside >= threshold && bestMatch !== null) {
-    console.log(`Auto-detected pitch: ${(bestMatch as PitchConfig).name} (${maxPointsInside}/${trackingPoints.length} points inside)`);
+    console.warn(`Auto-detected pitch: ${(bestMatch as PitchConfig).name} (${maxPointsInside}/${trackingPoints.length} points inside)`);
     return (bestMatch as PitchConfig).id;
   }
 
-  console.log('No pitch detected, using default');
+  console.warn('No pitch detected, using default');
   return null;
 };

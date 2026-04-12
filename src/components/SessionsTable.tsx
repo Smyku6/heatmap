@@ -64,7 +64,7 @@ const SessionsTable: React.FC<SessionsTableProps> = ({ sessions }) => {
     <div className="sessions-table-container">
       <div className="sessions-table-header">
         <h2 className="sessions-table-title">Twoje sesje treningowe</h2>
-        <p className="sessions-table-subtitle">Kliknij "Analizuj" aby zobaczyć szczegółową analizę</p>
+        <p className="sessions-table-subtitle">Kliknij &quot;Analizuj&quot; aby zobaczyć szczegółową analizę</p>
       </div>
 
       <div className="sessions-table-wrapper">
