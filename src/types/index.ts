@@ -2,6 +2,40 @@
 // SESSION TYPES
 // ============================================
 
+/**
+ * Training session representing a complete football activity
+ *
+ * Sessions are created from TCX files and contain GPS tracking data,
+ * pitch information, and calculated metrics like distance and duration.
+ * They are persisted to localStorage and can be loaded for detailed analysis.
+ *
+ * @property id - Unique session identifier (timestamp-based)
+ * @property rawPoints - Original GPS tracking points from TCX file
+ * @property pitchId - Identifier of the detected pitch
+ * @property activityDate - Date when the activity was recorded
+ * @property totalDuration - Activity duration (string or formatted object)
+ * @property totalDistance - Total distance traveled (string/number/formatted object)
+ * @property totalAvgHeartRate - Average heart rate across activity (null if unavailable)
+ * @property totalPointCount - Number of GPS tracking points
+ * @property pitchInfo - Metadata about the pitch (name, dimensions, location)
+ * @property visualizationData - Processed data ready for canvas rendering
+ *
+ * @example
+ * ```typescript
+ * const session: Session = {
+ *   id: '1234567890',
+ *   rawPoints: parseTCX(tcxContent),
+ *   pitchId: 'orlik-kopernika',
+ *   activityDate: new Date(),
+ *   totalDuration: '1:30:00',
+ *   totalDistance: 5000,
+ *   totalAvgHeartRate: 145,
+ *   totalPointCount: 1800,
+ *   pitchInfo: { name: 'Orlik Kopernika', dimensions: { width: 40, length: 60 } },
+ *   visualizationData: prepareVisualizationData(...)
+ * };
+ * ```
+ */
 export interface Session {
   id: string;
   rawPoints: TrackPoint[];
@@ -19,6 +53,20 @@ export interface Session {
 // TRACKING & GPS TYPES
 // ============================================
 
+/**
+ * GPS tracking point from TCX file
+ *
+ * Represents a single GPS measurement with coordinates, timestamp,
+ * and optional sensor data (heart rate, altitude, speed).
+ *
+ * @property lat - Latitude in decimal degrees
+ * @property lon - Longitude in decimal degrees
+ * @property time - Timestamp of the measurement
+ * @property altitude - Elevation in meters (optional)
+ * @property distance - Cumulative distance in meters (optional)
+ * @property speed - Instantaneous speed in km/h (optional)
+ * @property heartRate - Heart rate in BPM (optional)
+ */
 export interface TrackPoint {
   lat: number;
   lon: number;
@@ -29,6 +77,18 @@ export interface TrackPoint {
   heartRate?: number;
 }
 
+/**
+ * GPS tracking point transformed to SVG canvas coordinates
+ *
+ * Represents a TrackPoint after perspective transformation,
+ * containing both SVG rendering coordinates (x,y) and metadata.
+ *
+ * @property x - X coordinate on SVG canvas
+ * @property y - Y coordinate on SVG canvas
+ * @property time - Timestamp of the measurement
+ * @property heartRate - Heart rate in BPM (optional)
+ * @property speed - Instantaneous speed in km/h (optional)
+ */
 export interface TransformedPoint {
   x: number;
   y: number;
@@ -154,6 +214,29 @@ export interface Sprint {
   endTime: Date;
 }
 
+/**
+ * Configuration settings for sprint detection algorithm
+ *
+ * Defines thresholds for identifying high-speed running segments
+ * and display preferences for sprint visualization.
+ *
+ * @property minSpeed - Minimum speed threshold in km/h (default: 16.5)
+ * @property minDuration - Minimum sprint duration in seconds (default: 2)
+ * @property minDistance - Minimum sprint distance in meters (default: 10)
+ * @property simplified - Use simplified sprint visualization (default: true)
+ * @property showNumbers - Display sprint numbers on canvas (default: false)
+ *
+ * @example
+ * ```typescript
+ * const settings: SprintSettings = {
+ *   minSpeed: 18.0,
+ *   minDuration: 3,
+ *   minDistance: 15,
+ *   simplified: true,
+ *   showNumbers: true
+ * };
+ * ```
+ */
 export interface SprintSettings {
   minSpeed: number;
   minDuration: number;
@@ -166,6 +249,29 @@ export interface SprintSettings {
 // HEATMAP TYPES
 // ============================================
 
+/**
+ * Configuration settings for heatmap visualization
+ *
+ * Controls the appearance and behavior of the activity heatmap overlay,
+ * including color intensity, opacity, and density calculations.
+ *
+ * @property intensity - Heat intensity multiplier (higher = more intense colors)
+ * @property opacity - Overall heatmap opacity (0.0 - 1.0)
+ * @property densityRadius - Radius in pixels for density calculation
+ * @property colorPalette - Color scheme ('classic' | 'thermal' | 'purple' | 'mono')
+ * @property minThreshold - Minimum density value to display (filters noise)
+ *
+ * @example
+ * ```typescript
+ * const settings: HeatmapSettings = {
+ *   intensity: 14,
+ *   opacity: 0.65,
+ *   densityRadius: 10,
+ *   colorPalette: 'thermal',
+ *   minThreshold: 0
+ * };
+ * ```
+ */
 export interface HeatmapSettings {
   intensity: number;
   opacity: number;

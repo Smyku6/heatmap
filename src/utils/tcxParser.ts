@@ -89,9 +89,31 @@ const calculatePitchRotationAngle = (_pitchCornersSVG: PitchCorners, orientation
   return 0;
 };
 
-// Konwertuje GPS lat/lon na współrzędne SVG
-// Używa transformacji perspektywicznej (homografia) aby zmapować czworokąt GPS na prostokąt canvas
-// Zachowuje rzeczywiste proporcje boiska (obliczone z GPS)
+/**
+ * Converts GPS lat/lon coordinates to SVG canvas coordinates
+ *
+ * Uses perspective transformation (homography) to map GPS quadrilateral onto
+ * a rectangular canvas while preserving real-world pitch proportions calculated
+ * from GPS distances.
+ *
+ * @param allPoints - All GPS points to include in bounds calculation
+ * @param canvasWidth - Canvas width in pixels (default: 1000)
+ * @param canvasHeight - Canvas height in pixels (default: 800)
+ * @param pitchCorners - GPS coordinates of the four pitch corners
+ * @returns Conversion function and canvas dimensions
+ *
+ * @example
+ * ```typescript
+ * const pitchCorners = getPitch('orlik-kopernika').corners;
+ * const { toSVG, canvasWidth, canvasHeight } = convertGPSToSVG(
+ *   allPoints,
+ *   1000,
+ *   800,
+ *   pitchCorners
+ * );
+ * const svgPoint = toSVG(point.lat, point.lon);
+ * ```
+ */
 export const convertGPSToSVG = (
   allPoints: Array<GPSCoordinates>,
   canvasWidth = 1000,
@@ -215,7 +237,22 @@ const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: numbe
   return R * c;
 };
 
-// Oblicza wymiary boiska na podstawie narożników GPS
+/**
+ * Calculates pitch dimensions from GPS corner coordinates
+ *
+ * Uses Haversine formula to calculate real-world distances between corner points
+ * and averages opposite sides to get width and length in meters.
+ *
+ * @param corners - GPS coordinates of the four pitch corners
+ * @returns Pitch dimensions object with width and length in meters (rounded)
+ *
+ * @example
+ * ```typescript
+ * const pitchCorners = getPitch('orlik-kopernika').corners;
+ * const dimensions = calculatePitchDimensions(pitchCorners);
+ * console.log(`Pitch: ${dimensions.width}m × ${dimensions.length}m`);
+ * ```
+ */
 export const calculatePitchDimensions = (corners: GPSPitchCorners) => {
   // Szerokość (górna i dolna krawędź)
   const topWidth = calculateDistance(
@@ -260,7 +297,27 @@ const calculateSpeed = (point1: TrackPoint, point2: TrackPoint): number => {
   return speedKmH;
 };
 
-// Wykrywa sprinty w danych trackingowych
+/**
+ * Detects sprint segments in tracking data
+ *
+ * Analyzes GPS tracking points to identify periods of high-speed running based on
+ * configurable thresholds for speed, duration, and distance. Returns sprints with
+ * GPS coordinates (before SVG transformation).
+ *
+ * @param trackingPoints - Array of GPS tracking points with timestamps
+ * @param settings - Sprint detection configuration (optional, uses defaults)
+ * @returns Array of detected sprint segments with GPS coordinates
+ *
+ * @example
+ * ```typescript
+ * const sprints = detectSprints(points, {
+ *   minSpeed: 16.5,    // km/h
+ *   minDuration: 2,    // seconds
+ *   minDistance: 10    // meters
+ * });
+ * console.log(`Detected ${sprints.length} sprints`);
+ * ```
+ */
 export const detectSprints = (
   trackingPoints: TrackPoint[],
   settings: Partial<SprintSettings> = {}
@@ -368,7 +425,22 @@ const finalizeSprint = (
   };
 };
 
-// Oblicza całkowitą przebiegniętą odległość
+/**
+ * Calculates total distance traveled across all tracking points
+ *
+ * Uses Haversine formula to calculate GPS distance between consecutive points
+ * and sums them up for the total distance.
+ *
+ * @param trackingPoints - Array of GPS tracking points
+ * @returns Total distance in meters
+ *
+ * @example
+ * ```typescript
+ * const points = parseTCX(tcxContent);
+ * const distance = calculateTotalDistance(points);
+ * console.log(`Total distance: ${(distance / 1000).toFixed(2)} km`);
+ * ```
+ */
 export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => {
   if (trackingPoints.length < 2) {return 0;}
 
@@ -382,7 +454,24 @@ export const calculateTotalDistance = (trackingPoints: TrackPoint[]): number => 
   return totalDistance; // w metrach
 };
 
-// Oblicza czas trwania aktywności
+/**
+ * Calculates activity duration from tracking points
+ *
+ * Computes time difference between first and last tracking point,
+ * formatting it as hours:minutes:seconds with additional metadata.
+ *
+ * @param trackingPoints - Array of GPS tracking points with timestamps
+ * @returns Duration object with formatted string and time range, or null if insufficient data
+ *
+ * @example
+ * ```typescript
+ * const duration = calculateDuration(points);
+ * if (duration) {
+ *   console.log(`Duration: ${duration.formatted}`);
+ *   console.log(`Time range: ${duration.timeRange}`);
+ * }
+ * ```
+ */
 export const calculateDuration = (trackingPoints: TrackPoint[]) => {
   if (trackingPoints.length < 2) {return null;}
 
@@ -415,7 +504,24 @@ export const calculateDuration = (trackingPoints: TrackPoint[]) => {
   };
 };
 
-// Dzieli punkty na segmenty czasowe (według czasu, nie liczby punktów)
+/**
+ * Splits tracking points into time-based segments
+ *
+ * Divides the activity into equal time segments (halves, thirds, or quarters)
+ * based on timestamps, not point count. This ensures each segment represents
+ * an equal portion of time.
+ *
+ * @param trackingPoints - Array of GPS tracking points with timestamps
+ * @param segmentType - Type of segmentation ('full' | 'halves' | 'thirds' | 'quarters')
+ * @returns Array of point arrays, one for each segment
+ *
+ * @example
+ * ```typescript
+ * const segments = splitIntoSegments(points, 'halves');
+ * console.log(`First half: ${segments[0].length} points`);
+ * console.log(`Second half: ${segments[1].length} points`);
+ * ```
+ */
 export const splitIntoSegments = (
   trackingPoints: TrackPoint[],
   segmentType: SegmentType
