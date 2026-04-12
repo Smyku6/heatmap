@@ -121,12 +121,31 @@ export interface PenaltyBoxDimensions {
 // SPRINT TYPES
 // ============================================
 
+// Sprint points have both GPS coordinates and SVG coordinates after transformation
+export type SprintPoint = TrackPoint & TransformedPoint;
+
+// Raw sprint data before SVG transformation
+export interface RawSprint {
+  startIndex?: number;
+  endIndex?: number;
+  startPoint: TrackPoint;
+  endPoint: TrackPoint;
+  points: TrackPoint[];
+  duration: number;
+  distance: number;
+  avgSpeed: number;
+  maxSpeed: number;
+  startTime: Date;
+  endTime: Date;
+}
+
+// Sprint data after SVG transformation (used in visualization)
 export interface Sprint {
   startIndex?: number;
   endIndex?: number;
-  startPoint?: TrackPoint | TransformedPoint;
-  endPoint?: TrackPoint | TransformedPoint;
-  points: (TrackPoint | TransformedPoint)[];
+  startPoint: SprintPoint;
+  endPoint: SprintPoint;
+  points: SprintPoint[];
   duration: number;
   distance: number;
   avgSpeed: number;

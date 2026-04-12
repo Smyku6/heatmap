@@ -7,8 +7,10 @@ import type {
   OrientationType,
   VisualizationData,
   SprintSettings,
-  PitchCorners,
-  Sprint
+  Sprint,
+  RawSprint,
+  SprintPoint,
+  PitchCorners
 } from '../types';
 
 /**
@@ -256,7 +258,7 @@ const calculateSpeed = (point1: TrackPoint, point2: TrackPoint): number => {
 export const detectSprints = (
   trackingPoints: TrackPoint[],
   settings: Partial<SprintSettings> = {}
-): Sprint[] => {
+): RawSprint[] => {
   const {
     minSpeed = 16.5,      // Minimalna prędkość w km/h
     minDuration = 2,      // Minimalna długość sprintu w sekundach
@@ -324,7 +326,7 @@ const finalizeSprint = (
   sprint: SprintInProgress,
   minDuration: number,
   minDistance: number
-): Sprint | null => {
+): RawSprint | null => {
   const startTime = new Date(sprint.points[0].time);
   const endTime = new Date(sprint.points[sprint.points.length - 1].time);
   const duration = (endTime.getTime() - startTime.getTime()) / 1000; // w sekundach
@@ -521,7 +523,7 @@ export const prepareVisualizationData = (
       : null;
 
     // Wykryj sprinty jeśli ustawienia są podane
-    let sprints: any[] = [];
+    let sprints: Sprint[] = [];
     if (sprintSettings) {
       const detectedSprints = detectSprints(segmentPoints, sprintSettings);
       // Konwertuj punkty sprintów do współrzędnych SVG
@@ -530,15 +532,15 @@ export const prepareVisualizationData = (
         startPoint: {
           ...sprint.startPoint,
           ...toSVG(sprint.startPoint.lat, sprint.startPoint.lon)
-        },
+        } as SprintPoint,
         endPoint: {
           ...sprint.endPoint,
           ...toSVG(sprint.endPoint.lat, sprint.endPoint.lon)
-        },
+        } as SprintPoint,
         points: sprint.points.map(p => ({
           ...p,
           ...toSVG(p.lat, p.lon)
-        }))
+        } as SprintPoint))
       }));
     }
 
