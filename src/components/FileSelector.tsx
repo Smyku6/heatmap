@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 
 import { getPerformancesList } from '../config/performances';
 
-import type { PitchId } from '../types';
+import type { PitchId, FileUploadState } from '../types';
 import './FileSelector.css';
 
 interface FileSelectorProps {
@@ -12,7 +12,7 @@ interface FileSelectorProps {
 
 const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerformance }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [uploadState, setUploadState] = useState<FileUploadState>({ type: 'idle' });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -21,25 +21,37 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
     }
 
     if (!file.name.endsWith('.tcx')) {
-      console.error('Proszę wybrać plik TCX');
+      setUploadState({ type: 'error', message: 'Proszę wybrać plik TCX' });
+      setTimeout(() => setUploadState({ type: 'idle' }), 3000);
       return;
     }
 
-    setIsLoading(true);
+    setUploadState({ type: 'parsing', progress: 0 });
     const reader = new FileReader();
+
+    reader.onprogress = (progressEvent) => {
+      if (progressEvent.lengthComputable) {
+        const progress = (progressEvent.loaded / progressEvent.total) * 100;
+        setUploadState({ type: 'parsing', progress });
+      }
+    };
+
     reader.onload = (event) => {
       setTimeout(() => {
         const result = event.target?.result;
         if (typeof result === 'string') {
           onFileLoad(result);
+          // Success state would be set after session creation
+          setUploadState({ type: 'idle' });
         }
-        setIsLoading(false);
       }, 300);
     };
+
     reader.onerror = () => {
-      console.error('Błąd wczytywania pliku');
-      setIsLoading(false);
+      setUploadState({ type: 'error', message: 'Błąd wczytywania pliku' });
+      setTimeout(() => setUploadState({ type: 'idle' }), 3000);
     };
+
     reader.readAsText(file);
   };
 
@@ -50,7 +62,7 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
     }
 
     const performance = performances[0]; // Bierzemy pierwszy przykładowy plik
-    setIsLoading(true);
+    setUploadState({ type: 'parsing', progress: 50 });
 
     try {
       const response = await fetch(performance.tcxFile);
@@ -61,35 +73,20 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
 
       setTimeout(() => {
         onLoadPerformance(tcxContent, performance.pitchId);
-        setIsLoading(false);
+        setUploadState({ type: 'idle' });
       }, 300);
     } catch (error) {
       console.error('Błąd ładowania występu:', error);
-      console.error('Nie można załadować przykładowego pliku');
-      setIsLoading(false);
+      setUploadState({ type: 'error', message: 'Nie można załadować przykładowego pliku' });
+      setTimeout(() => setUploadState({ type: 'idle' }), 3000);
     }
   };
 
-  return (
-    <div className="file-selector">
-      <div className="file-selector-card">
-        <div className="file-selector-header">
-          <span className="material-symbols-outlined file-selector-icon">
-            {isLoading ? 'sync' : 'analytics'}
-          </span>
-          <div className="file-selector-title-group">
-            <h3 className="file-selector-title">
-              {isLoading ? 'Wczytuję dane...' : 'Rozpocznij analizę'}
-            </h3>
-            <p className="file-selector-subtitle">
-              {isLoading
-                ? 'Przetwarzanie danych treningowych'
-                : 'Wybierz plik TCX z Garmin lub użyj przykładu'}
-            </p>
-          </div>
-        </div>
-
-        {!isLoading && (
+  // Type-safe exhaustive rendering based on upload state
+  const renderContent = () => {
+    switch (uploadState.type) {
+      case 'idle':
+        return (
           <div className="file-selector-actions">
             <button
               className="file-selector-btn primary"
@@ -108,13 +105,65 @@ const FileSelector: React.FC<FileSelectorProps> = ({ onFileLoad, onLoadPerforman
               <span>Przykładowy plik</span>
             </button>
           </div>
-        )}
+        );
 
-        {isLoading && (
+      case 'selecting':
+        return (
+          <div className="file-selector-loading">
+            <p>Wybieranie pliku...</p>
+          </div>
+        );
+
+      case 'parsing':
+        return (
           <div className="file-selector-loading">
             <div className="loading-spinner" />
+            {uploadState.progress > 0 && (
+              <p style={{ marginTop: '1rem', fontSize: '0.875rem', opacity: 0.7 }}>
+                Wczytywanie: {Math.round(uploadState.progress)}%
+              </p>
+            )}
           </div>
-        )}
+        );
+
+      case 'success':
+        return (
+          <div className="file-selector-loading">
+            <p style={{ color: 'var(--color-primary)' }}>✓ Plik wczytany pomyślnie!</p>
+          </div>
+        );
+
+      case 'error':
+        return (
+          <div className="file-selector-loading">
+            <p style={{ color: '#ef4444' }}>✗ {uploadState.message}</p>
+          </div>
+        );
+    }
+  };
+
+  const isProcessing = uploadState.type === 'parsing' || uploadState.type === 'selecting';
+
+  return (
+    <div className="file-selector">
+      <div className="file-selector-card">
+        <div className="file-selector-header">
+          <span className="material-symbols-outlined file-selector-icon">
+            {isProcessing ? 'sync' : 'analytics'}
+          </span>
+          <div className="file-selector-title-group">
+            <h3 className="file-selector-title">
+              {isProcessing ? 'Wczytuję dane...' : 'Rozpocznij analizę'}
+            </h3>
+            <p className="file-selector-subtitle">
+              {isProcessing
+                ? 'Przetwarzanie danych treningowych'
+                : 'Wybierz plik TCX z Garmin lub użyj przykładu'}
+            </p>
+          </div>
+        </div>
+
+        {renderContent()}
       </div>
 
       <input
