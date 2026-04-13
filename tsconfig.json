@@ -1,0 +1,50 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "ignoreDeprecations": "6.0",
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Strict Type Checking (Enterprise Level - Progressive Enablement) */
+    "strict": true,
+    "noImplicitAny": true, // ✅ ENABLED - No implicit any types
+    "strictNullChecks": true, // ✅ ENABLED - Null safety checks
+    "strictFunctionTypes": true, // ✅ ENABLED
+    "strictBindCallApply": true, // ✅ ENABLED
+    "strictPropertyInitialization": true, // ✅ ENABLED - With strictNullChecks
+    "noImplicitThis": true, // ✅ ENABLED
+    "alwaysStrict": true, // ✅ ENABLED
+
+    /* Additional Checks */
+    "noUnusedLocals": true, // ✅ ENABLED - Detect unused local variables
+    "noUnusedParameters": true, // ✅ ENABLED - Detect unused function parameters
+    "noImplicitReturns": true, // ✅ ENABLED
+    "noFallthroughCasesInSwitch": true, // ✅ ENABLED
+    "noUncheckedIndexedAccess": false, // 🔄 TODO: Enable after array safety (~20 errors)
+    "noImplicitOverride": true, // ✅ ENABLED
+    "noPropertyAccessFromIndexSignature": false, // 🔄 TODO: Enable after index signature fixes
+
+    /* Import/Export Strictness */
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
+}

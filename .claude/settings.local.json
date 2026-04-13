@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run deploy:*)"
+      "Bash(find:*)",
+      "Bash(git mv:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npm run lint:*)",
+      "Read(//c/**)"
     ],
     "deny": [],
     "ask": []
