@@ -166,6 +166,85 @@ export function isUploadError(state: FileUploadState): state is { type: 'error';
 }
 
 // ============================================
+// DRAG & DROP UPLOAD STATES
+// ============================================
+
+/**
+ * Drag-and-drop file upload state machine
+ *
+ * Tracks the complete lifecycle of a drag-and-drop file upload:
+ * - idle: Normal state, waiting for user interaction
+ * - dragging: File is being dragged over the drop zone
+ * - uploading: File is being read and processed
+ * - error: Upload or processing failed with error message
+ *
+ * @example
+ * ```typescript
+ * const [uploadState, setUploadState] = useState<DragDropUploadState>({ type: 'idle' });
+ *
+ * function handleDragEnter() {
+ *   setUploadState({ type: 'dragging' });
+ * }
+ *
+ * function handleDrop(file: File) {
+ *   setUploadState({ type: 'uploading', progress: 0 });
+ *   const reader = new FileReader();
+ *
+ *   reader.onprogress = (e) => {
+ *     const progress = (e.loaded / e.total) * 100;
+ *     setUploadState({ type: 'uploading', progress });
+ *   };
+ *
+ *   reader.onload = () => {
+ *     processFile(reader.result);
+ *     setUploadState({ type: 'idle' });
+ *   };
+ *
+ *   reader.onerror = () => {
+ *     setUploadState({ type: 'error', message: 'Failed to read file' });
+ *   };
+ * }
+ * ```
+ */
+export type DragDropUploadState =
+  | { type: 'idle' }
+  | { type: 'dragging' }
+  | { type: 'uploading'; progress?: number }
+  | { type: 'error'; message: string };
+
+/**
+ * Type guard to check if drag-drop state is idle
+ */
+export function isDragDropIdle(state: DragDropUploadState): state is { type: 'idle' } {
+  return state.type === 'idle';
+}
+
+/**
+ * Type guard to check if drag-drop state is dragging
+ */
+export function isDragDropDragging(state: DragDropUploadState): state is { type: 'dragging' } {
+  return state.type === 'dragging';
+}
+
+/**
+ * Type guard to check if drag-drop state is uploading
+ */
+export function isDragDropUploading(
+  state: DragDropUploadState
+): state is { type: 'uploading'; progress?: number } {
+  return state.type === 'uploading';
+}
+
+/**
+ * Type guard to check if drag-drop state is error
+ */
+export function isDragDropError(
+  state: DragDropUploadState
+): state is { type: 'error'; message: string } {
+  return state.type === 'error';
+}
+
+// ============================================
 // DATA FETCHING STATES
 // ============================================
 

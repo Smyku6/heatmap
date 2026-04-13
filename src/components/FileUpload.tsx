@@ -1,4 +1,6 @@
 import React, { useState, useRef } from 'react';
+
+import type { DragDropUploadState } from '../types';
 import './FileUpload.css';
 
 interface FileUploadProps {
@@ -6,8 +8,7 @@ interface FileUploadProps {
 }
 
 const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
+  const [uploadState, setUploadState] = useState<DragDropUploadState>({ type: 'idle' });
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const processFile = (file: File | undefined) => {
@@ -16,26 +17,37 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
     }
 
     if (!file.name.endsWith('.tcx')) {
-      console.error('Proszę wybrać plik TCX');
+      setUploadState({ type: 'error', message: 'Proszę wybrać plik TCX' });
+      setTimeout(() => setUploadState({ type: 'idle' }), 3000);
       return;
     }
 
-    setIsUploading(true);
+    setUploadState({ type: 'uploading', progress: 0 });
 
     const reader = new FileReader();
+
+    reader.onprogress = (progressEvent) => {
+      if (progressEvent.lengthComputable) {
+        const progress = (progressEvent.loaded / progressEvent.total) * 100;
+        setUploadState({ type: 'uploading', progress });
+      }
+    };
+
     reader.onload = (event) => {
       setTimeout(() => {
         const result = event.target?.result;
         if (typeof result === 'string') {
           onFileLoad(result);
         }
-        setIsUploading(false);
+        setUploadState({ type: 'idle' });
       }, 500); // Small delay for animation
     };
+
     reader.onerror = () => {
-      console.error('Błąd wczytywania pliku');
-      setIsUploading(false);
+      setUploadState({ type: 'error', message: 'Błąd wczytywania pliku' });
+      setTimeout(() => setUploadState({ type: 'idle' }), 3000);
     };
+
     reader.readAsText(file);
   };
 
@@ -46,13 +58,17 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(true);
+    if (uploadState.type === 'idle') {
+      setUploadState({ type: 'dragging' });
+    }
   };
 
   const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
+    if (uploadState.type === 'dragging') {
+      setUploadState({ type: 'idle' });
+    }
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -63,7 +79,10 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    setIsDragging(false);
+
+    if (uploadState.type === 'dragging') {
+      setUploadState({ type: 'idle' });
+    }
 
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
@@ -72,10 +91,85 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
   };
 
   const handleClick = () => {
-    fileInputRef.current?.click();
+    if (uploadState.type === 'idle' || uploadState.type === 'error') {
+      fileInputRef.current?.click();
+    }
   };
 
-  const zoneClasses = ['upload-zone', isDragging && 'drag-over', isUploading && 'uploading']
+  // Type-safe exhaustive rendering based on upload state
+  const renderContent = () => {
+    switch (uploadState.type) {
+      case 'idle':
+        return (
+          <>
+            <div className="upload-icon-circle">
+              <span className="material-symbols-outlined">speed</span>
+            </div>
+            <h3 className="upload-title">Wgraj plik TCX</h3>
+            <p className="upload-description">
+              Przeciągnij i upuść plik treningowy z Twojego urządzenia Garmin lub wybierz go z
+              dysku.
+            </p>
+            <button className="upload-button" type="button">
+              Wybierz plik
+            </button>
+          </>
+        );
+
+      case 'dragging':
+        return (
+          <>
+            <div className="upload-icon-circle">
+              <span className="material-symbols-outlined">download</span>
+            </div>
+            <h3 className="upload-title">Upuść plik tutaj</h3>
+            <p className="upload-description">Zwolnij przycisk myszy, aby rozpocząć wczytywanie</p>
+          </>
+        );
+
+      case 'uploading':
+        return (
+          <>
+            <div className="upload-icon-circle">
+              <span className="material-symbols-outlined">sync</span>
+            </div>
+            <h3 className="upload-title">Wczytuję...</h3>
+            <p className="upload-description">
+              Przetwarzanie danych treningowych...
+              {uploadState.progress !== undefined && uploadState.progress > 0 && (
+                <span style={{ display: 'block', marginTop: '0.5rem', fontSize: '0.875rem' }}>
+                  {Math.round(uploadState.progress)}%
+                </span>
+              )}
+            </p>
+          </>
+        );
+
+      case 'error':
+        return (
+          <>
+            <div className="upload-icon-circle" style={{ borderColor: '#ef4444' }}>
+              <span className="material-symbols-outlined" style={{ color: '#ef4444' }}>
+                error
+              </span>
+            </div>
+            <h3 className="upload-title" style={{ color: '#ef4444' }}>
+              Błąd
+            </h3>
+            <p className="upload-description">{uploadState.message}</p>
+            <button className="upload-button" type="button">
+              Spróbuj ponownie
+            </button>
+          </>
+        );
+    }
+  };
+
+  const zoneClasses = [
+    'upload-zone',
+    uploadState.type === 'dragging' && 'drag-over',
+    uploadState.type === 'uploading' && 'uploading'
+  ]
     .filter(Boolean)
     .join(' ');
 
@@ -91,25 +185,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileLoad }) => {
       >
         <div className="upload-zone-background" />
 
-        <div className="upload-zone-content">
-          <div className="upload-icon-circle">
-            <span className="material-symbols-outlined">{isUploading ? 'sync' : 'speed'}</span>
-          </div>
-
-          <h3 className="upload-title">{isUploading ? 'Wczytuję...' : 'Wgraj plik TCX'}</h3>
-
-          <p className="upload-description">
-            {isUploading
-              ? 'Przetwarzanie danych treningowych...'
-              : 'Przeciągnij i upuść plik treningowy z Twojego urządzenia Garmin lub wybierz go z dysku.'}
-          </p>
-
-          {!isUploading && (
-            <button className="upload-button" type="button">
-              Wybierz plik
-            </button>
-          )}
-        </div>
+        <div className="upload-zone-content">{renderContent()}</div>
 
         {/* Technical Grid Decoration */}
         <div className="upload-decoration">

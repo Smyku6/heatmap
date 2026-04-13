@@ -24,6 +24,7 @@ export {
 export type {
   LoadingState,
   FileUploadState,
+  DragDropUploadState,
   FetchState,
   ValidationState,
   ModalState
@@ -37,6 +38,10 @@ export {
   isUploadParsing,
   isUploadSuccess,
   isUploadError,
+  isDragDropIdle,
+  isDragDropDragging,
+  isDragDropUploading,
+  isDragDropError,
   createIdleState,
   createLoadingState,
   createSuccessState,
