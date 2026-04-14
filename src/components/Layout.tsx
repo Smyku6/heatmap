@@ -1,34 +1,17 @@
-import { Menu } from 'lucide-react';
-import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 
+import BottomNav from './BottomNav';
 import Sidebar from './Sidebar';
-import { Button } from './ui/button';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
 
 const Layout = () => {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
   return (
     <div className="flex h-screen overflow-hidden bg-background text-foreground">
       {/* Mobile Header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 z-40 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="flex h-14 items-center px-4">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="mr-2">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-64 p-0">
-              <Sidebar onNavigate={() => setMobileMenuOpen(false)} />
-            </SheetContent>
-          </Sheet>
-          <div className="flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary text-2xl">bolt</span>
-            <h1 className="text-lg font-bold tracking-wider text-primary">ADAMA LAB</h1>
-          </div>
+      <header className="md:hidden fixed top-0 left-0 right-0 z-40 bg-slate-950/70 backdrop-blur-xl">
+        <div className="flex h-16 items-center justify-center px-6">
+          <h1 className="text-xl font-bold tracking-tight text-[#cafd00] uppercase font-['Space_Grotesk']">
+            KINETIC LAB
+          </h1>
         </div>
       </header>
 
@@ -38,11 +21,14 @@ const Layout = () => {
       </div>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-y-auto pt-14 md:pt-0">
+      <main className="flex-1 flex flex-col overflow-y-auto pt-16 pb-24 md:pt-0 md:pb-0">
         <div className="flex-1 flex flex-col gap-6 p-4 md:p-8">
           <Outlet />
         </div>
       </main>
+
+      {/* Mobile Bottom Navigation */}
+      <BottomNav />
     </div>
   );
 };
