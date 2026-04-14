@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Analysis from './pages/Analysis';
 import Dashboard from './pages/Dashboard';
+import SidebarTest from './pages/SidebarTest';
 import SquadMaker from './pages/SquadMaker';
 import './App.css';
 
@@ -10,6 +11,9 @@ function App() {
   return (
     <BrowserRouter basename="/heatmap">
       <Routes>
+        {/* Test route - outside of Layout */}
+        <Route path="/sidebar-test" element={<SidebarTest />} />
+
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
