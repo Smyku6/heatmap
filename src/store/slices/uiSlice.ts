@@ -31,6 +31,7 @@ export interface UISlice {
   showHeatmap: boolean;
   showActivityPoints: boolean;
   showSprints: boolean;
+  showAveragePosition: boolean;
 
   // Settings
   heatmapSettings: HeatmapSettings;
@@ -44,6 +45,7 @@ export interface UISlice {
   setShowHeatmap: (show: boolean) => void;
   setShowActivityPoints: (show: boolean) => void;
   setShowSprints: (show: boolean) => void;
+  setShowAveragePosition: (show: boolean) => void;
   setHeatmapSettings: (settings: HeatmapSettings) => void;
   setSprintSettings: (settings: SprintSettings) => void;
   setSatelliteTransform: (transform: SatelliteTransform) => void;
@@ -75,6 +77,7 @@ export const createUISlice: StateCreator<
   showHeatmap: true,
   showActivityPoints: false,
   showSprints: false,
+  showAveragePosition: false,
 
   // Heatmap Settings
   heatmapSettings: {
@@ -137,6 +140,12 @@ export const createUISlice: StateCreator<
    * Toggles sprint visualization
    */
   setShowSprints: (show) => set({ showSprints: show }, false, 'ui/toggleSprints'),
+
+  /**
+   * Toggles average position marker visibility
+   */
+  setShowAveragePosition: (show) =>
+    set({ showAveragePosition: show }, false, 'ui/toggleAveragePosition'),
 
   /**
    * Updates heatmap configuration settings

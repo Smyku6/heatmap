@@ -69,7 +69,8 @@ export const selectOrientation = (state: AppState) => state.selectedOrientation;
 export const selectDisplayToggles = (state: AppState) => ({
   showHeatmap: state.showHeatmap,
   showActivityPoints: state.showActivityPoints,
-  showSprints: state.showSprints
+  showSprints: state.showSprints,
+  showAveragePosition: state.showAveragePosition
 });
 
 /**
@@ -148,6 +149,7 @@ export const selectViewState = (state: AppState) => ({
   toggles: {
     showHeatmap: state.showHeatmap,
     showActivityPoints: state.showActivityPoints,
-    showSprints: state.showSprints
+    showSprints: state.showSprints,
+    showAveragePosition: state.showAveragePosition
   }
 });

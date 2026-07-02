@@ -12,6 +12,7 @@ export const useAnalysis = () => {
   const showHeatmap = useAppStore((state) => state.showHeatmap);
   const showActivityPoints = useAppStore((state) => state.showActivityPoints);
   const showSprints = useAppStore((state) => state.showSprints);
+  const showAveragePosition = useAppStore((state) => state.showAveragePosition);
   const heatmapSettings = useAppStore((state) => state.heatmapSettings);
   const sprintSettings = useAppStore((state) => state.sprintSettings);
   const satelliteTransform = useAppStore((state) => state.satelliteTransform);
@@ -22,6 +23,7 @@ export const useAnalysis = () => {
   const setShowHeatmap = useAppStore((state) => state.setShowHeatmap);
   const setShowActivityPoints = useAppStore((state) => state.setShowActivityPoints);
   const setShowSprints = useAppStore((state) => state.setShowSprints);
+  const setShowAveragePosition = useAppStore((state) => state.setShowAveragePosition);
   const setHeatmapSettings = useAppStore((state) => state.setHeatmapSettings);
   const setSprintSettings = useAppStore((state) => state.setSprintSettings);
   const loadSessionForAnalysis = useAppStore((state) => state.loadSessionForAnalysis);
@@ -34,6 +36,7 @@ export const useAnalysis = () => {
     showHeatmap,
     showActivityPoints,
     showSprints,
+    showAveragePosition,
     heatmapSettings,
     sprintSettings,
     satelliteTransform,
@@ -42,6 +45,7 @@ export const useAnalysis = () => {
     setShowHeatmap,
     setShowActivityPoints,
     setShowSprints,
+    setShowAveragePosition,
     setHeatmapSettings,
     setSprintSettings,
     loadSessionForAnalysis,

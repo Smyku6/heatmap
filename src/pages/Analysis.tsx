@@ -30,6 +30,7 @@ const Analysis = () => {
     showHeatmap,
     showActivityPoints,
     showSprints,
+    showAveragePosition,
     heatmapSettings,
     sprintSettings,
     satelliteTransform,
@@ -38,6 +39,7 @@ const Analysis = () => {
     setShowHeatmap,
     setShowActivityPoints,
     setShowSprints,
+    setShowAveragePosition,
     setHeatmapSettings,
     setSprintSettings,
     loadSessionForAnalysis,
@@ -159,6 +161,15 @@ const Analysis = () => {
           />
           <span>Pokaż punkty aktywności</span>
         </label>
+
+        <label className="checkbox-control">
+          <input
+            type="checkbox"
+            checked={showAveragePosition}
+            onChange={(e) => setShowAveragePosition(e.target.checked)}
+          />
+          <span>Pokaż średnią pozycję</span>
+        </label>
       </div>
 
       {showHeatmap && <HeatmapControls settings={heatmapSettings} onChange={setHeatmapSettings} />}
@@ -200,6 +211,7 @@ const Analysis = () => {
                   pitchDimensions={visualizationData.pitchInfo.dimensions}
                   goal={visualizationData.goal}
                   penaltyBox={visualizationData.penaltyBox}
+                  showAveragePosition={showAveragePosition}
                   showSprints={showSprints}
                   sprints={segment.sprints}
                   sprintSettings={sprintSettings}

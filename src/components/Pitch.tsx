@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import HeatmapLayer from './HeatmapLayer';
 import SprintLayer from './SprintLayer';
@@ -35,6 +35,7 @@ interface PitchProps {
   pitchDimensions?: { length: number; width: number };
   goal?: GoalDimensions;
   penaltyBox?: PenaltyBoxDimensions;
+  showAveragePosition?: boolean;
   showSprints?: boolean;
   sprints?: Sprint[];
   sprintSettings?: SprintSettings;
@@ -64,6 +65,7 @@ const Pitch: React.FC<PitchProps> = ({
   pitchDimensions = { length: 56, width: 26 },
   goal = { width: 5, height: 1 },
   penaltyBox = { width: 10, length: 5, goalBoxWidth: 5, goalBoxLength: 2 },
+  showAveragePosition = false,
   showSprints = false,
   sprints = [],
   sprintSettings = {
@@ -74,6 +76,8 @@ const Pitch: React.FC<PitchProps> = ({
     showNumbers: false
   }
 }) => {
+  const [showAvgTooltip, setShowAvgTooltip] = useState(false);
+
   if (!pitchCorners || !trackingPoints) {
     return null;
   }
@@ -319,6 +323,158 @@ const Pitch: React.FC<PitchProps> = ({
               showNumbers={sprintSettings.showNumbers}
             />
           )}
+
+          {/* Średnia pozycja */}
+          {showAveragePosition &&
+            trackingPoints.length > 0 &&
+            (() => {
+              const avgX = trackingPoints.reduce((sum, p) => sum + p.x, 0) / trackingPoints.length;
+              const avgY = trackingPoints.reduce((sum, p) => sum + p.y, 0) / trackingPoints.length;
+
+              // Oblicz dodatkowe statystyki
+              const pointsWithHR = trackingPoints.filter((p) => p.heartRate);
+              const avgHR =
+                pointsWithHR.length > 0
+                  ? Math.round(
+                      pointsWithHR.reduce((sum, p) => sum + (p.heartRate ?? 0), 0) /
+                        pointsWithHR.length
+                    )
+                  : null;
+
+              const pointsWithSpeed = trackingPoints.filter((p) => p.speed);
+              const avgSpeed =
+                pointsWithSpeed.length > 0
+                  ? (
+                      pointsWithSpeed.reduce((sum, p) => sum + (p.speed ?? 0), 0) /
+                      pointsWithSpeed.length
+                    ).toFixed(1)
+                  : null;
+
+              // Tooltip po prawej lub lewej stronie, zależnie od pozycji punktu
+              const tooltipOnRight = avgX < width / 2;
+              const tooltipX = tooltipOnRight ? avgX + 20 : avgX - 20;
+              const tooltipY = avgY;
+              const boxWidth = 160;
+              const boxHeight = avgHR && avgSpeed ? 72 : avgHR || avgSpeed ? 54 : 36;
+              const boxX = tooltipOnRight ? tooltipX : tooltipX - boxWidth;
+              const boxY = tooltipY - boxHeight / 2;
+
+              return (
+                <g
+                  style={{ cursor: 'pointer' }}
+                  onMouseEnter={() => setShowAvgTooltip(true)}
+                  onMouseLeave={() => setShowAvgTooltip(false)}
+                >
+                  {/* Zewnętrzny pulsujący okrąg */}
+                  <circle
+                    cx={avgX}
+                    cy={avgY}
+                    r={18}
+                    fill="none"
+                    stroke="#cafd00"
+                    strokeWidth="2"
+                    opacity={0.5}
+                  >
+                    <animate
+                      attributeName="r"
+                      values="14;22;14"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      values="0.6;0.2;0.6"
+                      dur="2s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                  {/* Główny punkt */}
+                  <circle
+                    cx={avgX}
+                    cy={avgY}
+                    r={10}
+                    fill="#cafd00"
+                    stroke="#fff"
+                    strokeWidth="2.5"
+                    opacity={0.9}
+                  />
+                  {/* Wewnętrzny punkt */}
+                  <circle cx={avgX} cy={avgY} r={4} fill="#0a0a0a" opacity={0.8} />
+
+                  {/* Tooltip */}
+                  {showAvgTooltip && (
+                    <g>
+                      {/* Linia łącząca punkt z tooltipem */}
+                      <line
+                        x1={avgX}
+                        y1={avgY}
+                        x2={tooltipOnRight ? boxX : boxX + boxWidth}
+                        y2={tooltipY}
+                        stroke="#cafd00"
+                        strokeWidth="1"
+                        opacity={0.5}
+                      />
+                      {/* Tło tooltipa */}
+                      <rect
+                        x={boxX}
+                        y={boxY}
+                        width={boxWidth}
+                        height={boxHeight}
+                        rx={6}
+                        fill="rgba(10, 10, 10, 0.9)"
+                        stroke="#cafd00"
+                        strokeWidth="1"
+                      />
+                      {/* Tytuł */}
+                      <text
+                        x={boxX + 10}
+                        y={boxY + 16}
+                        fill="#cafd00"
+                        fontSize="11"
+                        fontWeight="bold"
+                        fontFamily="sans-serif"
+                      >
+                        Średnia pozycja
+                      </text>
+                      {/* Punkty GPS */}
+                      <text
+                        x={boxX + 10}
+                        y={boxY + 32}
+                        fill="#ccc"
+                        fontSize="10"
+                        fontFamily="sans-serif"
+                      >
+                        Punkty GPS: {trackingPoints.length}
+                      </text>
+                      {/* Średnie tętno */}
+                      {avgHR && (
+                        <text
+                          x={boxX + 10}
+                          y={boxY + 48}
+                          fill="#ccc"
+                          fontSize="10"
+                          fontFamily="sans-serif"
+                        >
+                          Śr. tętno: {avgHR} bpm
+                        </text>
+                      )}
+                      {/* Średnia prędkość */}
+                      {avgSpeed && (
+                        <text
+                          x={boxX + 10}
+                          y={boxY + (avgHR ? 64 : 48)}
+                          fill="#ccc"
+                          fontSize="10"
+                          fontFamily="sans-serif"
+                        >
+                          Śr. prędkość: {avgSpeed} km/h
+                        </text>
+                      )}
+                    </g>
+                  )}
+                </g>
+              );
+            })()}
 
           {/* Markery narożników boiska */}
           {Object.entries(pitchCorners).map(([key, corner]) => {
