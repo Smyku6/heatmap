@@ -6,6 +6,7 @@ const BottomNav = () => {
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
     { id: 'analysis', label: 'Analysis', icon: 'analytics', path: '/analysis' },
+    { id: 'goal-analysis', label: 'Goals', icon: 'sports_soccer', path: '/goal-analysis' },
     { id: 'history', label: 'History', icon: 'history', path: '/history' },
     { id: 'settings', label: 'Settings', icon: 'settings', path: '/settings' }
   ];

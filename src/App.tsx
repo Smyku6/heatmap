@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Layout from './components/Layout';
 import Analysis from './pages/Analysis';
 import Dashboard from './pages/Dashboard';
+import GoalAnalysis from './pages/GoalAnalysis';
 import SidebarTest from './pages/SidebarTest';
 import SquadMaker from './pages/SquadMaker';
 import './App.css';
@@ -18,6 +19,7 @@ function App() {
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="analysis" element={<Analysis />} />
+          <Route path="goal-analysis" element={<GoalAnalysis />} />
           <Route path="squad-maker" element={<SquadMaker />} />
           <Route
             path="history"

@@ -36,6 +36,8 @@ interface PitchProps {
   goal?: GoalDimensions;
   penaltyBox?: PenaltyBoxDimensions;
   showAveragePosition?: boolean;
+  showSpeedTrail?: boolean;
+  animateTrailIndex?: number | null;
   showSprints?: boolean;
   sprints?: Sprint[];
   sprintSettings?: SprintSettings;
@@ -66,6 +68,8 @@ const Pitch: React.FC<PitchProps> = ({
   goal = { width: 5, height: 1 },
   penaltyBox = { width: 10, length: 5, goalBoxWidth: 5, goalBoxLength: 2 },
   showAveragePosition = false,
+  showSpeedTrail = false,
+  animateTrailIndex = null,
   showSprints = false,
   sprints = [],
   sprintSettings = {
@@ -323,6 +327,152 @@ const Pitch: React.FC<PitchProps> = ({
               showNumbers={sprintSettings.showNumbers}
             />
           )}
+
+          {/* Ślad prędkości (gruba linia kolorowana wg speed) */}
+          {showSpeedTrail &&
+            trackingPoints.length > 1 &&
+            (() => {
+              const isAnimating = animateTrailIndex !== null && animateTrailIndex !== undefined;
+              const visibleCount = isAnimating
+                ? Math.min(animateTrailIndex + 1, trackingPoints.length)
+                : trackingPoints.length;
+              const visiblePoints = trackingPoints.slice(0, visibleCount);
+
+              const speeds = trackingPoints.map((p) => p.speed ?? 0).filter((s) => s > 0);
+              const maxSpeed = speeds.length > 0 ? Math.max(...speeds) : 20;
+              const minSpeed = speeds.length > 0 ? Math.min(...speeds) : 0;
+
+              const getSpeedColor = (speed: number | undefined): string => {
+                if (!speed || speed <= 0) return 'rgba(100, 200, 255, 0.8)';
+                const ratio = Math.min((speed - minSpeed) / (maxSpeed - minSpeed || 1), 1);
+                if (ratio < 0.25) return 'rgba(100, 200, 255, 0.9)';
+                if (ratio < 0.5) return 'rgba(0, 230, 118, 0.9)';
+                if (ratio < 0.75) return 'rgba(255, 215, 0, 0.95)';
+                return 'rgba(255, 50, 50, 1)';
+              };
+
+              const currentPoint = visiblePoints[visiblePoints.length - 1];
+              const lastPoint = trackingPoints[trackingPoints.length - 1];
+              const animationFinished =
+                !isAnimating || animateTrailIndex >= trackingPoints.length - 1;
+
+              return (
+                <g>
+                  {/* Glow pod spodem */}
+                  {visiblePoints.map((point, i) => {
+                    if (i === 0) return null;
+                    const prev = visiblePoints[i - 1];
+                    return (
+                      <line
+                        key={`glow-${i}`}
+                        x1={prev.x}
+                        y1={prev.y}
+                        x2={point.x}
+                        y2={point.y}
+                        stroke={getSpeedColor(point.speed)}
+                        strokeWidth={14}
+                        strokeLinecap="round"
+                        opacity={0.25}
+                      />
+                    );
+                  })}
+                  {/* Główna linia */}
+                  {visiblePoints.map((point, i) => {
+                    if (i === 0) return null;
+                    const prev = visiblePoints[i - 1];
+                    return (
+                      <line
+                        key={`trail-${i}`}
+                        x1={prev.x}
+                        y1={prev.y}
+                        x2={point.x}
+                        y2={point.y}
+                        stroke={getSpeedColor(point.speed)}
+                        strokeWidth={6}
+                        strokeLinecap="round"
+                        opacity={0.9}
+                      />
+                    );
+                  })}
+                  {/* Punkt startowy */}
+                  <circle
+                    cx={trackingPoints[0].x}
+                    cy={trackingPoints[0].y}
+                    r={7}
+                    fill="#fff"
+                    stroke="#333"
+                    strokeWidth="2"
+                    opacity={0.9}
+                  />
+
+                  {/* Animowana kropka gracza */}
+                  {isAnimating && !animationFinished && currentPoint && (
+                    <g>
+                      {/* Glow pulsujący */}
+                      <circle
+                        cx={currentPoint.x}
+                        cy={currentPoint.y}
+                        r={16}
+                        fill={getSpeedColor(currentPoint.speed)}
+                        opacity={0.2}
+                      />
+                      {/* Kropka gracza */}
+                      <circle
+                        cx={currentPoint.x}
+                        cy={currentPoint.y}
+                        r={9}
+                        fill={getSpeedColor(currentPoint.speed)}
+                        stroke="#fff"
+                        strokeWidth="3"
+                      />
+                      {/* Prędkość nad kropką */}
+                      {currentPoint.speed && (
+                        <text
+                          x={currentPoint.x}
+                          y={currentPoint.y - 18}
+                          textAnchor="middle"
+                          fontSize="11"
+                          fontWeight="bold"
+                          fontFamily="sans-serif"
+                          fill="#fff"
+                          stroke="#000"
+                          strokeWidth="3"
+                          paintOrder="stroke"
+                        >
+                          {currentPoint.speed.toFixed(1)} km/h
+                        </text>
+                      )}
+                    </g>
+                  )}
+
+                  {/* Punkt końcowy (gol) - widoczny zawsze lub po zakończeniu animacji */}
+                  {animationFinished && (
+                    <>
+                      <circle
+                        cx={lastPoint.x}
+                        cy={lastPoint.y}
+                        r={8}
+                        fill="#cafd00"
+                        stroke="#fff"
+                        strokeWidth="2.5"
+                        opacity={1}
+                      />
+                      <text
+                        x={lastPoint.x}
+                        y={lastPoint.y + 1}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fontSize="9"
+                        fill="#0a0a0a"
+                        fontWeight="bold"
+                      >
+                        G
+                      </text>
+                    </>
+                  )}
+                </g>
+              );
+            })()}
 
           {/* Średnia pozycja */}
           {showAveragePosition &&

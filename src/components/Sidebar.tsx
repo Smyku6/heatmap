@@ -13,6 +13,7 @@ const Sidebar = ({ onNavigate }: SidebarProps) => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: 'dashboard', path: '/dashboard' },
     { id: 'analysis', label: 'Analysis', icon: 'analytics', path: '/analysis' },
+    { id: 'goal-analysis', label: 'Goal Analysis', icon: 'sports_soccer', path: '/goal-analysis' },
     { id: 'history', label: 'History', icon: 'history', path: '/history' },
     {
       id: 'squad-maker',

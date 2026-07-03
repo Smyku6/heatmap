@@ -332,6 +332,56 @@ export interface HeatmapSettings {
 }
 
 // ============================================
+// MATCH / GOAL ANALYSIS TYPES
+// ============================================
+
+export interface MatchGoal {
+  scorer: string;
+  scorerId: string;
+  team: 'A' | 'B';
+  sec: number;
+  assist: string | null;
+  assistId: string | null;
+  ownGoal?: boolean;
+}
+
+export interface MatchPlayer {
+  id: string;
+  name: string;
+}
+
+export interface MatchPlayerActivity {
+  playerId: string;
+  userId: string;
+  distanceKm: number;
+  avgHeartRate: number;
+  maxHeartRate: number;
+}
+
+export interface MatchData {
+  id: string;
+  teamA: string;
+  teamB: string;
+  scoreA: number;
+  scoreB: number;
+  duration: number;
+  goals: MatchGoal[];
+  lineup?: {
+    teamA: MatchPlayer[];
+    teamB: MatchPlayer[];
+  };
+  matchStartEpoch?: number;
+  matchEndEpoch?: number;
+  receivedAt?: string;
+  playerActivities: MatchPlayerActivity[];
+  activity: {
+    maxHeartRate: number;
+    distanceKm: number;
+    avgHeartRate: number;
+  };
+}
+
+// ============================================
 // UI STATE TYPES
 // ============================================
 

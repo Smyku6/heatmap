@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 
 import { isArrayOf, isSession } from '../utils/typeGuards';
+import { createMatchSlice } from './slices/matchSlice';
 import { createSessionSlice } from './slices/sessionSlice';
 import { createUISlice } from './slices/uiSlice';
 import { createVisualizationSlice } from './slices/visualizationSlice';
@@ -32,7 +33,8 @@ const useAppStore = create<AppState>()(
       (...a) => ({
         ...createSessionSlice(...a),
         ...createUISlice(...a),
-        ...createVisualizationSlice(...a)
+        ...createVisualizationSlice(...a),
+        ...createMatchSlice(...a)
       }),
       {
         name: 'heatmap-storage', // localStorage key
